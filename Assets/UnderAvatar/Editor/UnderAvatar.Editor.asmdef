@@ -1,0 +1,6 @@
+{
+  "name": "UnderAvatar.Editor",
+  "rootNamespace": "UnderAvatar.Editor",
+  "references": ["UnderAvatar.Runtime"],
+  "includePlatforms": ["Editor"]
+}

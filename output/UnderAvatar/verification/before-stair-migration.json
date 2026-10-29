@@ -1,0 +1,1388 @@
+{
+    "version": 1,
+    "name": "主播的宅邸",
+    "floorHeight": 4.0,
+    "gridSize": 2.0,
+    "halfWidth": 8,
+    "halfDepth": 6,
+    "floors": [
+        {
+            "floorIndex": 0,
+            "items": [
+                {
+                    "id": "96cd1d002e6b4c8691e5275fb38578c6",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "024b692b69b64b95b425e5be3cf0e55c",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2e69d094e1804374926da5d62c4f8ced",
+                    "type": 0,
+                    "gridX": -6,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "a73a36b864f246c1807527b0adc60690",
+                    "type": 0,
+                    "gridX": -6,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8fbf3a4b540645369a9be37f43ea6473",
+                    "type": 0,
+                    "gridX": -5,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "04fb2289562841eb989e28073818b86b",
+                    "type": 0,
+                    "gridX": -5,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "44fb9cd2c7254264975900a050cf50e4",
+                    "type": 0,
+                    "gridX": -4,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "a754f7a6edd44f0d978ec12bfa5a9287",
+                    "type": 0,
+                    "gridX": -4,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "e0255fbf7bc647708b58d8cb9d339bde",
+                    "type": 0,
+                    "gridX": -3,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ffe0ea28bd9a4083b3bdd5c1f83bb981",
+                    "type": 0,
+                    "gridX": -3,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "cefb8604ef2844c693767044cd22aec5",
+                    "type": 0,
+                    "gridX": -2,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "3861d40679ec460ab285f1cb4219a5ba",
+                    "type": 0,
+                    "gridX": -2,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "72d05d6bcaad42e18660a9d7f850be6f",
+                    "type": 0,
+                    "gridX": -1,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "62224b61015d4ea494bedb29128bec1e",
+                    "type": 0,
+                    "gridX": -1,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "cdff8ece82904176ba1aeca6269a8262",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "5a98790821f14a3b87407a63356730e5",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "4c597367064540b6a05ca0a916c78d0c",
+                    "type": 0,
+                    "gridX": 1,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8ee355b514d4425fa0c1d0d0c0958def",
+                    "type": 0,
+                    "gridX": 1,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "790efe288e584dca96a9d771dfe4030b",
+                    "type": 0,
+                    "gridX": 2,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "22c44d934ae64506a947e8e105645f3b",
+                    "type": 0,
+                    "gridX": 2,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "c0e95e6b1a594c1c93a4fb188218a867",
+                    "type": 0,
+                    "gridX": 3,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "5c7e36bbd6ed42ae86ff1bf2e84f9905",
+                    "type": 0,
+                    "gridX": 3,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "6f6311b2c26c462ba1f5e71f2cc3f317",
+                    "type": 0,
+                    "gridX": 4,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ae509f03ea4c4f02bf1349ddb3ac306b",
+                    "type": 0,
+                    "gridX": 4,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "35948f1ebd7248ed928ee866a980d296",
+                    "type": 0,
+                    "gridX": 5,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "65e2ae87c2b54b80b359b05679d21bcd",
+                    "type": 0,
+                    "gridX": 5,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "bc752da661cd4bd48791ab84a062223a",
+                    "type": 0,
+                    "gridX": 6,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "27683f15c0ab430b865005dfdc1f4b10",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "709c5eb15aba43f989345e840f50975b",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "469bb8ac35be4bcd95faf6d98788e6df",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "a1e8beea34f34329adde0b266187ae27",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "d62b0e528c1d4091bc0220f7b602b7c2",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "4a23d971f9b541b4ad54c0d7618dc54f",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2d179da5a01949b58855f86ceb59739c",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "530cb70d92654e97aed370ae30a3ab9c",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "0f8dda45c8ea499ab789b43539371de2",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ae8ebe53df57492f8b343a43fb516860",
+                    "type": 1,
+                    "gridX": 0,
+                    "gridZ": -2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "c81ee885212e4314aa527d6a2bb795f4",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "59a4db707b9047fc84b53c73d0897528",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8368505948c743c297bd5248b8b9a5cd",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "16b46daed6ed45d1830a948db7a08318",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "856ee721c09749c78286b5ad1bea54f5",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "849f125918dc4adda5cdd1638394a349",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ea0458a83d7147bd8f739c117cbc6478",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "430a407121674c3585bd88d3742fdf3b",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "e54869769f9241e3aa5a4680607cd3b8",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "0fe51e23f0184db5843650cd73b63252",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "d353d808b27647e6903432a1b55f05e4",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "0d9b22c9fa2e4e7f823dd2a938e012dc",
+                    "type": 1,
+                    "gridX": 0,
+                    "gridZ": 2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ec749bc647f14c84a75387193e1acd18",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "476898071b6f44fe894093e82c434bee",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "c509ca5430f24602ba87ee6867a27a41",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "9a22fa34364b4e02af4769fdbe6915e1",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "d8c190f0adbd4de7b6f28f8b3089d81f",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "77ee549d45ab4df0bdee56f72e8429b8",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "57758807d4f44cc8801e8ab85a24c07f",
+                    "type": 5,
+                    "gridX": -5,
+                    "gridZ": 3,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "f9ab342d7eb844258e193dec90c50239",
+                    "type": 5,
+                    "gridX": 5,
+                    "gridZ": -3,
+                    "rotationY": 180,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "6e108483267948aca64f0b9f7ebfe863",
+                    "type": 2,
+                    "gridX": -3,
+                    "gridZ": 3,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": true
+                },
+                {
+                    "id": "c5b85177212d45c9a0ba813a4a0b84a0",
+                    "type": 2,
+                    "gridX": 2,
+                    "gridZ": 3,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": true
+                },
+                {
+                    "id": "4e5818eea81f46e394f908fbfdbbb0c4",
+                    "type": 2,
+                    "gridX": -3,
+                    "gridZ": 0,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2fb359063f234450bc1e61857d1236af",
+                    "type": 2,
+                    "gridX": 4,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8554c9ae98814bc794392fe4a8c0e1f5",
+                    "type": 3,
+                    "gridX": -5,
+                    "gridZ": -3,
+                    "rotationY": 0,
+                    "questId": "item_medicine",
+                    "questDescription": "拍摄一楼厨房的可疑药剂",
+                    "hideable": false
+                },
+                {
+                    "id": "e6f77727889e45c8aa8ce6db6fbd9557",
+                    "type": 0,
+                    "gridX": 6,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "5a7363a1ce884503b69019438a673a34",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "1cfb539376f04e53b797d487af05bf49",
+                    "type": 0,
+                    "gridX": 1,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "66d99e38256346c9b305f69b6909117e",
+                    "type": 0,
+                    "gridX": 2,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "532bcd9138a74c53923776893995b9b1",
+                    "type": 0,
+                    "gridX": 4,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "b50e03cfd73648528ebd775d0d24f390",
+                    "type": 0,
+                    "gridX": 5,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "aba3719c412e4deda8882ec11314d5cb",
+                    "type": 0,
+                    "gridX": 6,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "9500e95ebf584fb79b685e6f03262c56",
+                    "type": 1,
+                    "gridX": 3,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                }
+            ]
+        },
+        {
+            "floorIndex": 1,
+            "items": [
+                {
+                    "id": "1191156d0f1740609e10b4bb30fa78a0",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "de98286a4d0b4b6e9fe0e675f0d3c854",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "a1016631a2654d09b60fcc6f1cad3c54",
+                    "type": 0,
+                    "gridX": -6,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "71443d7401714d1d854574a3fcce82f4",
+                    "type": 0,
+                    "gridX": -6,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "1029bcb8f6174ca1ae64494c424db726",
+                    "type": 0,
+                    "gridX": -5,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "9d1e8130ec864e40aacce81d322d5793",
+                    "type": 0,
+                    "gridX": -5,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "caddc4ecc9a747ef9916b1605b4adfca",
+                    "type": 0,
+                    "gridX": -4,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "84623ab0bf1545a085a823cc42633fc8",
+                    "type": 0,
+                    "gridX": -4,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "6fa167430f2842269b4b3dd817b29511",
+                    "type": 0,
+                    "gridX": -3,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8f98394155d54cac912aaca10aa60648",
+                    "type": 0,
+                    "gridX": -3,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "df60b8ee7726471cbefb0b4e278f4b1c",
+                    "type": 0,
+                    "gridX": -2,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "287e915d828a4159b60ea8f4c6328aa7",
+                    "type": 0,
+                    "gridX": -2,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "a9651a6e849f4bf7adcee046aebe2923",
+                    "type": 0,
+                    "gridX": -1,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "6482f13d04434bd4bfa4af9b67cf6148",
+                    "type": 0,
+                    "gridX": -1,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "65942b7be2d443a491c7bf5173151e73",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "1686248d18a14725958d8d50a91d94e0",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "12e68cc4d72246098fd7e5fd77c6d95b",
+                    "type": 0,
+                    "gridX": 1,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ec600c2af30b4120bd55958267e276d0",
+                    "type": 0,
+                    "gridX": 1,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "9a5fac3e7d9e40bbbeb80e7c6ae092ee",
+                    "type": 0,
+                    "gridX": 2,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "98ed83d29a3f4ab39a88ed02910c0edc",
+                    "type": 0,
+                    "gridX": 2,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "4f4ab744f2b8437fa7cf92e4925d1c0e",
+                    "type": 0,
+                    "gridX": 3,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "08d46e9026c54371bc1f96ca8ae9c1d9",
+                    "type": 0,
+                    "gridX": 3,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "f1153a734a8849c2a1bc4bbf8aa82a12",
+                    "type": 0,
+                    "gridX": 4,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "e06e3e5ffd55427e8eee7617cd217b23",
+                    "type": 0,
+                    "gridX": 4,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2a84036ea203465ba33a8959ad0517b5",
+                    "type": 0,
+                    "gridX": 5,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "bd5c43d377844c828bd5a7cea48b5c95",
+                    "type": 0,
+                    "gridX": 5,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "25b4e9c6407e48b18f76ce5d5bcbf6c6",
+                    "type": 0,
+                    "gridX": 6,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "3d507c5c5d514e68a5a48c625c95fce7",
+                    "type": 0,
+                    "gridX": 6,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2814515b476c40dfaf00b42b96f60b1a",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "313bb7ed67024528854ecb418b25d9fe",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 5,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "01a28ba911aa4f1eb395dec7a2beb888",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "618eaaccd7e34a92a66240b4f9e1c6cf",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "eaba5ab7fc114d15a252510daffae772",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "81cc0d820b8e432b82698838f73319d8",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "da638fb34b9f48e6b117c8c605043435",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "d5d92cf2944a417dbc135d760e8d1989",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "65ef1f68502341fa85ff4115cbf0275d",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "e770dc5f0c8849c09463af221a696514",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "1ef94762711e425b9fbe6acbcd9de63b",
+                    "type": 1,
+                    "gridX": 0,
+                    "gridZ": -2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "7ebd06ea128841f88505d9871da5aa74",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": -1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "a0e3fc50a3594896b7cbb73bcff90742",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": -1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "5b48aa41907942d08f56d681a35bce41",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": -1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "340e2cc1db0b47cabb59ab7793c51a35",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "fc16ecd93f5944f8b9f502c6bd68428c",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "c47fd4e08ebe4ce091613be3c31b7bc6",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "1ae59df92ee9474dbef27f6ca2281b0b",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "05bcd631adc2408486ef3eb962205876",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "026c1fa64642446c971ec18c51b9b1dc",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 1,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "9560577a8f064ce7bdc5ec66994f40d6",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "c73d9a2d268a4b48a3b3a85d1476563f",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "b72e0118638e4525b51e2f20ccef6b45",
+                    "type": 1,
+                    "gridX": 0,
+                    "gridZ": 2,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8dcd768ee12e4148a33eb9a6a13ddf85",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "90dc9988ee94435cbaaed850b82be6fc",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "ce0e33cf707d436eb1b47bd333666756",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 3,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "1da710d5337e48e398d3de7a9916ab2b",
+                    "type": 0,
+                    "gridX": -7,
+                    "gridZ": 4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "068a8248640246cf9aa50904bfa20caa",
+                    "type": 0,
+                    "gridX": 7,
+                    "gridZ": 4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "8ccf7bd713b74cf192281c0a81d15c33",
+                    "type": 0,
+                    "gridX": 0,
+                    "gridZ": 4,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "de3d0ff938564b618aa89044d505dc99",
+                    "type": 5,
+                    "gridX": -5,
+                    "gridZ": 3,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "08a253663acb4496b5b223594b712069",
+                    "type": 5,
+                    "gridX": 5,
+                    "gridZ": -3,
+                    "rotationY": 180,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2a3891f4c9f546ef9f9d957be7f5e8e0",
+                    "type": 2,
+                    "gridX": -3,
+                    "gridZ": 3,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": true
+                },
+                {
+                    "id": "07b9b3ff39284d03ae02999da6fd8359",
+                    "type": 2,
+                    "gridX": 2,
+                    "gridZ": 3,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": true
+                },
+                {
+                    "id": "a6c6b95fee284c60ac82b2f664f1f573",
+                    "type": 2,
+                    "gridX": -3,
+                    "gridZ": 0,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "9b38d4ba281943999b1d69c91af8116a",
+                    "type": 2,
+                    "gridX": 4,
+                    "gridZ": 0,
+                    "rotationY": 90,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "98e4d2a2d2b6474a99e48ec37f880cff",
+                    "type": 4,
+                    "gridX": 4,
+                    "gridZ": 4,
+                    "rotationY": 0,
+                    "questId": "",
+                    "questDescription": "",
+                    "hideable": false
+                },
+                {
+                    "id": "2bc9bc3aa7c84615a91f4c25bbec94f5",
+                    "type": 3,
+                    "gridX": -4,
+                    "gridZ": -3,
+                    "rotationY": 0,
+                    "questId": "item_diary",
+                    "questDescription": "拍摄二楼卧室的怪物日记",
+                    "hideable": false
+                },
+                {
+                    "id": "d07b2dfb87d2410b9ab28c7bbb0cb03c",
+                    "type": 3,
+                    "gridX": 5,
+                    "gridZ": 1,
+                    "rotationY": 0,
+                    "questId": "item_contract",
+                    "questDescription": "拍摄二楼书房的秘密合同",
+                    "hideable": false
+                }
+            ]
+        },
+        {
+            "floorIndex": 2,
+            "items": []
+        },
+        {
+            "floorIndex": 3,
+            "items": []
+        }
+    ]
+}

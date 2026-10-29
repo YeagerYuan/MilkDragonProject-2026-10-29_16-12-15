@@ -1,0 +1,6 @@
+{
+  "name": "UnderAvatar.Runtime",
+  "rootNamespace": "UnderAvatar",
+  "references": ["Unity.InputSystem"],
+  "autoReferenced": true
+}

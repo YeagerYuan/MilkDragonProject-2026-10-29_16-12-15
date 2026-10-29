@@ -1,0 +1,155 @@
+{
+  "result": {
+    "success": true,
+    "message": "Test job status retrieved.",
+    "error": null,
+    "data": {
+      "job_id": "f1f3e90c533542288bf61bccfdf8c4b1",
+      "status": "succeeded",
+      "mode": "PlayMode",
+      "started_unix_ms": 1793178684141,
+      "finished_unix_ms": 1793178715595,
+      "last_update_unix_ms": 1793178715595,
+      "progress": {
+        "completed": 12,
+        "total": 12,
+        "current_test_full_name": null,
+        "current_test_started_unix_ms": null,
+        "last_finished_test_full_name": "UnderAvatar.Tests.StageOneTests.PlayModeCanReturnWithoutLosingMapAndJsonCanReload",
+        "last_finished_unix_ms": 1793178715587,
+        "stuck_suspected": false,
+        "editor_is_focused": true,
+        "run_in_background": true,
+        "focus_nudge_attempts": null,
+        "focus_nudge_limit": null,
+        "focus_nudge_status": null,
+        "blocked_reason": null,
+        "failures_so_far": [],
+        "failures_capped": false
+      },
+      "error": null,
+      "result": {
+        "mode": "PlayMode",
+        "summary": {
+          "total": 12,
+          "passed": 12,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 30.8467535,
+          "resultState": "Passed"
+        },
+        "results": [
+          {
+            "name": "AiReturnsToDeskPlaysRealInputsAndFinishesALevel",
+            "fullName": "UnderAvatar.Tests.GameplayTests.AiReturnsToDeskPlaysRealInputsAndFinishesALevel",
+            "state": "Passed",
+            "durationSeconds": 2.6656805,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "EmergencyTurnHasWindupMissPenaltyAndStun",
+            "fullName": "UnderAvatar.Tests.GameplayTests.EmergencyTurnHasWindupMissPenaltyAndStun",
+            "state": "Passed",
+            "durationSeconds": 7.0576216,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "EvidenceCooldownFlashAndAllObjectivesProduceReporterVictory",
+            "fullName": "UnderAvatar.Tests.GameplayTests.EvidenceCooldownFlashAndAllObjectivesProduceReporterVictory",
+            "state": "Passed",
+            "durationSeconds": 11.6784443,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "StreamerCanPhysicallyReturnFromAnotherFloorThroughDoorsAndStairs",
+            "fullName": "UnderAvatar.Tests.GameplayTests.StreamerCanPhysicallyReturnFromAnotherFloorThroughDoorsAndStairs",
+            "state": "Passed",
+            "durationSeconds": 4.6576343,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "StreamingCannotCaptureAndOnlyCompletionUnlocksCapture",
+            "fullName": "UnderAvatar.Tests.GameplayTests.StreamingCannotCaptureAndOnlyCompletionUnlocksCapture",
+            "state": "Passed",
+            "durationSeconds": 0.6501303,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "WallPreventsCaptureAndWardrobePreventsPhotographyAndCapture",
+            "fullName": "UnderAvatar.Tests.GameplayTests.WallPreventsCaptureAndWardrobePreventsPhotographyAndCapture",
+            "state": "Passed",
+            "durationSeconds": 0.25234,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "AValidEvidencePhotoCompletesQuestAndDuplicateCostsOnePoint",
+            "fullName": "UnderAvatar.Tests.PhotoTests.AValidEvidencePhotoCompletesQuestAndDuplicateCostsOnePoint",
+            "state": "Passed",
+            "durationSeconds": 0.708131,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "ThreeEmptyUploadsEndMatchAndFurtherPhotosCannotChangeScore",
+            "fullName": "UnderAvatar.Tests.PhotoTests.ThreeEmptyUploadsEndMatchAndFurtherPhotosCannotChangeScore",
+            "state": "Passed",
+            "durationSeconds": 1.3093468,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "WallRangeAndViewfinderRejectInvalidTargets",
+            "fullName": "UnderAvatar.Tests.PhotoTests.WallRangeAndViewfinderRejectInvalidTargets",
+            "state": "Passed",
+            "durationSeconds": 0.4004442,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "ClosedDoorAndWallsBlockPhotoRaysButOpenDoorDoesNot",
+            "fullName": "UnderAvatar.Tests.StageOneTests.ClosedDoorAndWallsBlockPhotoRaysButOpenDoorDoesNot",
+            "state": "Passed",
+            "durationSeconds": 0.4130519,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "EditorPlacesSelectsEditsDeletesAndFiltersFloors",
+            "fullName": "UnderAvatar.Tests.StageOneTests.EditorPlacesSelectsEditsDeletesAndFiltersFloors",
+            "state": "Passed",
+            "durationSeconds": 0.4317333,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          },
+          {
+            "name": "PlayModeCanReturnWithoutLosingMapAndJsonCanReload",
+            "fullName": "UnderAvatar.Tests.StageOneTests.PlayModeCanReturnWithoutLosingMapAndJsonCanReload",
+            "state": "Passed",
+            "durationSeconds": 0.5456262,
+            "message": null,
+            "stackTrace": null,
+            "output": ""
+          }
+        ]
+      }
+    },
+    "hint": null
+  }
+}

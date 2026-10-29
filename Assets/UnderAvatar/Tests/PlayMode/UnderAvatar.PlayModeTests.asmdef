@@ -1,0 +1,6 @@
+{
+  "name": "UnderAvatar.PlayModeTests",
+  "references": ["UnderAvatar.Runtime"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

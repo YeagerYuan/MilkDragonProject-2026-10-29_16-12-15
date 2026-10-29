@@ -1,0 +1,7 @@
+{
+  "name": "UnderAvatar.EditModeTests",
+  "references": ["UnderAvatar.Runtime", "UnderAvatar.Editor"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

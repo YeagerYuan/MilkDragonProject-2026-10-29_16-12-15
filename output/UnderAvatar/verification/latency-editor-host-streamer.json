@@ -1,0 +1,20 @@
+{
+    "passed": true,
+    "moved": true,
+    "crouched": true,
+    "doorOpened": true,
+    "photo": true,
+    "heardNoise": true,
+    "completedFifteen": true,
+    "captured": true,
+    "rematch": true,
+    "noAI": true,
+    "cameraCorrect": true,
+    "side": "host",
+    "role": "Streamer",
+    "map": "LAN smoke 17885",
+    "result": "主播获胜：狗仔被灭口",
+    "error": "",
+    "frames": 2240,
+    "roundTripMs": 216.75318908691407
+}

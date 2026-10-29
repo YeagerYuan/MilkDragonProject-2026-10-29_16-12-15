@@ -1,0 +1,8 @@
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+.localSDK/
+.vs/
+*.sln
+*.log
