@@ -349,12 +349,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &214463201 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1745983749490673787, guid: 96efdd81c57d49c459efee964f254570,
-    type: 3}
-  m_PrefabInstance: {fileID: 1773480473893796982}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &267095127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1177,7 +1171,8 @@ MonoBehaviour:
     patrolSeconds: 30
     flappyTargetScore: 0
     allowEmergencyTurn: 0
-  reporterPrefab: {fileID: 214463201}
+  reporterPrefab: {fileID: 1745983749490673787, guid: 96efdd81c57d49c459efee964f254570,
+    type: 3}
 --- !u!4 &1852418220
 Transform:
   m_ObjectHideFlags: 0
@@ -1274,74 +1269,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 82781399}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1773480473893796982
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -8.52712
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -7.6426
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400947502195102401, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1745983749490673787, guid: 96efdd81c57d49c459efee964f254570,
-        type: 3}
-      propertyPath: m_Name
-      value: Paparazzi
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 96efdd81c57d49c459efee964f254570, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1349,5 +1276,4 @@ SceneRoots:
   - {fileID: 1852418220}
   - {fileID: 806852422}
   - {fileID: 267095130}
-  - {fileID: 1773480473893796982}
   - {fileID: 1752408371}
