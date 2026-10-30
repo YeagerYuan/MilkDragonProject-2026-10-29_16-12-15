@@ -132,6 +132,22 @@ namespace UnderAvatar
             if(PhoneOpen && (Mouse.current?.leftButton.wasPressedThisFrame==true || keys.spaceKey.wasPressedThisFrame)) session.TakePhoto();
         }
 
+        void LateUpdate()
+        {
+            if (animator == null || body == null || !body.enabled)
+                return;
+
+            Vector3 velocity = body.velocity;
+            velocity.y = 0f; 
+
+            float speed = velocity.magnitude;
+
+            float normalizedSpeed = session.Settings.reporterSpeed > 0f
+                ? speed / session.Settings.reporterSpeed
+                : 0f;
+
+            animator.SetFloat("Speed", normalizedSpeed, 0.1f, Time.deltaTime);
+        }
         public void ApplyCommand(PlayerCommand command,float dt)
         {
             if(!session.IsAuthority || session.Finished) return;
@@ -256,16 +272,6 @@ namespace UnderAvatar
             Vector3 previous=transform.position;
             body.Move(((transform.right*input.x+transform.forward*input.y)*MovementSpeed(sneak)+Vector3.up*vertical)*deltaTime);
             Vector3 displacement=transform.position-previous; displacement.y=0;
-            if (animator != null && deltaTime > 0f)
-            {
-                float actualSpeed = displacement.magnitude / deltaTime;
-
-                float normalizedSpeed = session.Settings.reporterSpeed > 0f
-                    ? actualSpeed / session.Settings.reporterSpeed
-                    : 0f;
-
-                animator.SetFloat("Speed", normalizedSpeed, 0.1f, deltaTime);
-            }
             if(session.IsAuthority && !Sneaking && input.sqrMagnitude>.01f && displacement.magnitude>.002f && body.isGrounded && Time.time>=nextFootstep)
             { nextFootstep=Time.time+.48f; session.EmitNoise(transform.position,NoiseKind.Footstep); }
         }
