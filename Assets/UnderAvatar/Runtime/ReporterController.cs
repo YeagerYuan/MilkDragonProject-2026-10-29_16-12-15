@@ -15,11 +15,13 @@ namespace UnderAvatar
         public int Floor => Mathf.Clamp(Mathf.FloorToInt((transform.position.y+.15f)/session.World.Data.floorHeight),0,session.World.Data.floors.Count-1);
         MatchSession session;
         CharacterController body;
-        Renderer bodyVisual;
+        // Renderer bodyVisual;
         CharacterPosture posture;
         float pitch,vertical,nextFootstep;
         Vector3 hidingExit;
         ActorSnapshot replica;
+        GameObject modelVisual;
+        Animator animator;
 
         public void Initialize(MatchSession match)
         {
@@ -27,13 +29,42 @@ namespace UnderAvatar
             gameObject.layer=PrototypeLayers.Get("UA_Reporter");
             body=gameObject.AddComponent<CharacterController>();
             body.height=1.8f; body.radius=.3f; body.center=Vector3.up*.9f; body.stepOffset=.3f;
-            var model=new GameObject("ReporterVisual"); model.transform.SetParent(transform,false);
-            var visibleBody=GameObject.CreatePrimitive(PrimitiveType.Capsule);
-            visibleBody.name="ReporterBody"; visibleBody.transform.SetParent(model.transform,false);
-            visibleBody.transform.localPosition=Vector3.up*.9f; visibleBody.transform.localScale=new Vector3(.6f,.9f,.6f);
-            visibleBody.layer=PrototypeLayers.Get("UA_Reporter"); visibleBody.GetComponent<Collider>().enabled=false;
-            bodyVisual=visibleBody.GetComponent<Renderer>();
-            bodyVisual.sharedMaterial=session.World.Palette.Material(new Color(.19f,.65f,.68f));
+
+            // Create a container for the character model
+            var model = new GameObject("ReporterVisual");
+            model.transform.SetParent(transform, false);
+
+            // Instantiate the rigged paparazzi prefab
+            if (session.App.ReporterPrefab == null)
+            {
+                throw new System.InvalidOperationException(
+                    "Reporter Prefab is not assigned in PrototypeApp."
+                );
+            }
+
+            modelVisual = Instantiate(session.App.ReporterPrefab, model.transform);
+            modelVisual.name = "PaparazziModel";
+
+            animator = modelVisual.GetComponentInChildren<Animator>();
+
+            modelVisual.transform.localPosition = Vector3.zero;
+            modelVisual.transform.localRotation = Quaternion.identity;
+
+            // Set the entire character hierarchy to the reporter layer
+            int reporterLayer = PrototypeLayers.Get("UA_Reporter");
+
+            foreach (Transform child in modelVisual.GetComponentsInChildren<Transform>(true))
+            {
+                child.gameObject.layer = reporterLayer;
+            }
+
+            // Disable visual-model colliders.
+            // The parent Reporter already has its own CharacterController.
+            foreach (Collider col in modelVisual.GetComponentsInChildren<Collider>(true))
+            {
+                col.enabled = false;
+            }
+
             var head=new GameObject("ReporterCamera"); head.transform.SetParent(transform,false); head.transform.localPosition=Vector3.up*1.65f;
             View=head.AddComponent<Camera>(); View.nearClipPlane=.05f; View.farClipPlane=150; View.fieldOfView=75;
             View.cullingMask=~LayerMask.GetMask("UA_Sound","UA_Reporter");
@@ -68,13 +99,26 @@ namespace UnderAvatar
         {
             if(session.IsNetwork)
             {
+                if (IsHuman && !Hidden && !session.Finished && !session.DebugOpen && session.InputCaptured &&
+                    !DocumentManager.BlocksGameplayInput && Mouse.current?.leftButton.wasPressedThisFrame == true)
+                    InteractDocument();
                 if(!session.IsAuthority && !IsHuman && replica!=null) SmoothReplica();
                 return;
             }
             if(!IsHuman || session.Finished || session.DebugOpen || !session.InputCaptured) return;
             var keys=Keyboard.current;
             if(keys==null) return;
-            if(keys.eKey.wasPressedThisFrame) { Interact(); if(Hidden) return; }
+            if (DocumentManager.BlocksGameplayInput) return;
+            if(keys.eKey.wasPressedThisFrame)
+            {
+                Interact(); 
+                if(Hidden) return;  
+            } 
+            if (Mouse.current?.leftButton.wasPressedThisFrame == true)
+            {
+                InteractDocument();
+            }
+            if (DocumentManager.BlocksGameplayInput) return;
             if(Hidden) return;
             Vector2 look=Mouse.current?.delta.ReadValue()??Vector2.zero;
             transform.Rotate(0,look.x*.12f,0);
@@ -119,7 +163,7 @@ namespace UnderAvatar
             if(replica==null || value.hidden!=Hidden || Vector3.Distance(transform.position,value.position)>3)
                 transform.position=value.position;
             replica=value;Hidden=value.hidden;PhoneOpen=value.phone;Sneaking=value.sneaking;
-            posture.SetCrouched(value.crouched,true);bodyVisual.enabled=!Hidden;
+            posture.SetCrouched(value.crouched,true);modelVisual.SetActive(!Hidden);
             if(IsHuman) body.enabled=!Hidden;
         }
         public void PredictLook(Vector2 look)
@@ -150,7 +194,7 @@ namespace UnderAvatar
             {
                 if(Physics.CheckCapsule(hidingExit+Vector3.up*.4f,hidingExit+Vector3.up*1.5f,.3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
                 { if(IsHuman) session.Notice("衣柜出口被阻挡，暂时无法离开。"); return; }
-                Hidden=false; bodyVisual.enabled=true; Teleport(hidingExit); if(IsHuman) session.Notice("已离开衣柜。"); return;
+                Hidden=false; modelVisual.SetActive(true); Teleport(hidingExit); if(IsHuman) session.Notice("已离开衣柜。"); return;
             }
             if(Physics.Raycast(View.transform.position,View.transform.forward,out var hit,3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
             {
@@ -166,6 +210,40 @@ namespace UnderAvatar
             session.Notice("靠近并看向门或衣柜后按 E；楼梯直接步行上下。");
         }
 
+        public void InteractDocument()
+        {
+            if (DocumentManager.BlocksGameplayInput || !IsHuman || Hidden || session.Finished || session.DebugOpen || !session.InputCaptured) return;
+            int layerMask = ~LayerMask.GetMask("UA_Reporter");
+
+            if (Physics.Raycast(
+                View.transform.position,
+                View.transform.forward,
+                out var hit,
+                3f,
+                layerMask,
+                QueryTriggerInteraction.Ignore))
+            {
+                Debug.Log("Hit object: " + hit.collider.name);
+
+                var document =
+                    hit.collider.GetComponentInParent<DocumentInteractable>();
+
+                if (document != null)
+                {
+                    Debug.Log("Document found!");
+                    document.Interact();
+                }
+                else
+                {
+                    Debug.Log("Hit object is not a document");
+                }
+            }
+            else
+            {
+                Debug.Log("Raycast hit nothing!");
+            }
+        }
+
         public bool SetCrouched(bool crouch) => posture.SetCrouched(crouch);
         public float MovementSpeed(bool sneak) => session.Settings.reporterSpeed*(sneak || Crouched?.45f:1);
         public void MoveInput(Vector2 input,bool sneak,float deltaTime)
@@ -178,6 +256,16 @@ namespace UnderAvatar
             Vector3 previous=transform.position;
             body.Move(((transform.right*input.x+transform.forward*input.y)*MovementSpeed(sneak)+Vector3.up*vertical)*deltaTime);
             Vector3 displacement=transform.position-previous; displacement.y=0;
+            if (animator != null && deltaTime > 0f)
+            {
+                float actualSpeed = displacement.magnitude / deltaTime;
+
+                float normalizedSpeed = session.Settings.reporterSpeed > 0f
+                    ? actualSpeed / session.Settings.reporterSpeed
+                    : 0f;
+
+                animator.SetFloat("Speed", normalizedSpeed, 0.1f, deltaTime);
+            }
             if(session.IsAuthority && !Sneaking && input.sqrMagnitude>.01f && displacement.magnitude>.002f && body.isGrounded && Time.time>=nextFootstep)
             { nextFootstep=Time.time+.48f; session.EmitNoise(transform.position,NoiseKind.Footstep); }
         }
@@ -194,7 +282,7 @@ namespace UnderAvatar
         {
             if(wardrobe.Data.type!=ItemType.Furniture || !wardrobe.Data.hideable || session.Finished) return;
             hidingExit=transform.position; PhoneOpen=false; Sneaking=false; Hidden=true;
-            bodyVisual.enabled=false;
+            modelVisual.SetActive(false);
             body.enabled=false; transform.position=wardrobe.transform.position;
             if(IsHuman) session.Notice("已躲入衣柜。无法拍照，按 E 离开。",5);
         }

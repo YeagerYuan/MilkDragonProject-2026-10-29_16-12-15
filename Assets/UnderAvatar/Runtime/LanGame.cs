@@ -218,6 +218,8 @@ namespace UnderAvatar
                 if(Phase==LanPhase.Playing && App.Session && !App.Session.Finished)
                 {
                     PlayerCommand local=CommandProvider?.Invoke()??PlayerCommand.Read(App.Session.InputCaptured);
+                    if (DocumentManager.BlocksGameplayInput)
+                        local = new PlayerCommand { aspect = local.aspect };
                     if(!local.Valid) local=new PlayerCommand();
                     if(IsHost)
                     {

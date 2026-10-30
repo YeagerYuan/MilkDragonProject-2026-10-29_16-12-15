@@ -1,0 +1,7 @@
+{
+  "name": "UnderAvatar.PageCurl",
+  "references": [
+    "Unity.InputSystem"
+  ],
+  "autoReferenced": true
+}
