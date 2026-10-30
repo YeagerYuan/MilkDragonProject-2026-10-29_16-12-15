@@ -17,6 +17,20 @@
       },
       "hash": "6a128d39060e4ea50dad6002edbfdc7e8e023648"
     },
+    "com.tripo3d.unitybridge": {
+      "version": "file:C:/Users/tjxch/Downloads/Tripo3d_Unity_Bridge-latest/Tripo3d_Unity_Bridge",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.modules.jsonserialize": "1.0.0"
+      }
+    },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.14",
       "depth": 0,

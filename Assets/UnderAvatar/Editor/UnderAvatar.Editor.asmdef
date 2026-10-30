@@ -1,6 +1,11 @@
 {
   "name": "UnderAvatar.Editor",
   "rootNamespace": "UnderAvatar.Editor",
-  "references": ["UnderAvatar.Runtime"],
-  "includePlatforms": ["Editor"]
+  "references": [
+    "UnderAvatar.Runtime",
+    "UnderAvatar.PageCurl"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ]
 }

@@ -1,0 +1,17 @@
+﻿<Solution>
+  <Project Path="fps.UI.csproj" />
+  <Project Path="fps.Game.csproj" />
+  <Project Path="UnderAvatar.Runtime.csproj" />
+  <Project Path="Unity.Microgame.Tutorials.csproj" />
+  <Project Path="Tripo3D.UnityBridge.Editor.csproj" />
+  <Project Path="UnderAvatar.Editor.csproj" />
+  <Project Path="UnderAvatar.EditModeTests.csproj" />
+  <Project Path="NavMeshComponents.csproj" />
+  <Project Path="fps.AI.csproj" />
+  <Project Path="fps.Gameplay.csproj" />
+  <Project Path="UnderAvatar.PlayModeTests.csproj" />
+  <Project Path="Unity.FPS.Tutorials.csproj" />
+  <Project Path="NavMeshComponentsEditor.csproj" />
+  <Project Path="UnderAvatar.PageCurl.csproj" />
+  <Project Path="fps.Editor.csproj" />
+</Solution>

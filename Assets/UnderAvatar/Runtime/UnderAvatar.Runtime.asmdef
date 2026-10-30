@@ -1,6 +1,9 @@
 {
   "name": "UnderAvatar.Runtime",
   "rootNamespace": "UnderAvatar",
-  "references": ["Unity.InputSystem"],
+  "references": [
+    "Unity.InputSystem",
+    "UnderAvatar.PageCurl"
+  ],
   "autoReferenced": true
 }

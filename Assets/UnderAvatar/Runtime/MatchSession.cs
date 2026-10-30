@@ -14,7 +14,7 @@ namespace UnderAvatar
         public float maxPhotoDistance=8f;
         public int maxScore=3;
         public float patrolSeconds=30f;
-        [Min(1)] public int flappyTargetScore=15;
+        [Min(0)] public int flappyTargetScore=15;
         public bool allowEmergencyTurn;
     }
 
@@ -238,6 +238,8 @@ namespace UnderAvatar
         {
             Pulses.RemoveAll(p=>Time.time-p.Created>2.8f);
             InputCaptured=false;
+            // The document owns ESC and pointer clicks while reading and on its closing frame.
+            if (DocumentManager.BlocksGameplayInput) return;
             var keys=Keyboard.current;
             if(keys==null) return;
             if(keys.escapeKey.wasPressedThisFrame)

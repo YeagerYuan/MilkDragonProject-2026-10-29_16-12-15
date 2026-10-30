@@ -21,6 +21,8 @@ namespace UnderAvatar
         public string StartupError { get; private set; }
         GameObject matchRoot;
         Camera menuCamera;
+        [SerializeField] GameObject reporterPrefab;
+        public GameObject ReporterPrefab => reporterPrefab;
 
         void Awake()
         {
