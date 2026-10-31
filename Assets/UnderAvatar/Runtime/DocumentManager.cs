@@ -91,6 +91,9 @@ public class DocumentManager : MonoBehaviour
             activeBounds = contentRect;
             documentImage.sprite = data.pages[0];
             documentImage.preserveAspect = true;
+            Canvas.ForceUpdateCanvases();
+            FitSinglePage();
+            activeBounds = documentImage.rectTransform;
         }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -115,6 +118,41 @@ public class DocumentManager : MonoBehaviour
         float scale = Mathf.Min(parent.rect.width * .9f / activeBounds.rect.width,
             parent.rect.height * .85f / activeBounds.rect.height);
         activeBook.transform.localScale = Vector3.one * Mathf.Max(.01f, scale);
+    }
+
+    private void FitSinglePage()
+    {
+        if (documentImage.sprite == null) return;
+
+        // Resize the actual image, not contentRect
+        RectTransform rt = documentImage.rectTransform;
+        RectTransform parent = rt.parent as RectTransform;
+
+        if (parent == null) return;
+
+        // Reset the image's transform
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+        rt.localScale = Vector3.one;
+
+        float maxWidth = parent.rect.width * 0.9f;
+        float maxHeight = parent.rect.height * 0.85f;
+
+        Sprite sprite = documentImage.sprite;
+        float aspect = sprite.rect.width / sprite.rect.height;
+
+        float width = Mathf.Min(maxWidth, maxHeight * aspect);
+        float height = width / aspect;
+
+        rt.SetSizeWithCurrentAnchors(
+            RectTransform.Axis.Horizontal, width
+        );
+
+        rt.SetSizeWithCurrentAnchors(
+            RectTransform.Axis.Vertical, height
+        );
     }
 
     public void CloseDocument()

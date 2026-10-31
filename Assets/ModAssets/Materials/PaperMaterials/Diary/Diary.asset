@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bfb5f67219d92946b5a6b9c20cc1a1a, type: 3}
+  m_Name: Diary
+  m_EditorClassIdentifier: UnderAvatar.Runtime::DocumentData
+  documentName: 
+  documentType: 1
+  pages:
+  - {fileID: 21300000, guid: 16d8a1745a116c94eb854a05b3cb4f88, type: 3}
+  - {fileID: 21300000, guid: 016a9d8caf60bd748a4aea1729d0758d, type: 3}
+  - {fileID: 21300000, guid: 803dea4642acb2c4b8368bc9c152185b, type: 3}
+  - {fileID: 21300000, guid: 7634675edacd067429e076407e1b4793, type: 3}

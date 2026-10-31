@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8bfb5f67219d92946b5a6b9c20cc1a1a, type: 3}
-  m_Name: BlankPaper
+  m_Name: TailorOrder
   m_EditorClassIdentifier: UnderAvatar.Runtime::DocumentData
-  documentName: 
+  documentName: TailorOrder
   documentType: 0
   pages:
-  - {fileID: 21300000, guid: a28c9184503deac418b5d3d4083feb1b, type: 3}
+  - {fileID: 21300000, guid: 8dea6ff5c82b4b64f83cf7c8fbf9a265, type: 3}
