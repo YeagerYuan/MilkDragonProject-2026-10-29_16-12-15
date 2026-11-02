@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0061c16328a70bf498bc0e5ed77e6b6a, type: 3}
+  m_Name: BuildingSurfaces
+  m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.BuildingSurfaceProfile
+  useTextures: 1
+  upperWall: {fileID: 2100000, guid: 41dab61283c115e4cb315b27c8de575e, type: 2}
+  lowerWall: {fileID: 2100000, guid: 8eb15d9ebf9d099488f4172b86f62a7d, type: 2}
+  floor: {fileID: 2100000, guid: c5f53bc17c7510a4bbf4a0f1945d2c3c, type: 2}
+  ceiling: {fileID: 2100000, guid: 6d0159eddd2d3784ead04c3211b9204f, type: 2}
+  concrete: {fileID: 2100000, guid: f75b9ea350ee6c14798bf02ec651b7f9, type: 2}
+  metal: {fileID: 2100000, guid: 3ffbc2ba45e1e65429adc323f067a21e, type: 2}
+  wainscotFraction: 0.42
+  wallMeters: 3
+  floorMeters: 2
+  ceilingMeters: 4
+  concreteMeters: 2
+  metalMeters: 0.6

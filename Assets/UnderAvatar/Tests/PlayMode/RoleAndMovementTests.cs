@@ -86,16 +86,20 @@ namespace UnderAvatar.Tests
             int doors=0; match.NoiseEmitted+=pulse=>{if(pulse.Kind==NoiseKind.Door) doors++;};
             float deadline=Time.time+55,previousHeight=match.Reporter.transform.position.y;
             bool climbed=false;
-            while(Time.time<deadline && (match.StreamerPhotos<1 || !match.Quests.Any(q=>q.Complete)))
+            var navigation=new BuildingNavigation(match.World.Data);var room=navigation.RoomCells(match.Streamer.Computer.Front);
+            bool leftAfterPhoto=false;
+            while(Time.time<deadline && (match.StreamerPhotos<1 || !match.Quests.Any(q=>q.Complete) || !leftAfterPhoto))
             {
                 yield return null;
                 float height=match.Reporter.transform.position.y;
                 Assert.That(Mathf.Abs(height-previousHeight),Is.LessThan(.65f),"AI reporter teleported floors");
                 climbed|=height>.4f && height<app.World.Data.floorHeight-.4f; previousHeight=height;
+                if(match.StreamerPhotos>0 && !room.Contains(navigation.Cell(match.Reporter.transform.position))) leftAfterPhoto=true;
             }
             Assert.That(match.StreamerPhotos,Is.EqualTo(1),"AI status: "+match.ReporterAI.Status+" position: "+match.Reporter.transform.position);
             Assert.That(match.Quests.Any(q=>q.Complete),Is.True,"AI failed to photograph an evidence item.");
             Assert.That(climbed,Is.True); Assert.That(doors,Is.GreaterThan(0));
+            Assert.That(leftAfterPhoto,Is.True,"AI must leave the streamer's room after taking its broadcast photo.");
             int score=match.Score;
             yield return new WaitForSeconds(5.5f);
             Assert.That(match.StreamerPhotos,Is.EqualTo(1)); Assert.That(match.Score,Is.EqualTo(score));

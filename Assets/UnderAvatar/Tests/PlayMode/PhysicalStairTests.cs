@@ -92,8 +92,20 @@ namespace UnderAvatar.Tests
                 view.targetTexture=rt; view.Render(); RenderTexture.active=rt;
                 image.ReadPixels(new Rect(0,0,320,200),0,0); image.Apply();
                 var pixels=image.GetPixels();
-                int desk=pixels.Count(c=>c.g>c.r*1.5f && c.b>c.r*1.5f && c.g>.2f);
-                int actor=pixels.Count(c=>c.r>c.g*1.5f && c.r>c.b*1.2f && c.r>.15f);
+                // Compare with the actual character hidden; model replacement may change its color.
+                var renderers=match.Streamer.Appearance.GetComponentsInChildren<Renderer>();
+                var visible=renderers.Select(r=>r.enabled).ToArray();
+                foreach(var r in renderers) r.enabled=false;
+                view.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,320,200),0,0);image.Apply();
+                var background=image.GetPixels();
+                for(int i=0;i<renderers.Length;i++) renderers[i].enabled=visible[i];
+                int actor=pixels.Where((c,i)=>Mathf.Abs(c.r-background[i].r)+Mathf.Abs(c.g-background[i].g)+Mathf.Abs(c.b-background[i].b)>.05f).Count();
+                var deskRenderers=pc.GetComponentsInChildren<Renderer>();var deskVisible=deskRenderers.Select(r=>r.enabled).ToArray();
+                foreach(var renderer in deskRenderers) renderer.enabled=false;
+                view.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,320,200),0,0);image.Apply();
+                var withoutDesk=image.GetPixels();
+                for(int i=0;i<deskRenderers.Length;i++) deskRenderers[i].enabled=deskVisible[i];
+                int desk=pixels.Where((c,i)=>Mathf.Abs(c.r-withoutDesk[i].r)+Mathf.Abs(c.g-withoutDesk[i].g)+Mathf.Abs(c.b-withoutDesk[i].b)>.05f).Count();
                 Assert.That(desk,Is.GreaterThan(100),"Computer desk disappeared from reporter camera");
                 Assert.That(actor,Is.GreaterThan(100),"Streamer disappeared from reporter camera");
             }

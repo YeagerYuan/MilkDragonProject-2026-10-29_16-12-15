@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UnderAvatar
 {
-    public enum LanPhase { None, Connecting, Lobby, Loading, Playing }
+    public enum LanPhase { None, Connecting, Lobby, Loading, Playing, Training }
     [DefaultExecutionOrder(100)]
     public sealed class LanGame : MonoBehaviour
     {
@@ -22,7 +22,8 @@ namespace UnderAvatar
         public int Port { get; private set; }=7777;
         public string Status { get; private set; }="";
         public string MapName => map?.name??"";
-        public bool CanStart => IsHost && Phase==LanPhase.Lobby && PeerJoined && LocalReady && RemoteReady;
+        public bool CanStart => IsHost && (Phase==LanPhase.Lobby || Phase==LanPhase.Training) && PeerJoined && LocalReady && RemoteReady;
+        public bool InWorld => Phase==LanPhase.Playing || Phase==LanPhase.Training;
         public int ReceivedFrames => transport?.ReceivedFrames??0;
         public float RoundTripMs { get; private set; }
         public float LocalFps { get; private set; }
@@ -38,6 +39,9 @@ namespace UnderAvatar
         }
         LanTransport transport;
         BuildingData map;
+        BuildingData trainingMap;
+        int sessionId;
+        bool loadingTraining;
         MatchSettings rules;
         readonly Queue<PlayerCommand> remoteInputs=new Queue<PlayerCommand>();
         ClientPrediction prediction;
@@ -57,6 +61,8 @@ namespace UnderAvatar
                 CheckPort(port); Disconnect();
                 map=App.Building?App.Building.CreateRuntimeCopy():BuildingData.CreateDefault();
                 PrototypeApp.ValidateMap(map);
+                trainingMap=App.TrainingBuilding?App.TrainingBuilding.CreateRuntimeCopy():TrainingHallLayout.Create();
+                PrototypeApp.ValidateMap(trainingMap);
                 rules=JsonUtility.FromJson<MatchSettings>(JsonUtility.ToJson(App.Settings)); rules.allowEmergencyTurn=false;
                 ValidateRules(rules);
                 IsHost=true;LocalRole=role;Port=port;Phase=LanPhase.Lobby;
@@ -79,10 +85,18 @@ namespace UnderAvatar
         static void CheckPort(int port) { if(port<1024||port>65535) throw new ArgumentException("端口必须为 1024–65535。"); }
         static void ValidateRules(MatchSettings settings)
         {
-            if(settings==null || settings.flappyTargetScore<1 || settings.flappyTargetScore>100 || settings.maxScore<1 || settings.maxScore>10 ||
+            if(settings==null || settings.flappyTargetScore<1 || settings.flappyTargetScore>100 || settings.maxScore<1 || settings.maxScore>999 ||
                 !(settings.reporterSpeed>=.5f && settings.reporterSpeed<=8) || !(settings.streamerSpeed>=1 && settings.streamerSpeed<=12) ||
                 !(settings.maxPhotoDistance>=2 && settings.maxPhotoDistance<=30) || !(settings.patrolSeconds>=5 && settings.patrolSeconds<=300))
                 throw new ArgumentException("房间玩法参数无效。");
+            if(settings.streamerVision==null || !settings.streamerVision.Valid || settings.reporterVision==null || !settings.reporterVision.Valid)
+                throw new ArgumentException("房间视野灯光参数无效，请检查距离、内外角与亮度。");
+            if(settings.flappyRules==null || !settings.flappyRules.Valid || settings.broadcastTargets==null || settings.broadcastTargets.Count>1000 ||
+                settings.broadcastTargets.Any(t=>t==null || t.broadcast<1 || t.broadcast>10000 || t.score<1 || t.score>100) ||
+                settings.initialFans<1 || settings.initialFans>10000000 || settings.lateFanLoss<1 || settings.lateFanLoss>10000000 ||
+                !(settings.returnGraceSeconds>=0 && settings.returnGraceSeconds<=600) || !(settings.lateFanLossInterval>=.1f && settings.lateFanLossInterval<=600) ||
+                !(settings.wrongWardrobePenalty>=0 && settings.wrongWardrobePenalty<=300) || !(settings.wrongBedPenalty>=0 && settings.wrongBedPenalty<=300))
+                throw new ArgumentException("小游戏场次、物理参数或搜查 / 粉丝参数无效。");
         }
         void BindTransport()
         {
@@ -93,7 +107,7 @@ namespace UnderAvatar
             };
             transport.Message+=Receive;
         }
-        void Send(LanMessage message) => transport?.Send(JsonUtility.ToJson(message));
+        void Send(LanMessage message) { message.sessionId=sessionId;transport?.Send(JsonUtility.ToJson(message)); }
         void Receive(string text)
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -125,17 +139,20 @@ namespace UnderAvatar
                 case "hello":
                     if(PeerJoined||Phase!=LanPhase.Lobby) return;
                     PeerJoined=true;RemoteReady=false;
-                    Send(new LanMessage{type="welcome",role=Opposite(LocalRole),map=map.ToJson(),settings=rules});
+                    Send(new LanMessage{type="welcome",role=Opposite(LocalRole),map=map.ToJson(),trainingMap=trainingMap.ToJson(),settings=rules});
                     SendLobby();Status="玩家已加入，请双方点击准备。";break;
                 case "ready":
                     if(!PeerJoined||Phase!=LanPhase.Lobby) return;
                     RemoteReady=message.guestReady;SendLobby();break;
                 case "loaded":
-                    if(!PeerJoined||Phase!=LanPhase.Loading) return;
-                    Phase=LanPhase.Playing;ResetInputs();lastRemoteInput=Time.realtimeSinceStartup;
-                    Send(new LanMessage{type="go",snapshot=Snapshot()});Status="对战进行中";break;
+                    if(!PeerJoined||Phase!=LanPhase.Loading||message.sessionId!=sessionId) return;
+                    Phase=loadingTraining?LanPhase.Training:LanPhase.Playing;ResetInputs();lastRemoteInput=Time.realtimeSinceStartup;
+                    Send(new LanMessage{type="go",snapshot=Snapshot()});Status=loadingTraining?"教学大厅 · Tab 打开准备菜单":"对战进行中";break;
+                case "hall_ready":
+                    if(!PeerJoined || Phase!=LanPhase.Training || message.sessionId!=sessionId) return;
+                    RemoteReady=message.guestReady;SendHallStatus();break;
                 case "input":
-                    if(Phase!=LanPhase.Playing||message.input==null||!message.input.Valid) return;
+                    if(!InWorld||message.sessionId!=sessionId||message.input==null||!message.input.Valid) return;
                     if(message.input.sequence!=receivedInput+1) throw new InvalidOperationException("输入序号不一致，请使用相同版本重新连接。");
                     receivedInput=message.input.sequence;remoteInputs.Enqueue(message.input);
                     if(remoteInputs.Count>300) throw new InvalidOperationException("输入积压过多，请检查连接。");
@@ -152,41 +169,50 @@ namespace UnderAvatar
                     if(Phase!=LanPhase.Connecting) return;
                     if(message.role!=TestRole.Reporter && message.role!=TestRole.Streamer) throw new ArgumentException("角色无效。");
                     map=BuildingData.FromJson(message.map);PrototypeApp.ValidateMap(map);ValidateRules(message.settings);
+                    trainingMap=BuildingData.FromJson(message.trainingMap);PrototypeApp.ValidateMap(trainingMap);
                     rules=message.settings;LocalRole=message.role;PeerJoined=true;Phase=LanPhase.Lobby;
                     Status="已同步房主关卡，请点击准备。";break;
                 case "lobby":
-                    if(map==null) return;
-                    if(Phase==LanPhase.Playing||Phase==LanPhase.Loading) App.StopMatchForLobby();
+                    if(map==null || message.sessionId!=sessionId) return;
+                    if(InWorld||Phase==LanPhase.Loading) App.StopMatchForLobby();
                     Phase=LanPhase.Lobby;LocalReady=message.guestReady;RemoteReady=message.hostReady;break;
                 case "start":
-                    if(Phase!=LanPhase.Lobby||!LocalReady) return;
-                    Phase=LanPhase.Loading;App.StartNetworkSession(map,rules,LocalRole,false);
+                    if((Phase!=LanPhase.Lobby && Phase!=LanPhase.Training)||!LocalReady || message.sessionId<=sessionId || message.training!=(Phase==LanPhase.Lobby)) return;
+                    sessionId=message.sessionId;loadingTraining=message.training;LocalReady=RemoteReady=false;ResetInputs();
+                    Phase=LanPhase.Loading;App.StartNetworkSession(loadingTraining?trainingMap:map,rules,LocalRole,false,loadingTraining);
                     if(!App.Session) throw new InvalidOperationException(App.StartupError);
                     ApplyGuestSnapshot(message.snapshot);
                     Send(new LanMessage{type="loaded"});Status="等待房主开始…";break;
                 case "go":
-                    if(Phase!=LanPhase.Loading) return;
-                    ApplyGuestSnapshot(message.snapshot);Phase=LanPhase.Playing;Status="对战进行中";break;
+                    if(Phase!=LanPhase.Loading || message.sessionId!=sessionId) return;
+                    ApplyGuestSnapshot(message.snapshot);Phase=loadingTraining?LanPhase.Training:LanPhase.Playing;
+                    Status=loadingTraining?"教学大厅 · Tab 打开准备菜单":"对战进行中";break;
+                case "hall_status":
+                    if(Phase!=LanPhase.Training || message.sessionId!=sessionId) return;
+                    LocalReady=message.guestReady;RemoteReady=message.hostReady;break;
                 case "snapshot":
-                    if(Phase==LanPhase.Playing) ApplyGuestSnapshot(message.snapshot);break;
+                    if(InWorld && message.sessionId==sessionId) ApplyGuestSnapshot(message.snapshot);break;
             }
         }
         void SendLobby() => Send(new LanMessage{type="lobby",hostReady=LocalReady,guestReady=RemoteReady});
+        void SendHallStatus() => Send(new LanMessage{type="hall_status",hostReady=LocalReady,guestReady=RemoteReady});
         public static TestRole Opposite(TestRole role) => role==TestRole.Reporter?TestRole.Streamer:TestRole.Reporter;
         public void SetReady(bool ready)
         {
-            if(Phase!=LanPhase.Lobby||!PeerJoined) return;
+            if((Phase!=LanPhase.Lobby && Phase!=LanPhase.Training)||!PeerJoined) return;
             LocalReady=ready;
+            if(Phase==LanPhase.Training) { if(IsHost) SendHallStatus();else Send(new LanMessage{type="hall_ready",guestReady=ready});return; }
             if(IsHost) SendLobby();else Send(new LanMessage{type="ready",guestReady=ready});
         }
         public void StartMatch()
         {
             if(!CanStart) return;
+            loadingTraining=Phase==LanPhase.Lobby;sessionId++;LocalReady=RemoteReady=false;
             Phase=LanPhase.Loading;
-            App.StartNetworkSession(map,rules,LocalRole,true);
+            App.StartNetworkSession(loadingTraining?trainingMap:map,rules,LocalRole,true,loadingTraining);
             if(!App.Session) { Fail(App.StartupError);return; }
             ResetInputs();
-            Send(new LanMessage{type="start",snapshot=Snapshot()});Status="正在等待另一位玩家加载…";
+            Send(new LanMessage{type="start",training=loadingTraining,snapshot=Snapshot()});Status="正在等待另一位玩家加载…";
         }
         public void ReturnToLobby()
         {
@@ -215,9 +241,13 @@ namespace UnderAvatar
                     if(now-lastTraffic>12) { Fail("对方长时间没有响应，连接已断开。");return; }
                     if(now>=nextHeartbeat) { nextHeartbeat=now+1;Send(new LanMessage{type="ping",stamp=now}); }
                 }
-                if(Phase==LanPhase.Playing && App.Session && !App.Session.Finished)
+                if(InWorld && App.Session && !App.Session.Finished)
                 {
                     PlayerCommand local=CommandProvider?.Invoke()??PlayerCommand.Read(App.Session.InputCaptured);
+                    var phoneCommand=App.Session.ConsumePhoneCommands();
+                    if(phoneCommand.taskId!=null) local.taskId=phoneCommand.taskId;
+                    if(phoneCommand.uploadPhoto>0) local.uploadPhoto=phoneCommand.uploadPhoto;
+                    local.cancelPhoto|=phoneCommand.cancelPhoto;local.phone|=phoneCommand.phone;
                     if (DocumentManager.BlocksGameplayInput)
                         local = new PlayerCommand { aspect = local.aspect };
                     if(!local.Valid) local=new PlayerCommand();
@@ -241,7 +271,7 @@ namespace UnderAvatar
                     }
                     else prediction?.Tick(local,Time.deltaTime,command=>Send(new LanMessage{type="input",input=command}));
                 }
-                if(IsHost && Phase==LanPhase.Playing && now>=nextSnapshot && transport.PendingSendBytes<65536)
+                if(IsHost && InWorld && now>=nextSnapshot && transport.PendingSendBytes<65536)
                 {
                     nextSnapshot=now+1f/30;
                     Send(new LanMessage{type="snapshot",snapshot=Snapshot()});
@@ -275,7 +305,7 @@ namespace UnderAvatar
                 transport.Dispose();transport=null;
             }
             Phase=LanPhase.None;PeerJoined=LocalReady=RemoteReady=false;CommandProvider=null;
-            map=null;rules=null;ResetInputs();RoundTripMs=0;
+            map=trainingMap=null;rules=null;sessionId=0;loadingTraining=false;ResetInputs();RoundTripMs=0;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             delayedMessages.Clear();
 #endif

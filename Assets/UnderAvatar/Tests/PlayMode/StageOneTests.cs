@@ -48,6 +48,10 @@ namespace UnderAvatar.Tests
             Assert.That(asset.Data.ToJson(),Is.EqualTo(original));
             app.RestartGame();
             Assert.That(app.Session,Is.Not.Null,app.StartupError);
+            Assert.That(app.Session.IsTraining,Is.True);
+            Assert.That(asset.Data.ToJson(),Is.EqualTo(original));
+            app.SetSingleReady(true);app.StartSingleMatch();
+            Assert.That(app.Session.IsTraining,Is.False);
             Assert.That(app.World.Data.ToJson(),Is.EqualTo(original));
             Assert.That(app.World.Items.Where(i=>i.Data.type==ItemType.Door).All(i=>!i.IsOpen),Is.True);
             yield return null;

@@ -32,15 +32,17 @@ namespace UnderAvatar.Tests
         }
 
         [UnityTest]
-        public IEnumerator AValidEvidencePhotoCompletesQuestAndDuplicateCostsOnePoint()
+        public IEnumerator AValidEvidenceUploadCompletesQuestAndDuplicateDoesNotCostAnotherPoint()
         {
             var item=app.World.Items.First(i=>i.Data.type==ItemType.QuestItem && i.Floor==0);
             Aim(item); Assert.That(match.HasValidTarget,Is.True);
-            match.TakePhoto();
+            match.SelectTask(item.Data.questId);match.TakePhoto();
+            Assert.That(match.Quests.Single(q=>q.Id==item.Data.questId).Complete,Is.False);
+            int id=match.PendingPhoto.id;match.UploadPhoto(id);
             Assert.That(match.Quests.Single(q=>q.Id==item.Data.questId).Complete,Is.True);
             Assert.That(match.Score,Is.EqualTo(3));
             yield return new WaitForSeconds(.3f);
-            match.TakePhoto(); Assert.That(match.Score,Is.EqualTo(2));
+            match.UploadPhoto(id);Assert.That(match.Score,Is.EqualTo(3));
         }
 
         [UnityTest]
@@ -65,7 +67,7 @@ namespace UnderAvatar.Tests
         public IEnumerator ThreeEmptyUploadsEndMatchAndFurtherPhotosCannotChangeScore()
         {
             match.Reporter.SetLookAt(match.Reporter.View.transform.position+Vector3.up*10);
-            for(int i=0;i<3;i++) { match.TakePhoto(); yield return new WaitForSeconds(.3f); }
+            for(int i=0;i<3;i++) { match.TakePhoto();match.UploadPhoto(match.PendingPhoto.id);yield return new WaitForSeconds(.3f); }
             Assert.That(match.Score,Is.Zero);
             Assert.That(match.Result,Does.Contain("失败"));
             match.TakePhoto(); Assert.That(match.Score,Is.Zero);

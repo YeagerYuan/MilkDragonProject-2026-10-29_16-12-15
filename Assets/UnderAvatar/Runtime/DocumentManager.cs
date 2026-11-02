@@ -18,6 +18,11 @@ public class DocumentManager : MonoBehaviour
     [SerializeField] private Sprite blankDiaryPage;
 
     public bool IsOpen { get; private set; }
+    public UnderAvatar.MatchSession Owner { get; private set; }
+    private string textContent;
+    private Font textFont;
+    private Vector2 textScroll;
+    private Rect TextBounds => new Rect(Screen.width*.2f,Screen.height*.1f,Screen.width*.6f,Screen.height*.8f);
     private Book activeBook;
     private RectTransform activeBounds;
     private int openedFrame;
@@ -45,13 +50,14 @@ public class DocumentManager : MonoBehaviour
         documentPanel.SetActive(false);
     }
 
-    public void OpenDocument(DocumentData data)
+    public void OpenDocument(DocumentData data, UnderAvatar.MatchSession owner=null)
     {
         if (!isActiveAndEnabled || documentPanel == null || documentImage == null) return;
-        if (data == null || data.pages == null || data.pages.Length == 0)
+        bool textOnly=data!=null && !string.IsNullOrWhiteSpace(data.text);
+        if (!textOnly && (data == null || data.pages == null || data.pages.Length == 0))
         { Debug.LogWarning("Document has no pages!", this); return; }
-        bool diary = data.documentType == DocumentType.Diary;
-        int count = diary ? data.pages.Length : 1;
+        bool diary = !textOnly && data.documentType == DocumentType.Diary;
+        int count = textOnly ? 0 : diary ? data.pages.Length : 1;
         for (int i = 0; i < count; i++)
             if (data.pages[i] == null)
             { Debug.LogWarning("Assign every document page Sprite.", data); return; }
@@ -66,14 +72,19 @@ public class DocumentManager : MonoBehaviour
             previousLock = Cursor.lockState;
             previousVisibility = Cursor.visible;
         }
+        if(Owner) Owner.WonOrLost-=CloseForSessionEnd;
+        Owner=owner;
+        if(Owner) Owner.WonOrLost+=CloseForSessionEnd;
         DestroyActiveBook();
         openedFrame = Time.frameCount;
         blockedFrame = Time.frameCount;
         IsOpen = true;
         documentPanel.SetActive(true);
-        documentImage.gameObject.SetActive(!diary);
+        textContent=textOnly?data.documentName+"\n\n"+data.text:null;textScroll=Vector2.zero;
+        documentImage.gameObject.SetActive(!diary && !textOnly);
 
-        if (diary)
+        if(textOnly) activeBounds=null;
+        else if (diary)
         {
             // A fresh instance discards any unfinished drag/tween from the last document.
             activeBook = Instantiate(diaryBookTemplate, diaryBookTemplate.transform.parent, false);
@@ -173,6 +184,7 @@ public class DocumentManager : MonoBehaviour
     {
         if (!IsOpen) return;
         IsOpen = false;
+        textContent=null;
         blockedFrame = Time.frameCount;
         DestroyActiveBook();
         activeBounds = null;
@@ -180,15 +192,27 @@ public class DocumentManager : MonoBehaviour
         if (documentImage != null) documentImage.sprite = null;
         Cursor.lockState = previousLock;
         Cursor.visible = previousVisibility;
+        if(Owner) Owner.WonOrLost-=CloseForSessionEnd;
+        Owner=null;
     }
+
+    // Scene/session transitions must also close a document opened in this frame.
+    public void CloseForSessionEnd() => ReleaseDocument();
 
     private void Update()
     {
         if (!IsOpen) return;
+        if(Owner && (!Owner.gameObject.activeInHierarchy || Owner.Finished)) { ReleaseDocument();return; }
         if (!documentPanel.activeInHierarchy) { ReleaseDocument(); return; }
         if (Time.frameCount == openedFrame) return;
         if (Keyboard.current?.escapeKey.wasPressedThisFrame == true)
         { CloseDocument(); return; }
+        if(textContent!=null)
+        {
+            var mouse=Mouse.current;
+            if(mouse?.leftButton.wasPressedThisFrame==true && !TextBounds.Contains(new Vector2(mouse.position.ReadValue().x,Screen.height-mouse.position.ReadValue().y))) CloseDocument();
+            return;
+        }
         if (activeBook != null) FitBook();
         // Only the initial press outside closes. Dragging/releasing outside must finish the curl.
         if (Mouse.current?.leftButton.wasPressedThisFrame != true || activeBounds == null) return;
@@ -198,11 +222,24 @@ public class DocumentManager : MonoBehaviour
                 Mouse.current.position.ReadValue(), camera)) CloseDocument();
     }
 
+    private void OnGUI()
+    {
+        if(!IsOpen || textContent==null) return;
+        if(!textFont) textFont=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Arial"},22);
+        var style=new GUIStyle(GUI.skin.label){font=textFont,fontSize=22,wordWrap=true,padding=new RectOffset(24,24,20,20)};
+        var rect=TextBounds;var previousColor=GUI.color;
+        GUI.color=new Color(0,0,0,.65f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);
+        GUI.color=new Color(.04f,.055f,.065f,.98f);GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=previousColor;
+        GUILayout.BeginArea(new Rect(rect.x+12,rect.y+12,rect.width-24,rect.height-24));
+        textScroll=GUILayout.BeginScrollView(textScroll);GUILayout.Label(textContent,style);GUILayout.EndScrollView();
+        if(GUILayout.Button("关闭（Esc）",GUILayout.Height(36))) CloseDocument();GUILayout.EndArea();
+    }
     private void OnDisable() => ReleaseDocument();
     private void OnDestroy()
     {
         if (Instance != this) return;
         ReleaseDocument();
+        if(textFont) Destroy(textFont);
         if (generatedBlank != null) Destroy(generatedBlank);
         if (generatedTexture != null) Destroy(generatedTexture);
         Instance = null;

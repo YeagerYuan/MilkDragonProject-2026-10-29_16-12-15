@@ -1,0 +1,25 @@
+GitHub 功能整合（2026-11-02）
+
+来源：YeagerYuan/MilkDragonProject-2026-10-29_16-12-15
+基于 main 的 9f200cb（added document props），包含交互文档、日记翻页及狗仔动画资源更新。
+本地整合分支：codex/integrate-documents-20261102。未推送到 GitHub。
+
+体验方式
+选择狗仔进入 AI 或联机教学大厅，准备并进入正式对局后，可阅读场景中的日记、订单、便笺和照片。
+收起手机，对准 5 米内的文档，鼠标左键打开。日记拖动页角翻页；Esc 或点击纸张外关闭。
+阅读只占用本地输入，联机同步和另一位玩家继续运行。打开手机或躲藏时不能打开文档。
+文档不额外增加取证任务；原有拍照任务、分数和胜负规则保留。教学大厅保持原来的纯交互练习。
+
+Unity 编辑接口
+场景中 UnderAvatarPrototype 组件的“文档阅读”提供总开关、阅读界面预制体、文档布置预制体。
+默认界面：Assets/UnderAvatar/Resources/DocumentReader.prefab。
+默认布置：Assets/UnderAvatar/Resources/DeveloperDocuments.prefab。打开预制体可修改各文档位置；自定义地图可指定自己的布置预制体。
+文档内容：Assets/ModAssets/Materials/PaperMaterials 内的 DocumentData 资源，可修改名称和页面 Sprite。
+当前默认角色仍为你豆姐和恐怖奶龙；开发者更新的 PaparazziPrefabs 动画资源已保留，可通过角色模型配置另行选用。
+
+整合处理
+保留当前关卡和场景配置、局域网预测与插值、模型和音效、AI 教学大厅，以及已删除的旧示例状态。
+从开发者场景提取阅读 UI 和文档为独立预制体，避免用旧场景覆盖当前关卡。
+阅读时阻止移动、拍照及退出对局快捷键误触；被抓/结束对局或切换关卡时自动关闭阅读。
+保留本机 Tripo 插件路径，合入 Sprite 和 PageCurl 所需依赖。
+同步前文件备份及验证记录：Builds/GitIntegrationVerification。

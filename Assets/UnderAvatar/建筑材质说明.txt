@@ -1,0 +1,27 @@
+旧居民楼建筑材质
+
+根据 任务需求/楼梯.jpg、室内场景参考图.jpg 的灰白旧墙、绿墙裙、污渍地砖、潮湿顶面、水泥楼梯及锈铁风格，使用内置 image_gen 图像生成制作了六张独立颜色贴图。
+贴图及材质：Assets/UnderAvatar/Environment/AbandonedApartment/Textures 和 Materials。
+完整生成提示词：同目录 GenerationPrompts.txt。
+材质配置：Assets/UnderAvatar/Resources/BuildingSurfaces.asset。
+
+编辑入口
+Tools > Under Avatar > Building Surface Materials。
+可以替换六种材质，调整墙裙占层高比例，以及每张贴图在场景中覆盖的米数。
+默认墙裙比例 0.42；层高 4 米时墙裙高 1.68 米，改层高后自动跟随。
+默认地砖图覆盖 2 米，图内 4×4 块砖，所以每块约 0.5 米。
+墙贴图覆盖 3 米、天花板 4 米、水泥 2 米、锈铁 0.6 米。值越大，纹理细节在场景中越大。
+保存并更新场景预览，运行时修改则重新开始 Play。
+如要改变色调或光滑度，打开对应 Material，调整 Base Color、Smoothness 等 URP 标准参数。
+
+场景表现
+正式关卡和教学大厅共用这套材质。大厅仍正常照明，正式对局仍使用玩家视野灯光。
+墙面和门框采用上灰白、下绿色墙裙；墙高和房屋大小变化时按实际米数铺贴。
+楼板上表面为方砖，侧面为水泥，下表面为天花板。楼梯洞口保留。
+最高层增加可见的天花板，编辑模式自动隐藏，便于摆放和选择物体；天花板外观不增加导航碰撞。
+楼梯踏步和平台为水泥，现有栏板为锈铁。
+贴图采用 Repeat、Mip Maps、Trilinear、各向异性过滤和纹理压缩，降低远处闪烁及显存占用。
+这次是建筑表面贴图和材质接入。参考图中的电线、管道、蛛网和破洞属于独立几何细节。
+
+验证截图与测试报告：Builds/SurfaceVerification。
+Windows 更新包：Builds/UnderAvatarLAN-v8-tasks.zip。联机两端使用相同资源包。

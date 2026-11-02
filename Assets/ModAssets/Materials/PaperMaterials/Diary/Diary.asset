@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bfb5f67219d92946b5a6b9c20cc1a1a, type: 3}
   m_Name: Diary
   m_EditorClassIdentifier: UnderAvatar.Runtime::DocumentData
-  documentName: 
+  documentName: "\u65E7\u65E5\u8BB0"
   documentType: 1
   pages:
   - {fileID: 21300000, guid: 16d8a1745a116c94eb854a05b3cb4f88, type: 3}

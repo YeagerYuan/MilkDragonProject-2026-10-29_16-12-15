@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60466023591fd8c42a88cf2c6a9f88c3, type: 3}
+  m_Name: GameAudio
+  m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.GameAudioProfile
+  walkSteps:
+  - {fileID: 8300000, guid: 753c4626cd1c80a43b22dde86664898c, type: 3}
+  - {fileID: 8300000, guid: deae92d4b7ab2394e93ac24b61b3ffdd, type: 3}
+  - {fileID: 8300000, guid: 5261c34f60a258443aba00177b3c9461, type: 3}
+  - {fileID: 8300000, guid: 35c0c463792dda64da55b7e9a16f6876, type: 3}
+  - {fileID: 8300000, guid: 084b30da00dc1c74395f703a5f772f10, type: 3}
+  - {fileID: 8300000, guid: 3e1508a0addc42742871152bc7e6921d, type: 3}
+  chaseSteps:
+  - {fileID: 8300000, guid: 58be1d350ce74414199d9fc30302eaa4, type: 3}
+  - {fileID: 8300000, guid: 24102e1c0d32a37448a54923f0802458, type: 3}
+  - {fileID: 8300000, guid: 310dad093e2afa7428467a4f9fed2687, type: 3}
+  - {fileID: 8300000, guid: 0452afd0ba56263479d16024f0a888df, type: 3}
+  - {fileID: 8300000, guid: 6ef9ee5f870b0534a9aea72ec975653b, type: 3}
+  - {fileID: 8300000, guid: 9ccd5fa0d4177d549930505704f4c839, type: 3}
+  walkVolume: 0.65
+  chaseVolume: 0.85
+  walkInterval: 0.48
+  chaseInterval: 0.3
+  stepPitchVariation: 0.035
+  doorOpen:
+  - {fileID: 8300000, guid: 64229b46f67187245832bb699916461f, type: 3}
+  - {fileID: 8300000, guid: d95ca9f97f8458449b850bcee5a68e1c, type: 3}
+  doorClose:
+  - {fileID: 8300000, guid: 4974839047a715645bd91ca072b8b490, type: 3}
+  - {fileID: 8300000, guid: f84c9efe139538445857d631bb6d7501, type: 3}
+  shutter:
+  - {fileID: 8300000, guid: 75690df6352f17e49a88f0f7a25d9661, type: 3}
+  doorVolume: 0.75
+  shutterVolume: 0.8
+  breathingLoop: {fileID: 8300000, guid: 7cf40940133e60d4189d2ec7574d8976, type: 3}
+  breathingVolume: 0.3
+  quietBreathingMultiplier: 0.35
+  breathingFadeSeconds: 0.15
+  minDistance: 1.5
+  maxDistance: 28
+  chair: {fileID: 0}
+  success: {fileID: 0}

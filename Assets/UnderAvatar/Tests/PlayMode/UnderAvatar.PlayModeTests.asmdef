@@ -1,6 +1,13 @@
 {
   "name": "UnderAvatar.PlayModeTests",
-  "references": ["UnderAvatar.Runtime"],
-  "optionalUnityReferences": ["TestAssemblies"],
+  "references": [
+    "UnderAvatar.Runtime",
+    "Unity.InputSystem",
+    "UnderAvatar.PageCurl",
+    "Unity.ugui"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
   "autoReferenced": false
 }

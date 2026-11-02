@@ -8,7 +8,9 @@ namespace UnderAvatar.Editor
 {
     public sealed class BuildingEditorWindow : EditorWindow
     {
-        static readonly string[] Names={"墙体","交互门","家具 / 衣柜","任务物品","主播电脑桌","折返楼梯"};
+        static readonly string[] Names={"墙体","交互门","家具 / 衣柜","任务物品","主播电脑桌","折返楼梯","床","自定义物体"};
+        [SerializeField] string definitionId="";
+        LevelObjectDefinition BrushDefinition => LevelObjectCatalog.Default?LevelObjectCatalog.Default.objects.FirstOrDefault(d=>d.id==definitionId):null;
         [SerializeField] bool painting;
         [SerializeField] ItemType brush;
         [SerializeField] int rotation;
@@ -103,6 +105,7 @@ namespace UnderAvatar.Editor
                 }
                 scroll=EditorGUILayout.BeginScrollView(scroll);
                 EditorGUILayout.LabelField("测试设置（Play 后选择角色）",EditorStyles.boldLabel);
+                if(GUILayout.Button("配置狗仔 / 主播模型及联机动画")) CharacterVisualProfileEditor.Open();
                 EditorGUI.BeginChangeCheck();
                 var role=(TestRole)EditorGUILayout.Popup("操控角色",(int)target.Role,new[]{"狗仔（AI 主播）","主播（AI 狗仔）"});
                 int targetScore=EditorGUILayout.IntField("Flappy Bird 通关分数",target.Settings.flappyTargetScore);
@@ -113,6 +116,15 @@ namespace UnderAvatar.Editor
                     EditorUtility.SetDirty(target); EditorSceneManager.MarkSceneDirty(target.gameObject.scene);
                 }
                 EditorGUILayout.HelpBox("Play 后可选狗仔 / 主播单人测试，或两台电脑局域网对战。联机使用房主关卡和参数。",MessageType.None);
+                DrawVisionSettings(target);
+                DrawGameplaySettings(target);
+                DrawDocumentSettings(target);
+                if(GUILayout.Button("任务编辑器 / 拍摄与搬运任务",GUILayout.Height(34))) TaskEditorWindow.Open();
+                var taskRules=new SerializedObject(target);taskRules.Update();
+                var mistakes=taskRules.FindProperty("settings.maxScore");
+                mistakes.intValue=Mathf.Clamp(EditorGUILayout.IntField("狗仔失误上限",mistakes.intValue),1,999);
+                if(taskRules.ApplyModifiedProperties()) EditorSceneManager.MarkSceneDirty(target.gameObject.scene);
+                if(GUILayout.Button("音效配置 / 替换声音")) GameAudioProfileEditor.Open();
                 EditorGUILayout.Space(8);
                 EditorGUILayout.LabelField("楼层",EditorStyles.boldLabel);
                 var data=Asset.Data;
@@ -144,8 +156,20 @@ namespace UnderAvatar.Editor
                 EditorGUILayout.LabelField("Scene 视图工具",EditorStyles.boldLabel);
                 bool newPainting=GUILayout.Toggle(painting,"启用网格摆放", "Button");
                 if(newPainting!=painting) { painting=newPainting; ClearGhost(); SceneView.RepaintAll(); }
-                var newBrush=(ItemType)GUILayout.SelectionGrid((int)brush,Names,2,GUILayout.Height(78));
-                if(newBrush!=brush) { brush=newBrush; painting=true; ClearGhost(); }
+                var newBrush=(ItemType)GUILayout.SelectionGrid((int)brush,Names,2,GUILayout.Height(104));
+                if(newBrush!=brush) { brush=newBrush; definitionId="";painting=true; ClearGhost(); }
+                if(GUILayout.Button("物体库 / 添加命名物体 / 替换预制体")) LevelObjectCatalogEditor.Open();
+                var catalog=LevelObjectCatalog.Default;
+                var definitions=catalog?catalog.objects.Where(d=>!d.builtIn).ToArray():new LevelObjectDefinition[0];
+                var choices=new[]{"使用内置物体"}.Concat(definitions.Select(d=>d.displayName)).ToArray();
+                int chosen=Array.FindIndex(definitions,d=>d.id==definitionId)+1;
+                int next=EditorGUILayout.Popup("自定义物体",chosen,choices);
+                if(next!=chosen)
+                {
+                    definitionId=next==0?"":definitions[next-1].id;
+                    if(next>0) { brush=definitions[next-1].type;wardrobe=definitions[next-1].wardrobe; }
+                    painting=true;ClearGhost();
+                }
                 int newRotation=EditorGUILayout.IntPopup("摆放旋转",rotation,new[]{"0°","90°","180°","270°"},new[]{0,90,180,270});
                 if(newRotation!=rotation) { rotation=newRotation; ClearGhost(); }
                 if(brush==ItemType.Stairs)
@@ -181,6 +205,7 @@ namespace UnderAvatar.Editor
                     {
                         var value=BuildingData.CreateDefault(); d.name=value.name; d.floors=value.floors; d.floorHeight=value.floorHeight;
                         d.gridSize=value.gridSize; d.halfWidth=value.halfWidth; d.halfDepth=value.halfDepth;
+                        d.useTaskEditor=false;d.tasks.Clear();d.taskProps.Clear();d.taskClues.Clear();
                     }));
                 if(GUILayout.Button("另存为新关卡资源")) CreateAsset();
                 bool expand=EditorGUILayout.Toggle("测试时展开 Game 视图",PrototypePlayView.ExpandOnPlay);
@@ -220,6 +245,80 @@ namespace UnderAvatar.Editor
                 AssetDatabase.SaveAssetIfDirty(Asset); painting=false; ClearGhost(); EditorApplication.isPlaying=true;
             });
         }
+        static void DrawDocumentSettings(PrototypeApp target)
+        {
+            EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("可阅读文档",EditorStyles.boldLabel);
+            var serialized=new SerializedObject(target);serialized.Update();
+            EditorGUILayout.PropertyField(serialized.FindProperty("enableDocuments"),new GUIContent("启用文档"));
+            EditorGUILayout.PropertyField(serialized.FindProperty("documentPropsPrefab"),new GUIContent("文档布置预制体"));
+            if(serialized.ApplyModifiedProperties())
+            {
+                EditorSceneManager.MarkSceneDirty(target.gameObject.scene);
+                BuildingEditorPreview.Rebuild();
+            }
+            using(new EditorGUI.DisabledScope(!target.DocumentsEnabled || !target.DocumentPropsPrefab))
+            {
+                EditorGUILayout.BeginHorizontal();
+                if(GUILayout.Button("聚焦文档")) BuildingEditorPreview.FrameDocuments();
+                if(GUILayout.Button("编辑文档布置")) AssetDatabase.OpenAsset(target.DocumentPropsPrefab);
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.HelpBox("留空使用默认文档布置。Scene 显示当前楼层及以下的文档预览；点击“编辑文档布置”打开预制体，使用 Unity 移动、旋转工具修改并保存，返回场景后自动更新。文档位置保存在预制体中。",MessageType.None);
+        }
+        static void DrawVisionSettings(PrototypeApp target)
+        {
+            EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("视野与照明",EditorStyles.boldLabel);
+            var serialized=new SerializedObject(target);serialized.Update();
+            DrawVision(serialized.FindProperty("settings.streamerVision"),"主播聚光灯");
+            DrawVision(serialized.FindProperty("settings.reporterVision"),"狗仔聚光灯");
+            if(serialized.ApplyModifiedProperties()) EditorSceneManager.MarkSceneDirty(target.gameObject.scene);
+            EditorGUILayout.HelpBox("参数保存在当前场景，修改后保存场景（Ctrl+S）。联机同步房主参数。跟随时间只影响光斑，不影响鼠标视角；Cookie 强度为 0 可关闭光斑纹理。",MessageType.None);
+        }
+        static void DrawGameplaySettings(PrototypeApp target)
+        {
+            var serialized=new SerializedObject(target);serialized.Update();
+            EditorGUILayout.Space(8);EditorGUILayout.LabelField("直播场次与 Flappy Bird",EditorStyles.boldLabel);
+            var targets=serialized.FindProperty("settings.broadcastTargets");
+            for(int i=0;i<targets.arraySize;i++)
+            {
+                var entry=targets.GetArrayElementAtIndex(i);EditorGUILayout.BeginHorizontal();
+                var round=entry.FindPropertyRelative("broadcast");var score=entry.FindPropertyRelative("score");
+                EditorGUILayout.LabelField("第",GUILayout.Width(16));round.intValue=Mathf.Max(1,EditorGUILayout.IntField(round.intValue,GUILayout.Width(50)));
+                EditorGUILayout.LabelField("场 · 分数",GUILayout.Width(64));score.intValue=Mathf.Clamp(EditorGUILayout.IntField(score.intValue),1,100);
+                if(GUILayout.Button("移除",GUILayout.Width(42))) { targets.DeleteArrayElementAtIndex(i);EditorGUILayout.EndHorizontal();break; }
+                EditorGUILayout.EndHorizontal();
+            }
+            if(GUILayout.Button("添加场次目标"))
+            {
+                int i=targets.arraySize;targets.InsertArrayElementAtIndex(i);var entry=targets.GetArrayElementAtIndex(i);
+                entry.FindPropertyRelative("broadcast").intValue=i+1;entry.FindPropertyRelative("score").intValue=target.Settings.flappyTargetScore;
+            }
+            EditorGUILayout.HelpBox("未指定场次使用上方默认分数；同场重复配置以最后一条为准。碰撞仍清零重试。以下飞行参数全场次一致，下次开播生效。",MessageType.None);
+            void Field(string path,string label) => EditorGUILayout.PropertyField(serialized.FindProperty("settings."+path),new GUIContent(label));
+            Field("flappyRules.flapImpulse","拍翅向上速度");Field("flappyRules.gravity","下落重力");Field("flappyRules.scrollSpeed","管道滚动速度");
+            Field("flappyRules.pipeSpacing","管道横向间距");Field("flappyRules.gapSize","管道开口高度");
+            EditorGUILayout.LabelField("搜查惩罚与返程开播",EditorStyles.boldLabel);
+            Field("patrolSeconds","每轮搜捕时长（秒）");Field("wrongWardrobePenalty","搜错衣柜扣时（秒）");Field("wrongBedPenalty","搜错床扣时（秒）");
+            Field("initialFans","初始粉丝");Field("returnGraceSeconds","返程宽限（秒）");Field("lateFanLossInterval","逾期扣粉间隔（秒）");Field("lateFanLoss","每次扣粉数量");
+            if(serialized.ApplyModifiedProperties()) EditorSceneManager.MarkSceneDirty(target.gameObject.scene);
+        }
+        static void DrawVision(SerializedProperty property,string label)
+        {
+            EditorGUILayout.LabelField(label,EditorStyles.miniBoldLabel);
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("range"),new GUIContent("照明距离（米）"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("innerAngle"),new GUIContent("内锥角（度）"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("outerAngle"),new GUIContent("外锥角（度）"));
+            var inner=property.FindPropertyRelative("innerAngle");
+            inner.floatValue=Mathf.Min(inner.floatValue,property.FindPropertyRelative("outerAngle").floatValue);
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("intensity"),new GUIContent("亮度"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("followSeconds"),new GUIContent("转向跟随时间（秒）"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative("cookieStrength"),new GUIContent("Cookie 强度"));
+            EditorGUI.indentLevel--;
+        }
+
         void DrawSelected()
         {
             var item=Selected;
@@ -230,6 +329,14 @@ namespace UnderAvatar.Editor
             int x=EditorGUILayout.DelayedIntField("网格 X",item.gridX);
             int z=EditorGUILayout.DelayedIntField("网格 Z",item.gridZ);
             int angle=EditorGUILayout.IntPopup("物品旋转",item.rotationY,new[]{"0°","90°","180°","270°"},new[]{0,90,180,270});
+            string displayName=EditorGUILayout.DelayedTextField("物体名称",item.displayName);
+            var modelOptions=LevelObjectCatalog.Default?LevelObjectCatalog.Default.objects.Where(d=>!d.builtIn && d.type==item.type &&
+                (item.type!=ItemType.Furniture || d.wardrobe==item.hideable)).ToArray():new LevelObjectDefinition[0];
+            int modelIndex=Array.FindIndex(modelOptions,d=>d.id==item.definitionId)+1;
+            int selectedModel=EditorGUILayout.Popup("外观物体定义",modelIndex,new[]{"使用内置类型的外观"}.Concat(modelOptions.Select(d=>d.displayName)).ToArray());
+            string modelId=selectedModel==modelIndex?item.definitionId:selectedModel==0?"":modelOptions[selectedModel-1].id;
+            Vector3 customSize=item.customSize;
+            if(item.type==ItemType.Custom) customSize=EditorGUILayout.Vector3Field("碰撞尺寸（米）",customSize);
             string id=item.questId,description=item.questDescription;
             bool hideable=item.hideable;
             if(item.type==ItemType.QuestItem)
@@ -241,12 +348,13 @@ namespace UnderAvatar.Editor
             }
             if(item.type==ItemType.Furniture) hideable=EditorGUILayout.Toggle("可躲藏衣柜",hideable);
             if(EditorGUI.EndChangeCheck())
-                Try(()=>BuildingEditorModel.EditItem(Asset,item.id,i=>{i.gridX=x;i.gridZ=z;i.rotationY=angle;i.questId=id;i.questDescription=description;i.hideable=hideable;}));
+                Try(()=>BuildingEditorModel.EditItem(Asset,item.id,i=>{i.gridX=x;i.gridZ=z;i.rotationY=angle;i.questId=id;i.questDescription=description;i.hideable=hideable;i.displayName=displayName;i.customSize=customSize;i.definitionId=modelId;}));
             if(GUILayout.Button("删除选中物品")) Try(()=>{ BuildingEditorModel.Delete(Asset,item.id); selectedId=null; });
         }
 
         void OnSceneGUI(SceneView view)
         {
+            if(TaskEditorWindow.EditingScene || PrefabStageUtility.GetCurrentPrefabStage()!=null) { ClearGhost();Tools.hidden=oldToolsHidden;return; }
             if(!Asset || !BuildingEditorPreview.World || EditorApplication.isPlayingOrWillChangePlaymode) { ClearGhost(); Tools.hidden=oldToolsHidden; return; }
             var e=Event.current;
             var selectedView=Selection.activeGameObject?Selection.activeGameObject.GetComponentInParent<PlacedItemView>():null;
@@ -284,7 +392,7 @@ namespace UnderAvatar.Editor
                 if(existing!=null) SelectItem(existing.id);
                 else Try(()=>
                 {
-                    string id=BuildingEditorModel.Place(Asset,floor,x,z,brush,rotation,wardrobe);
+                    string id=BuildingEditorModel.Place(Asset,floor,x,z,brush,rotation,wardrobe,BrushDefinition);
                     SelectItem(id);
                     if(brush==ItemType.QuestItem) { questFocus=true; Focus(); }
                 });
@@ -316,7 +424,7 @@ namespace UnderAvatar.Editor
         {
             if(ghost) return;
             palette=new PrototypeVisuals(); ghost=new GameObject("摆放预览");
-            ghost.AddComponent<PlacedItemView>().Initialize(new PlacedItemData{type=brush,rotationY=rotation,hideable=wardrobe},
+            ghost.AddComponent<PlacedItemView>().Initialize(new PlacedItemData{type=brush,rotationY=rotation,hideable=wardrobe,customSize=BrushDefinition?.customSize??new Vector3(1.5f,1.5f,1.5f)},
                 BuildingEditorPreview.Floor,Asset.Data.gridSize,Asset.Data.floorHeight,palette,true);
             BuildingEditorPreview.SetFlags(ghost);
             ghost.hideFlags|=HideFlags.HideInHierarchy;

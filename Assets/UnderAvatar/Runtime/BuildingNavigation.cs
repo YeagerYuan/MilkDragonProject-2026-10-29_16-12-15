@@ -21,6 +21,23 @@ namespace UnderAvatar
         public Vector3Int Cell(Vector3 position) => new Vector3Int(Mathf.RoundToInt(position.x/data.gridSize),
             Mathf.Clamp(Mathf.FloorToInt((position.y+.15f)/data.floorHeight),0,data.floors.Count-1),Mathf.RoundToInt(position.z/data.gridSize));
         public Vector3 Position(Vector3Int cell) => new Vector3(cell.x*data.gridSize,cell.y*data.floorHeight,cell.z*data.gridSize);
+        // Room boundaries stop at doors, independent of whether their leaves are currently open.
+        public HashSet<Vector3Int> RoomCells(Vector3 position)
+        {
+            var found=new HashSet<Vector3Int>();var queue=new Queue<Vector3Int>();var start=NearestWalkable(Cell(position));
+            found.Add(start);queue.Enqueue(start);
+            while(queue.Count>0)
+            {
+                var cell=queue.Dequeue();
+                foreach(var step in Steps)
+                {
+                    var next=cell+step;
+                    if(found.Contains(next) || !Walkable(next) || data.At(next.y,next.x,next.z)?.type==ItemType.Door) continue;
+                    found.Add(next);queue.Enqueue(next);
+                }
+            }
+            return found;
+        }
         public bool Walkable(Vector3Int cell)
         {
             if(cell.y<0 || cell.y>=data.floors.Count || !data.ContainsCell(cell.x,cell.z) || stairInterior.Contains(cell)) return false;

@@ -87,17 +87,17 @@ namespace UnderAvatar.Tests
             foreach(var item in app.World.Items.Where(i=>i.Data.type==ItemType.QuestItem))
             {
                 reporter.Teleport(item.transform.position+Vector3.back*2); reporter.SetLookAt(item.PhotoPoint);
-                match.TakePhoto(); yield return new WaitForSeconds(.3f);
+                match.SelectTask(item.Data.questId);match.TakePhoto();match.UploadPhoto(match.PendingPhoto.id);yield return new WaitForSeconds(.3f);
             }
             Assert.That(match.Quests.All(q=>q.Complete),Is.True);
             brain.BeginStreaming();
             reporter.Teleport(brain.transform.position-brain.transform.forward*2); reporter.SetLookAt(match.Streamer.PhotoPoint);
-            match.TakePhoto(); Assert.That(match.StreamerPhotos,Is.EqualTo(1));
+            match.SelectTask(InvestigationData.LiveTask);match.TakePhoto();match.UploadPhoto(match.PendingPhoto.id);Assert.That(match.StreamerPhotos,Is.EqualTo(1));
             Assert.That(match.FlashUntil,Is.GreaterThan(Time.time+.25f));
             Assert.That(match.Streamer.AlertUntil,Is.GreaterThan(Time.time));
             Assert.That(match.Pulses.Any(p=>p.Kind==NoiseKind.Shutter),Is.True);
             yield return new WaitForSeconds(.3f);
-            match.TakePhoto(); Assert.That(match.StreamerPhotos,Is.EqualTo(1)); Assert.That(match.Score,Is.EqualTo(2));
+            match.TakePhoto(); Assert.That(match.StreamerPhotos,Is.EqualTo(1)); Assert.That(match.Score,Is.EqualTo(3));
             brain.Flap();
             for(int i=0;i<300 && !brain.Level.Crashed;i++) brain.AdvanceMinigame(1f/60);
             Assert.That(brain.Level.Crashed,Is.True);
@@ -105,10 +105,10 @@ namespace UnderAvatar.Tests
             yield return new WaitForSeconds(5.05f);
             Assert.That(match.HasValidTarget,Is.False,"Elapsed time must not refresh a broadcast photo.");
             FinishFlappy(brain); brain.BeginStreaming();
-            match.TakePhoto(); Assert.That(match.StreamerPhotos,Is.EqualTo(2));
+            match.TakePhoto();match.UploadPhoto(match.PendingPhoto.id);Assert.That(match.StreamerPhotos,Is.EqualTo(2));
             yield return new WaitForSeconds(.3f);
             FinishFlappy(brain); brain.BeginStreaming();
-            match.TakePhoto(); Assert.That(match.Result,Does.Contain("狗仔获胜"));
+            match.TakePhoto();match.UploadPhoto(match.PendingPhoto.id);Assert.That(match.Result,Does.Contain("狗仔获胜"));
         }
 
         [UnityTest]

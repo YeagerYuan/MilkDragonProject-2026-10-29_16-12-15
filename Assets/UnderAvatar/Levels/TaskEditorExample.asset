@@ -1,0 +1,1502 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0126ee9bf013c14f843dce7f676ff0f, type: 3}
+  m_Name: TaskEditorExample
+  m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.BuildingAsset
+  building:
+    version: 1
+    useTaskEditor: 1
+    tasks:
+    - id: 217a5b38b22646d0ae53dece8123d8ce
+      title: "\u4E3B\u64AD\u6700\u559C\u6B22\u7684\u98DF\u7269"
+      description: "\u6839\u636E\u5BB6\u91CC\u7684\u8BB0\u5F55\uFF0C\u62CD\u4E0B\u4E3B\u64AD\u6700\u559C\u6B22\u7684\u98DF\u7269\u5E76\u4E0A\u4F20\u3002"
+      targetId: cf4ab04922f442fcb5e186df05be1182
+      kind: 0
+      clueIds:
+      - 2e3ba0772cb4491880438d3d678aae7b
+      - c22ed6dc98f946828ed8030cf86aed8c
+      regionPosition: {x: 0, y: 0.4, z: 0}
+      regionSize: {x: 2, y: 0.8, z: 2}
+      regionYaw: 0
+    - id: afafc09ea37f443e9b3790ab35335051
+      title: "\u4E0D\u4E00\u6837\u7684\u684C\u817F"
+      description: "\u628A\u84DD\u8272\u5C0F\u7403\u653E\u5230\u6709\u4E00\u6761\u684C\u817F\u4E0E\u4F17\u4E0D\u540C\u7684\u684C\u5B50\u4E0A\uFF0C\u518D\u62CD\u7167\u4E0A\u4F20\u3002"
+      targetId: 409086ac01bb4802bff76dc8a16f2c10
+      kind: 1
+      clueIds:
+      - 793a435910484bfa9398b6802d8eef40
+      regionPosition: {x: -4, y: 1.15, z: -4}
+      regionSize: {x: 1.2, y: 0.5, z: 0.8}
+      regionYaw: 0
+    taskProps:
+    - id: cf4ab04922f442fcb5e186df05be1182
+      name: "\u82F9\u679C"
+      definitionId: task_example_apple
+      position: {x: -6, y: 0.03, z: -5}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 0.35, y: 0.4, z: 0.35}
+      portable: 1
+    - id: 409086ac01bb4802bff76dc8a16f2c10
+      name: "\u84DD\u8272\u5C0F\u7403"
+      definitionId: task_example_ball
+      position: {x: -7, y: 0.03, z: -6}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 0.3, y: 0.3, z: 0.3}
+      portable: 1
+    - id: 99f45ca37feb4d5b97727bd5bfa15e12
+      name: "\u7EFF\u8272\u74F6\u5B50"
+      definitionId: task_example_bottle
+      position: {x: -5, y: 0.03, z: -5}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 0.2, y: 0.5, z: 0.2}
+      portable: 1
+    - id: a9e135b4d84e41d5907b3b69703076eb
+      name: "\u4E00\u6761\u84DD\u8272\u684C\u817F\u7684\u684C\u5B50"
+      definitionId: task_example_table
+      position: {x: -4, y: 0, z: -4}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 1.5, y: 0.91, z: 1}
+      portable: 0
+    taskClues:
+    - id: 2e3ba0772cb4491880438d3d678aae7b
+      title: "\u53A8\u623F\u4FBF\u7B3A"
+      text: "\u4ED6\u4E0D\u559C\u6B22\u74F6\u5B50\u91CC\u7684\u996E\u6599\uFF0C\u4E5F\u4E0D\u559C\u6B22\u84DD\u8272\u7684\u88C5\u9970\u54C1\u3002\u4ECA\u5929\u7ED9\u4ED6\u51C6\u5907\u7684\u662F\u4E00\u79CD\u7EA2\u8272\u7684\u6C34\u679C\u3002"
+      position: {x: -7, y: 0.03, z: -4}
+      rotation: {x: 90, y: 0, z: 0}
+    - id: c22ed6dc98f946828ed8030cf86aed8c
+      title: "\u996E\u98DF\u8BB0\u5F55"
+      text: "\u8FD9\u79CD\u6C34\u679C\u957F\u5728\u6811\u4E0A\uFF0C\u5207\u5F00\u540E\u679C\u8089\u504F\u767D\uFF0C\u4E2D\u5FC3\u6709\u51E0\u9897\u5C0F\u7C7D\u3002\u4ED6\u8BF4\u8FD9\u662F\u81EA\u5DF1\u6700\u559C\u6B22\u7684\u98DF\u7269\u3002"
+      position: {x: -6, y: 0.03, z: -4}
+      rotation: {x: 90, y: 0, z: 0}
+    - id: 793a435910484bfa9398b6802d8eef40
+      title: "\u6446\u653E\u8BF4\u660E"
+      text: "\u628A\u84DD\u8272\u5C0F\u7403\u653E\u5230\u90A3\u5F20\u684C\u817F\u4E0D\u592A\u5408\u7FA4\u7684\u684C\u5B50\u4E0A\uFF0C\u518D\u62CD\u4E00\u5F20\u7167\u7247\u3002"
+      position: {x: -5, y: 0.03, z: -4}
+      rotation: {x: 90, y: 0, z: 0}
+    name: "\u4EFB\u52A1\u7F16\u8F91\u5668\u793A\u4F8B \xB7 \u98DF\u7269\u4E0E\u7279\u6B8A\u684C\u5B50"
+    floorHeight: 4
+    gridSize: 2
+    halfWidth: 8
+    halfDepth: 6
+    floors:
+    - floorIndex: 0
+      items:
+      - id: f51406901b514fd698a270e3323f4485
+        type: 0
+        gridX: -7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c0b87e25862d4b25ad4528fb700096f0
+        type: 0
+        gridX: -7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2fbc84f04e1c439fb4860bf46861e819
+        type: 0
+        gridX: -6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 04c9a7051bda4405b26df5528e73fd14
+        type: 0
+        gridX: -6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 12df014642ab406d961ac4664f9ab5ee
+        type: 0
+        gridX: -5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 1702e4b19a7a4ea9a3563d1ec47d28a5
+        type: 0
+        gridX: -5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 6fd012ea83bd4253b614c06c813bd416
+        type: 0
+        gridX: -4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: feca6ce10d79405ca168f7a89150d849
+        type: 0
+        gridX: -4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b0f381cfeb254dceb9a6e7380f4c0892
+        type: 0
+        gridX: -3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 26b1e1941e2b4d46bf7a9176d9722aef
+        type: 0
+        gridX: -3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ddfb441add184d1f83d14b856b987df7
+        type: 0
+        gridX: -2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: f3cc621754ba487b8835ca484566c99c
+        type: 0
+        gridX: -2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: e9b356dc84294151a980ea49859a82ed
+        type: 0
+        gridX: -1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2d6f7b4058db4491a81eecc236c705a1
+        type: 0
+        gridX: -1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 499f359e50e74e4eb6dbc7a73b238ffe
+        type: 0
+        gridX: 0
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b4dcb6c414f54593b13b9fb098abb194
+        type: 0
+        gridX: 0
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2da98463fe914910ba192143823f1f0f
+        type: 0
+        gridX: 1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: afe546e434df454780a1fe67e9657d8d
+        type: 0
+        gridX: 1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 88965c5a09a9420f955c8256eb4c6e40
+        type: 0
+        gridX: 2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 3b31cc511c6847689a30e391778a5e0c
+        type: 0
+        gridX: 2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 5592dead10a0412385c1695770c51d72
+        type: 0
+        gridX: 3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b27d89edac1c4bcf87448361754aaf3c
+        type: 0
+        gridX: 3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2eabad584e9d4236bf39a32da501c167
+        type: 0
+        gridX: 4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: fa525d8a0f364a2db22ea8b8119af20c
+        type: 0
+        gridX: 4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 0e05cee9462e4b37bfee7a413a229a63
+        type: 0
+        gridX: 5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: dc11202efcbc4dbc88abeeba1bc3d44b
+        type: 0
+        gridX: 5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: facce32266304793975314fa2cfb30d5
+        type: 0
+        gridX: 6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c2a33c28e8c4489e9056039ca8e691f7
+        type: 0
+        gridX: 6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 7258de7ea842453fbfda0140116c0c11
+        type: 0
+        gridX: 7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: db517f85e6f14259a1ceaf20cda6ca52
+        type: 0
+        gridX: 7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: fb1f70ee12084bfbb3c281b97e0a9bdd
+        type: 0
+        gridX: -7
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: f3ada73ba32d4880a021fddceaa1efac
+        type: 0
+        gridX: 7
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ee59294c38c847b9aac47dadba1fe953
+        type: 0
+        gridX: 0
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 8632fbc4b5f04f1c8dc9c73f1c9b496b
+        type: 0
+        gridX: -7
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 6c42bc818d7b4805aa85dca957dd1fee
+        type: 0
+        gridX: 7
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 047442f344664afebcfa714b57aa7147
+        type: 0
+        gridX: 0
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 26aa26c783824cb9b7b55375d588e436
+        type: 0
+        gridX: -7
+        gridZ: -2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: bd46728f2dbb46f8aec102f4937878bf
+        type: 0
+        gridX: 7
+        gridZ: -2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2e14fb7abc5f4ca5aa61bcead8d9fcfb
+        type: 1
+        gridX: 0
+        gridZ: -2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 0f785bf83f024b0eafe4772058b80cba
+        type: 0
+        gridX: -7
+        gridZ: -1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: f0c7172cb1f74442ad63e13b581f81df
+        type: 0
+        gridX: 7
+        gridZ: -1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 6e9c2d63d034495698b6db59a8a0cf18
+        type: 0
+        gridX: 0
+        gridZ: -1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b6903cab014a470f9d0decd9bea45515
+        type: 0
+        gridX: -7
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: a0c96438c9534e338e5d2dec5dd346fc
+        type: 0
+        gridX: 7
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 0754bb6f7f3741b59860248fbc7ec134
+        type: 0
+        gridX: 0
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c5c19de521704d8385995eb7e2f06f78
+        type: 0
+        gridX: -7
+        gridZ: 1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: a90316dd9a054184be75248af5e377e6
+        type: 0
+        gridX: 7
+        gridZ: 1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: f99bb8662cd64356bab05f0c1b461c96
+        type: 0
+        gridX: 0
+        gridZ: 1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: d650c1bf6bb7459aaa7661a1b8f040e4
+        type: 0
+        gridX: -7
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 9aebfca9ab1f405aaa9a964bc4751840
+        type: 0
+        gridX: 7
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ddc6db59fff5425fb58f572179c57ce0
+        type: 1
+        gridX: 0
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: f572204d5e84442b8869f929596e4e5e
+        type: 0
+        gridX: -7
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 97851611960a4677abed6333ba6eb161
+        type: 0
+        gridX: 7
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 01fdca26dd5242a28ef6730881f0ce64
+        type: 0
+        gridX: 0
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: a762b6b4614f426fa47022a92e28c5ed
+        type: 0
+        gridX: -7
+        gridZ: 4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: dd22350608304ed6b4bc8382ec5e24b2
+        type: 0
+        gridX: 7
+        gridZ: 4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2cc24699f5cd498d9f6d07e3f194d9fc
+        type: 0
+        gridX: 0
+        gridZ: 4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: a440261b1f2e4e8b8243af4ced1e59fe
+        type: 2
+        gridX: -3
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 5daf0a37c914478b91499bf9ce755cbe
+        type: 2
+        gridX: 2
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 55242a96394f40a2bb5ae4f7dcd57b99
+        type: 2
+        gridX: -3
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ad803807277b4fc8ae73ba3512e1181b
+        type: 2
+        gridX: 4
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: d1b29eabb54642a9a1687ef5a3a180ff
+        type: 5
+        gridX: -5
+        gridZ: -1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 77c883332c2645068c8ab379c0ebacd7
+        type: 5
+        gridX: 5
+        gridZ: -3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 7002f63bd4a241f486855a062998f0ab
+        type: 3
+        gridX: -5
+        gridZ: -3
+        rotationY: 0
+        questId: item_medicine
+        questDescription: "\u62CD\u6444\u4E00\u697C\u53A8\u623F\u7684\u53EF\u7591\u836F\u5242"
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+    - floorIndex: 1
+      items:
+      - id: e215b702e58542289da3f05031df8939
+        type: 0
+        gridX: -7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ec1050bb54e148c1ac0605815f0c0311
+        type: 0
+        gridX: -7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 2278d8d133f2426d939299e11e4c80f4
+        type: 0
+        gridX: -6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 433215352f254594bd7b5fad9f3f7a1f
+        type: 0
+        gridX: -6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 789a93c9f723458db256bc903ae6a538
+        type: 0
+        gridX: -5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 3d324ea7d25f4d0ebc04326aa0d67ae3
+        type: 0
+        gridX: -5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 4e4aa829bc814863976a008f7c159ffb
+        type: 0
+        gridX: -4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c88301ae83a74d3690af635ecb00e049
+        type: 0
+        gridX: -4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c44bf73047bd4ef5b181c39cf9fe2210
+        type: 0
+        gridX: -3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ef47e7a4fb36435c940bca29ba2305f7
+        type: 0
+        gridX: -3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 5e92aee5683048258702d8ef1637ea1f
+        type: 0
+        gridX: -2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 92dd5a0b1f004d949ee2e966aca24779
+        type: 0
+        gridX: -2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 35c9b54746ab4040b06ce29e76a01c48
+        type: 0
+        gridX: -1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: bba9609c09b04a85bd62fda65a5c1e94
+        type: 0
+        gridX: -1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: e000a70fa02b4718bea4e2f8f6db09da
+        type: 0
+        gridX: 0
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 43a2834e7bc645849cc1da022dbf0910
+        type: 0
+        gridX: 0
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b4cd40ee89dc419d9ac909ad5e6e1de3
+        type: 0
+        gridX: 1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 3bfdd8a56edb4e109393607e6e908ede
+        type: 0
+        gridX: 1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 0cd73605561240f6b226d3070278fdc2
+        type: 0
+        gridX: 2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: a86894752da84085a56f9fc3375b42f0
+        type: 0
+        gridX: 2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b558b324645a4a9b89c5e7ae6d5e9855
+        type: 0
+        gridX: 3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 27ea949b84274318a3ab1883a07eb67c
+        type: 0
+        gridX: 3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 258ede8fded94fcda3470716ee2903cf
+        type: 0
+        gridX: 4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 8894964554fd4818b1fdc361d8477d47
+        type: 0
+        gridX: 4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b17c0e1f17ad4f93ab88ee0a58fc969c
+        type: 0
+        gridX: 5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: b3b67085b9b24d5c95c1ebb6123ef9e6
+        type: 0
+        gridX: 5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 6e4b90552a40414bad3acf5ae29dce7c
+        type: 0
+        gridX: 6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 423db09b9d2a4fbebe495c1db869d108
+        type: 0
+        gridX: 6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 3b7abb80a91a4a4584527647eabac513
+        type: 0
+        gridX: 7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 3b6ae5874b884a3d97d779e3bbf1486b
+        type: 0
+        gridX: 7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c8e0abb1762c4902ae2db99203500d91
+        type: 0
+        gridX: -7
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: aff87b259a3f4f37b52dc42ca737772d
+        type: 0
+        gridX: 7
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 9ce3ca9f04b8418e91c49c3ca8358eac
+        type: 0
+        gridX: 0
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 0535735e7593426eb361e5912da53d65
+        type: 0
+        gridX: -7
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 4915ba76e99b4cbd81dfc219f861f7ca
+        type: 0
+        gridX: 7
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: e865377585564be4bd4d562713f4b8a7
+        type: 0
+        gridX: 0
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 71ace5539c2d4ad3bb977a7bb442d993
+        type: 0
+        gridX: -7
+        gridZ: -2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 372fc2c7d5bc470ca368dc3e01a47a37
+        type: 0
+        gridX: 7
+        gridZ: -2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 4adb101fcd2d4f5d9892e4bd05f68f64
+        type: 1
+        gridX: 0
+        gridZ: -2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: a6a8de6b38464412af8678d1e8ad51bf
+        type: 0
+        gridX: -7
+        gridZ: -1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c5ff360a9e454f568b4cc4273619711f
+        type: 0
+        gridX: 7
+        gridZ: -1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 0b9ee99107474dd88362ca837b04f6c2
+        type: 0
+        gridX: 0
+        gridZ: -1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 57bc901b2b04449891fa2b7ff2072940
+        type: 0
+        gridX: -7
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: e6ee2b57cc3d48f8b48637e4c6a48eba
+        type: 0
+        gridX: 7
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 5948200906614b4ca5e247a4891cefd3
+        type: 0
+        gridX: 0
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: e136a42af28e4e918a8e405003068fc7
+        type: 0
+        gridX: -7
+        gridZ: 1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 37f63cf6fb974dfba90156c316cf606e
+        type: 0
+        gridX: 7
+        gridZ: 1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 72a1f3246c444b6b8b5fc4d6fc6cdee3
+        type: 0
+        gridX: 0
+        gridZ: 1
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 279374a49caa448abf58cbdb17ac2a0d
+        type: 0
+        gridX: -7
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: bde4d10f1c11492d8db567971da5922c
+        type: 0
+        gridX: 7
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: d112f23530e1454c9eee59fb8a501f01
+        type: 1
+        gridX: 0
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ca2b0849c67b4ade82a9102b12de609c
+        type: 0
+        gridX: -7
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ec5d1b6e2656485e9c25ac771d16c728
+        type: 0
+        gridX: 7
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 9bbc9eb0a25b41fc82d9da8107aaa1dc
+        type: 0
+        gridX: 0
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c4976fe24a82487fb183359a05a73e6e
+        type: 0
+        gridX: -7
+        gridZ: 4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 5b53e72b8dd348b3bbff5703beb01c3e
+        type: 0
+        gridX: 7
+        gridZ: 4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: af8895c602ff46b69076014cc0c0fd51
+        type: 0
+        gridX: 0
+        gridZ: 4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 3b3dc5dd62e44ec0b4a9172a8f4e4d81
+        type: 2
+        gridX: -3
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 8adbd8e1011945ee8a2af66ba149825a
+        type: 2
+        gridX: 2
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: e83a3060752d4e38b26683c54724e85d
+        type: 2
+        gridX: -3
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 885af087f52c457f9a8507e8b36308f6
+        type: 2
+        gridX: 4
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: c2921447dfbf4b2eb83e8f11a41eb129
+        type: 4
+        gridX: 4
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: 8749755f6a7349568f0cf09fefe8d231
+        type: 3
+        gridX: -4
+        gridZ: -3
+        rotationY: 0
+        questId: item_diary
+        questDescription: "\u62CD\u6444\u4E8C\u697C\u5367\u5BA4\u7684\u602A\u7269\u65E5\u8BB0"
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: ec638a2434504c66af35412170ba8908
+        type: 3
+        gridX: 5
+        gridZ: 1
+        rotationY: 0
+        questId: item_contract
+        questDescription: "\u62CD\u6444\u4E8C\u697C\u4E66\u623F\u7684\u79D8\u5BC6\u5408\u540C"
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
