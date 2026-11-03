@@ -1,0 +1,1181 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0126ee9bf013c14f843dce7f676ff0f, type: 3}
+  m_Name: TrainingHall
+  m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.BuildingAsset
+  building:
+    version: 1
+    name: "\u660E\u4EAE\u6559\u5B66\u5927\u5385"
+    floorHeight: 4
+    gridSize: 2
+    halfWidth: 7
+    halfDepth: 5
+    floors:
+    - floorIndex: 0
+      items:
+      - id: hall_0_-7_-5
+        type: 0
+        gridX: -7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_5
+        type: 0
+        gridX: -7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-6_-5
+        type: 0
+        gridX: -6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-6_5
+        type: 0
+        gridX: -6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-5_-5
+        type: 0
+        gridX: -5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-5_5
+        type: 0
+        gridX: -5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-4_-5
+        type: 0
+        gridX: -4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-4_5
+        type: 0
+        gridX: -4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-3_-5
+        type: 0
+        gridX: -3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-3_5
+        type: 0
+        gridX: -3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-2_-5
+        type: 0
+        gridX: -2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-2_5
+        type: 0
+        gridX: -2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-1_-5
+        type: 0
+        gridX: -1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-1_5
+        type: 0
+        gridX: -1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_0_-5
+        type: 0
+        gridX: 0
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_0_5
+        type: 0
+        gridX: 0
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_1_-5
+        type: 0
+        gridX: 1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_1_5
+        type: 0
+        gridX: 1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_2_-5
+        type: 0
+        gridX: 2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_2_5
+        type: 0
+        gridX: 2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_3_-5
+        type: 0
+        gridX: 3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_3_5
+        type: 0
+        gridX: 3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_4_-5
+        type: 0
+        gridX: 4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_4_5
+        type: 0
+        gridX: 4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_5_-5
+        type: 0
+        gridX: 5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_5_5
+        type: 0
+        gridX: 5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_6_-5
+        type: 0
+        gridX: 6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_6_5
+        type: 0
+        gridX: 6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_-5
+        type: 0
+        gridX: 7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_5
+        type: 0
+        gridX: 7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_-4
+        type: 0
+        gridX: -7
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_-4
+        type: 0
+        gridX: 7
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_-3
+        type: 0
+        gridX: -7
+        gridZ: -3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_-3
+        type: 0
+        gridX: 7
+        gridZ: -3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_-2
+        type: 0
+        gridX: -7
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_-2
+        type: 0
+        gridX: 7
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_-1
+        type: 0
+        gridX: -7
+        gridZ: -1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_-1
+        type: 0
+        gridX: 7
+        gridZ: -1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_0
+        type: 0
+        gridX: -7
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_0
+        type: 0
+        gridX: 7
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_1
+        type: 0
+        gridX: -7
+        gridZ: 1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_1
+        type: 0
+        gridX: 7
+        gridZ: 1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_2
+        type: 0
+        gridX: -7
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_2
+        type: 0
+        gridX: 7
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_3
+        type: 0
+        gridX: -7
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_3
+        type: 0
+        gridX: 7
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-7_4
+        type: 0
+        gridX: -7
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_7_4
+        type: 0
+        gridX: 7
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-6_0
+        type: 5
+        gridX: -6
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-1_0
+        type: 0
+        gridX: -1
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_0_0
+        type: 1
+        gridX: 0
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_1_0
+        type: 0
+        gridX: 1
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_-3_3
+        type: 2
+        gridX: -3
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_0_3
+        type: 6
+        gridX: 0
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_4_3
+        type: 4
+        gridX: 4
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_4_-2
+        type: 3
+        gridX: 4
+        gridZ: -2
+        rotationY: 0
+        questId: hall_evidence
+        questDescription: "\u5927\u5385\u62CD\u7167\u7EC3\u4E60\u7269\u54C1"
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_0_2_-2
+        type: 2
+        gridX: 2
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+    - floorIndex: 1
+      items:
+      - id: hall_1_-7_-5
+        type: 0
+        gridX: -7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_5
+        type: 0
+        gridX: -7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-6_-5
+        type: 0
+        gridX: -6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-6_5
+        type: 0
+        gridX: -6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-5_-5
+        type: 0
+        gridX: -5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-5_5
+        type: 0
+        gridX: -5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-4_-5
+        type: 0
+        gridX: -4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-4_5
+        type: 0
+        gridX: -4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-3_-5
+        type: 0
+        gridX: -3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-3_5
+        type: 0
+        gridX: -3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-2_-5
+        type: 0
+        gridX: -2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-2_5
+        type: 0
+        gridX: -2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-1_-5
+        type: 0
+        gridX: -1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-1_5
+        type: 0
+        gridX: -1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_0_-5
+        type: 0
+        gridX: 0
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_0_5
+        type: 0
+        gridX: 0
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_1_-5
+        type: 0
+        gridX: 1
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_1_5
+        type: 0
+        gridX: 1
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_2_-5
+        type: 0
+        gridX: 2
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_2_5
+        type: 0
+        gridX: 2
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_3_-5
+        type: 0
+        gridX: 3
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_3_5
+        type: 0
+        gridX: 3
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_4_-5
+        type: 0
+        gridX: 4
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_4_5
+        type: 0
+        gridX: 4
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_5_-5
+        type: 0
+        gridX: 5
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_5_5
+        type: 0
+        gridX: 5
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_6_-5
+        type: 0
+        gridX: 6
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_6_5
+        type: 0
+        gridX: 6
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_-5
+        type: 0
+        gridX: 7
+        gridZ: -5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_5
+        type: 0
+        gridX: 7
+        gridZ: 5
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_-4
+        type: 0
+        gridX: -7
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_-4
+        type: 0
+        gridX: 7
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_-3
+        type: 0
+        gridX: -7
+        gridZ: -3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_-3
+        type: 0
+        gridX: 7
+        gridZ: -3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_-2
+        type: 0
+        gridX: -7
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_-2
+        type: 0
+        gridX: 7
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_-1
+        type: 0
+        gridX: -7
+        gridZ: -1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_-1
+        type: 0
+        gridX: 7
+        gridZ: -1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_0
+        type: 0
+        gridX: -7
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_0
+        type: 0
+        gridX: 7
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_1
+        type: 0
+        gridX: -7
+        gridZ: 1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_1
+        type: 0
+        gridX: 7
+        gridZ: 1
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_2
+        type: 0
+        gridX: -7
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_2
+        type: 0
+        gridX: 7
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_3
+        type: 0
+        gridX: -7
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_3
+        type: 0
+        gridX: 7
+        gridZ: 3
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_-7_4
+        type: 0
+        gridX: -7
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+      - id: hall_1_7_4
+        type: 0
+        gridX: 7
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}

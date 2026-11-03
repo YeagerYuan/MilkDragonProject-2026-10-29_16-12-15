@@ -14,7 +14,10 @@ namespace UnderAvatar
             internal bool scored;
         }
         public const float BirdX=.25f, BirdRadius=.024f, PipeWidth=.085f, GapSize=.34f;
-        const float Gravity=-1.8f, Impulse=.56f, ScrollSpeed=.24f, PipeSpacing=.43f;
+        FlappyRules rules=new FlappyRules();
+        public float PipeGap => rules.gapSize;
+        public FlappyRules Rules => rules.Copy();
+        public void Configure(FlappyRules value) { rules=value!=null && value.Valid?value.Copy():new FlappyRules(); }
         readonly System.Random random;
         readonly List<Pipe> pipes=new List<Pipe>();
         public IReadOnlyList<Pipe> Pipes => pipes;
@@ -49,7 +52,7 @@ namespace UnderAvatar
             for(int i=0;i<4;i++)
             {
                 center=NextCenter(center);
-                pipes.Add(new Pipe{X=1.05f+i*PipeSpacing,GapCenter=center});
+                pipes.Add(new Pipe{X=1.05f+i*rules.pipeSpacing,GapCenter=center});
             }
         }
         float NextCenter(float previous) => Mathf.Clamp(previous+((float)random.NextDouble()-.5f)*.20f,.32f,.68f);
@@ -57,7 +60,7 @@ namespace UnderAvatar
         {
             if(Complete) return;
             if(Crashed) Reset();
-            Running=true; Velocity=Impulse;
+            Running=true; Velocity=rules.flapImpulse;
         }
         public void Tick(float deltaTime)
         {
@@ -66,13 +69,13 @@ namespace UnderAvatar
             while(remaining>0 && Running && !Complete)
             {
                 float dt=Mathf.Min(remaining,1f/120); remaining-=dt;
-                Velocity+=Gravity*dt; BirdHeight+=Velocity*dt;
-                foreach(var pipe in pipes) pipe.X-=ScrollSpeed*dt;
+                Velocity-=rules.gravity*dt; BirdHeight+=Velocity*dt;
+                foreach(var pipe in pipes) pipe.X-=rules.scrollSpeed*dt;
                 if(BirdHeight-BirdRadius<=0 || BirdHeight+BirdRadius>=1) { Crash(); break; }
                 foreach(var pipe in pipes)
                 {
                     bool overlaps=pipe.X<BirdX+BirdRadius && pipe.X+PipeWidth>BirdX-BirdRadius;
-                    if(overlaps && (BirdHeight-BirdRadius<pipe.GapCenter-GapSize*.5f || BirdHeight+BirdRadius>pipe.GapCenter+GapSize*.5f))
+                    if(overlaps && (BirdHeight-BirdRadius<pipe.GapCenter-rules.gapSize*.5f || BirdHeight+BirdRadius>pipe.GapCenter+rules.gapSize*.5f))
                     { Crash(); break; }
                     if(!pipe.scored && pipe.X+PipeWidth<BirdX-BirdRadius)
                     {
@@ -83,7 +86,7 @@ namespace UnderAvatar
                 if(pipes[0].X+PipeWidth<0)
                 {
                     var last=pipes[pipes.Count-1];
-                    pipes.RemoveAt(0); pipes.Add(new Pipe{X=last.X+PipeSpacing,GapCenter=NextCenter(last.GapCenter)});
+                    pipes.RemoveAt(0); pipes.Add(new Pipe{X=last.X+rules.pipeSpacing,GapCenter=NextCenter(last.GapCenter)});
                 }
             }
         }

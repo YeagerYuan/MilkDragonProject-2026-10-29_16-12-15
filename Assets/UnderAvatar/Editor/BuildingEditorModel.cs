@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 using System.IO;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace UnderAvatar.Editor
             Undo.RegisterCompleteObjectUndo(asset,label);
             asset.SetData(data); EditorUtility.SetDirty(asset); Changed?.Invoke(asset);
         }
-        public static string Place(BuildingAsset asset,int floor,int x,int z,ItemType type,int rotation,bool hideable)
+        public static string Place(BuildingAsset asset,int floor,int x,int z,ItemType type,int rotation,bool hideable,LevelObjectDefinition definition=null)
         {
             string id=Guid.NewGuid().ToString("N");
             Commit(asset,"放置 "+type,data=>
@@ -24,6 +25,7 @@ namespace UnderAvatar.Editor
                 if(floor<0 || floor>=data.floors.Count || !data.ContainsCell(x,z)) throw new ArgumentException("超出当前楼层范围。");
                 if(data.At(floor,x,z)!=null) throw new ArgumentException("这个网格已有物品。");
                 var item=new PlacedItemData{id=id,type=type,gridX=x,gridZ=z,rotationY=rotation,hideable=type==ItemType.Furniture && hideable};
+                if(definition!=null) { item.definitionId=definition.id;item.displayName=definition.displayName;item.customSize=definition.customSize; }
                 if(type==ItemType.QuestItem) { item.questId="item_"+id.Substring(0,8); item.questDescription="拍摄第 "+(floor+1)+" 层的线索"; }
                 data.floors[floor].items.Add(item);
             });
@@ -34,6 +36,11 @@ namespace UnderAvatar.Editor
             if(widthCells%2!=1 || depthCells%2!=1) throw new ArgumentException("宽度和深度使用奇数格（以中心网格对称延伸）。");
             Commit(asset,"修改全部楼层尺寸",data=>
             {
+                float oldHeight=data.floorHeight;
+                Func<Vector3,Vector3> shift=p=>p+Vector3.up*Mathf.FloorToInt(Mathf.Max(0,p.y)/oldHeight)*(wallHeight-oldHeight);
+                foreach(var p in data.taskProps) p.position=shift(p.position);
+                foreach(var c in data.taskClues) c.position=shift(c.position);
+                foreach(var task in data.tasks) task.regionPosition=shift(task.regionPosition);
                 data.floorHeight=wallHeight; data.halfWidth=(widthCells-1)/2; data.halfDepth=(depthCells-1)/2;
             });
         }
@@ -62,6 +69,7 @@ namespace UnderAvatar.Editor
             {
                 data.name=imported.name; data.floorHeight=imported.floorHeight; data.gridSize=imported.gridSize;
                 data.halfWidth=imported.halfWidth; data.halfDepth=imported.halfDepth; data.floors=imported.floors;
+                data.useTaskEditor=imported.useTaskEditor;data.tasks=imported.tasks;data.taskProps=imported.taskProps;data.taskClues=imported.taskClues;
             });
         }
         public static void Export(BuildingAsset asset,string path)

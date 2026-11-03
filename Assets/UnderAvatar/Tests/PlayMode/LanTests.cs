@@ -53,9 +53,11 @@ namespace UnderAvatar.Tests
             root=new GameObject("LauncherTest");var app=root.AddComponent<PrototypeApp>();
             yield return null;Assert.That(app.Session,Is.Null);
             app.StartSingle(TestRole.Reporter);Assert.That(app.Session.Role,Is.EqualTo(TestRole.Reporter));
+            Assert.That(app.Session.IsTraining,Is.True);app.SetSingleReady(true);app.StartSingleMatch();
             Assert.That(app.Session.Streamer.Controller.Driver,Is.Not.Null);
             app.ReturnToMenu();yield return null;
-            app.StartSingle(TestRole.Streamer);Assert.That(app.Session.ReporterAI,Is.Not.Null);
+            app.StartSingle(TestRole.Streamer);Assert.That(app.Session.IsTraining,Is.True);
+            app.SetSingleReady(true);app.StartSingleMatch();Assert.That(app.Session.ReporterAI,Is.Not.Null);
             Assert.That(app.Session.Streamer.State,Is.EqualTo(StreamerState.Streaming));
         }
         [UnityTest] public IEnumerator NetworkAuthorityDisablesAIAndReplicatesDoorsEvidenceFlappyAndVictory()
@@ -73,7 +75,7 @@ namespace UnderAvatar.Tests
             var door=app.World.Items.First(i=>i.Data.type==ItemType.Door);door.SetDoorOpen(true);
             match.Reporter.Teleport(match.Streamer.transform.position-match.Streamer.transform.forward*2);
             match.Reporter.SetLookAt(match.Streamer.PhotoPoint);match.Reporter.SetPhone(true);
-            Physics.SyncTransforms();match.TakePhoto();
+            Physics.SyncTransforms();match.SelectTask(InvestigationData.LiveTask);match.TakePhoto();match.UploadPhoto(match.PendingPhoto.id);
             Assert.That(match.StreamerPhotos,Is.EqualTo(1));
             match.Streamer.Controller.Flap();
             for(int i=0;i<80;i++)

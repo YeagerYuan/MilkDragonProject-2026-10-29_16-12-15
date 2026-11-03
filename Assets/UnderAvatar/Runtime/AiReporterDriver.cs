@@ -17,14 +17,19 @@ namespace UnderAvatar
         int pathIndex,stairIndex;
         Vector3? pendingDestination;
         Vector3? photoTarget;
+        string photoTask;
         PlacedItemView hidingPlace;
         float nextDecision,hiddenUntil;
         bool sneaking;
+        bool retreating;
+        float avoidRoomUntil;
+        HashSet<Vector3Int> streamerRoom;
         public bool HasPath => path!=null && pathIndex<path.Count;
 
         public void Initialize(MatchSession match)
         {
             session=match; reporter=match.Reporter; navigation=new BuildingNavigation(match.World.Data);
+            streamerRoom=navigation.RoomCells(session.Streamer.Computer.Front);
         }
         public bool SetDestination(Vector3 destination)
         {
@@ -40,7 +45,7 @@ namespace UnderAvatar
             if(session==null || session.Finished) return;
             if(reporter.Hidden)
             {
-                Status="藏在衣柜中";
+                Status=reporter.HidingPlace?.Data.type==ItemType.Bed?"藏在床下":"藏在衣柜中";
                 if(Time.time>=hiddenUntil || session.StreamerPhotoAvailable)
                 { reporter.Interact(); hiddenUntil=Time.time+1; nextDecision=0; }
                 return;
@@ -63,10 +68,14 @@ namespace UnderAvatar
         }
         void Decide()
         {
+            if(session.PendingPhoto!=null) session.UploadPhoto(session.PendingPhoto.id);
+            if(HandleCarryTask()) return;
+            if(retreating && HasPath) { Status="拍摄完成，撤离主播房间";return; }
+            retreating=false;
             if(SeesThreat())
             {
                 photoTarget=null; sneaking=false; reporter.SetCrouched(false);
-                var wardrobe=session.World.Items.Where(i=>i.Data.hideable && i.Floor==reporter.Floor &&
+                var wardrobe=session.World.Items.Where(i=>i.IsHidingPlace && !i.IsOpen && i.Floor==reporter.Floor &&
                     Vector3.Distance(i.Front,transform.position)<8 &&
                     Vector3.Distance(i.Front,session.Streamer.transform.position)>2)
                     .OrderBy(i=>Vector3.Distance(i.Front,transform.position)).FirstOrDefault();
@@ -98,23 +107,74 @@ namespace UnderAvatar
             {
                 reporter.SetLookAt(photoTarget.Value); reporter.SetPhone(true);
                 Physics.SyncTransforms();
-                if(session.HasValidTarget) { session.TakePhoto(); photoTarget=null; return; }
+                if(session.HasValidTarget)
+                {
+                    session.SelectTask(photoTask);session.TakePhoto();if(session.PendingPhoto!=null) session.UploadPhoto(session.PendingPhoto.id);photoTarget=null;
+                    if(!session.Finished && streamerRoom.Contains(navigation.Cell(transform.position))) PlanRetreat();
+                    return;
+                }
                 photoTarget=null;
             }
             if(HasPath) return;
             // Live status is visible on the phone; the AI does not track a roaming streamer through walls.
             if(session.StreamerPhotoAvailable && PlanPhoto(session.Streamer.PhotoPoint,session.Streamer.Floor))
-            { Status="接近电脑，拍摄直播"; sneaking=true; return; }
+            { photoTask=InvestigationData.LiveTask;Status="接近电脑，拍摄直播"; sneaking=true; return; }
             foreach(var item in session.World.Items.Where(i=>i.Data.type==ItemType.QuestItem &&
+                (Time.time>=avoidRoomUntil || !streamerRoom.Contains(navigation.NearestWalkable(navigation.Cell(i.transform.position)))) &&
                 session.Quests.Any(q=>q.Id==i.Data.questId && !q.Complete))
                 .OrderBy(i=>Vector3.Distance(i.transform.position,transform.position)))
             {
                 if(PlanPhoto(item.PhotoPoint,item.Floor))
-                { Status="收集任务物证"; sneaking=false; return; }
+                { photoTask=item.Data.questId;Status="收集任务物证"; sneaking=false; return; }
+            }
+            foreach(var task in InvestigationData.Tasks(session.World.Data).Where(t=>session.Quests.Any(q=>q.Id==t.id && !q.Complete)))
+            {
+                var point=session.TargetPoint(task.targetId);
+                if(point.HasValue && PlanPhoto(point.Value,Mathf.FloorToInt(point.Value.y/session.World.Data.floorHeight)))
+                {photoTask=task.id;Status="收集任务证据";sneaking=false;return;}
             }
             reporter.SetPhone(false); sneaking=true;
-            var hide=session.World.Items.Where(i=>i.Data.hideable).OrderBy(i=>Vector3.Distance(i.Front,transform.position)).FirstOrDefault();
+            var hide=session.World.Items.Where(i=>i.IsHidingPlace && !i.IsOpen && (Time.time>=avoidRoomUntil || !streamerRoom.Contains(navigation.Cell(i.Front))))
+                .OrderBy(i=>Vector3.Distance(i.Front,transform.position)).FirstOrDefault();
             if(hide && SetDestination(hide.Front)) { hidingPlace=hide; Status="等待下一场直播"; }
+        }
+        bool HandleCarryTask()
+        {
+            if(SeesThreat()) return false;
+            var task=InvestigationData.Tasks(session.World.Data).FirstOrDefault(t=>t.kind==InvestigationKind.PlaceAndPhotograph && session.Quests.Any(q=>q.Id==t.id && !q.Complete));
+            if(task==null) return false;
+            var prop=session.TaskWorld.Props.Find(p=>p.Data.id==task.targetId);if(!prop) return false;
+            if(!session.TaskWorld.Held && task.Contains(prop.transform.position)) return false;
+            reporter.SetPhone(false);photoTarget=null;sneaking=false;
+            if(session.TaskWorld.Held)
+            {
+                Vector3 bottom=task.regionPosition;bottom.y-=task.regionSize.y*.5f;
+                if(Vector3.Distance(transform.position,bottom)<2.7f && Mathf.Abs(transform.position.y-bottom.y)<2)
+                {
+                    reporter.SetLookAt(bottom+Vector3.up*.02f);
+                    if(session.TaskWorld.TryPlacement(out var placed,out var yaw) && task.Contains(placed)) {session.TaskWorld.Interact();path=null;return true;}
+                }
+                if(!HasPath) SetDestination(bottom+Vector3.back*1.4f);
+                Status="搬运道具到目标位置";return true;
+            }
+            if(Vector3.Distance(reporter.View.transform.position,prop.PhotoPoint)<2.8f)
+            {
+                reporter.SetLookAt(prop.PhotoPoint);Physics.SyncTransforms();
+                if(session.TaskWorld.AimProp()==prop) {session.TaskWorld.Interact();path=null;return true;}
+            }
+            if(!HasPath) SetDestination(prop.transform.position+Vector3.back*1.4f);
+            Status="寻找需要搬运的道具";return true;
+        }
+        void PlanRetreat()
+        {
+            reporter.SetPhone(false);sneaking=false;hidingPlace=null;avoidRoomUntil=Time.time+10;
+            var reachable=navigation.ReachableFrom(transform.position);
+            var exits=reachable.Where(c=>!streamerRoom.Contains(c) && Vector3.Distance(navigation.Position(c),session.Streamer.Computer.Front)>5)
+                .OrderBy(c=>Vector3.Distance(navigation.Position(c),transform.position));
+            foreach(var cell in exits) if(SetDestination(navigation.Position(cell))) { retreating=true;Status="拍摄完成，撤离主播房间";return; }
+            // Open-plan maps have no door-defined room: retreat away from the desk instead.
+            foreach(var cell in reachable.OrderByDescending(c=>Vector3.Distance(navigation.Position(c),session.Streamer.Computer.Front)))
+                if(SetDestination(navigation.Position(cell))) { retreating=true;Status="拍摄完成，远离主播电脑";return; }
         }
         bool PlanPhoto(Vector3 point,int floor)
         {

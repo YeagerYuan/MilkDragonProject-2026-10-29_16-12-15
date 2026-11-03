@@ -1,0 +1,43 @@
+Under Avatar — CC0 recorded sound assets
+Downloaded and edited: 2026-10-30
+License for all source recordings: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+These are edited field/foley recordings, not AI-generated audio.
+
+Walk_01–06.wav
+Title: Footsteps. Author: GboxMikeFozzy.
+https://opengameart.org/content/footsteps-0
+Recorded walking through a subway; author normalized and reduced noise.
+Originals: 01-footstep_0.ogg, 02-footstep.ogg through 06-footstep.ogg.
+Edits: high-pass rumble reduction, short fades, consistent peak level, mono 48 kHz PCM.
+
+Chase_01–06.wav
+Title: wood_08c_womanshoes_run.wav. Author: sturmankin.
+https://freesound.org/people/sturmankin/sounds/273405/
+Recorded with ZOOM H2 in a house basement, shoes on a wooden table over carpet/concrete.
+Public HQ preview: https://cdn.freesound.org/previews/273/273405_4181170-hq.mp3
+Edits: six isolated impacts from 6.185–8.760 s; high-pass, fades, consistent level, mono 48 kHz PCM.
+
+DoorOpen_01–02.wav, DoorClose_01–02.wav
+Title: Door open, door close. Author: Iwan Gabovitch (qubodup).
+https://opengameart.org/content/door-open-door-close
+https://opengameart.org/sites/default/files/door.7z
+Author recorded opening and closing his room door. Selected door-01/02/03/05.flac.
+Edits: mono downmix, high-pass, fades and consistent peak level, 48 kHz PCM.
+
+ReporterBreathing.wav
+Title: Breathing Tired. Author: mikeask.
+https://opengameart.org/content/breathing-tired
+https://opengameart.org/sites/default/files/breathing%20tired.wav
+A person breathing after running.
+Edits: mono downmix, 100 Hz high-pass, mild spectral noise reduction, trimmed to two breath cycles,
+80 ms wrap crossfade, edge fades and level adjustment; 48 kHz PCM.
+
+Shutter.wav
+Title: camera shutter.wav. Author: mywhats.
+https://freesound.org/people/mywhats/sounds/175517/
+Recorded shutter of a Zenit-E analog camera.
+Public HQ preview: https://cdn.freesound.org/previews/175/175517_1084891-hq.mp3
+Edits: high-pass, 2 ms edge fades and level adjustment, mono 48 kHz PCM.
+
+The two unrelated chair/success prototype cues remain procedural unless overridden in GameAudio.

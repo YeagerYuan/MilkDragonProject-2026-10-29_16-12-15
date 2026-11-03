@@ -12,6 +12,8 @@ namespace UnderAvatar
         readonly List<PlacedItemView> items = new List<PlacedItemView>();
         readonly List<GameObject> floors = new List<GameObject>();
         readonly List<List<Renderer>> slabs = new List<List<Renderer>>();
+        readonly Dictionary<Renderer,Material[]> slabMaterials=new Dictionary<Renderer,Material[]>();
+        GameObject topCeiling;
         public IReadOnlyList<StairLayout> Stairs { get; private set; }
         readonly List<GameObject> grids = new List<GameObject>();
         public bool Editing { get; private set; } = true;
@@ -25,7 +27,9 @@ namespace UnderAvatar
             StairLayout.Validate(data);
             if(Palette==null) Palette=new PrototypeVisuals();
             foreach(var floor in floors) { floor.SetActive(false); PrototypeVisuals.Release(floor); }
-            floors.Clear(); slabs.Clear(); grids.Clear(); items.Clear();
+            if(topCeiling) { topCeiling.SetActive(false);PrototypeVisuals.Release(topCeiling); }
+            Palette.ClearSurfaceMeshes();
+            floors.Clear(); slabs.Clear(); grids.Clear(); items.Clear();slabMaterials.Clear();
             Data = data;
             Stairs=StairLayout.All(data);
             foreach(var floor in data.floors)
@@ -48,9 +52,10 @@ namespace UnderAvatar
                         int first=x;
                         while(x<=data.halfWidth && !openings.Contains(new Vector2Int(x,z))) x++;
                         if(first==x) continue;
-                        var slab=Palette.Box(root.transform,"FloorSlab",new Vector3((first+x-1)*data.gridSize*.5f,-.12f,z*data.gridSize),
-                            new Vector3((x-first)*data.gridSize,.24f,data.gridSize),new Color(.20f,.23f,.27f),"UA_Wall");
-                        floorSlabs.Add(slab.GetComponent<Renderer>());
+                        var slab=Palette.SurfaceBox(root.transform,"FloorSlab",new Vector3((first+x-1)*data.gridSize*.5f,-.12f,z*data.gridSize),
+                            new Vector3((x-first)*data.gridSize,.24f,data.gridSize),new Color(.20f,.23f,.27f),BuildingSurfaceKind.Floor,
+                            root.transform.position.y,data.floorHeight,"UA_Wall");
+                        var renderer=slab.GetComponent<Renderer>();floorSlabs.Add(renderer);slabMaterials[renderer]=renderer.sharedMaterials;
                     }
                 }
                 var grid = new GameObject("EditorGrid");
@@ -64,6 +69,9 @@ namespace UnderAvatar
                         new Vector3((data.halfWidth*2+1)*data.gridSize,.018f,.018f),new Color(.33f,.40f,.46f),"UA_Props",false);
                 foreach(var item in floor.items) CreateView(floor.floorIndex,item);
             }
+            topCeiling=Palette.SurfaceBox(transform,"TopCeiling",new Vector3(0,data.floors.Count*data.floorHeight-.12f,0),
+                new Vector3((data.halfWidth*2+1)*data.gridSize,.24f,(data.halfDepth*2+1)*data.gridSize),new Color(.55f,.55f,.52f),
+                BuildingSurfaceKind.Ceiling,0,data.floorHeight,"UA_Wall",false);
             SetMode(Editing,Mathf.Clamp(ActiveFloor,0,floors.Count-1));
             Physics.SyncTransforms();
         }
@@ -92,13 +100,14 @@ namespace UnderAvatar
         {
             Editing = editing;
             ActiveFloor = activeFloor;
+            if(topCeiling) topCeiling.SetActive(!editing);
             for(int f=0; f<floors.Count; f++)
             {
                 floors[f].SetActive(!editing || f<=activeFloor);
                 foreach(var slab in slabs[f])
                 {
                     slab.enabled=true;
-                    slab.sharedMaterial=Palette.Material(f<activeFloor && editing ? new Color(.065f,.075f,.09f) : new Color(.20f,.23f,.27f));
+                    slab.sharedMaterials=slabMaterials[slab].Select(m=>f<activeFloor && editing?Palette.Dimmed(m):m).ToArray();
                 }
                 grids[f].SetActive(editing && f==activeFloor);
             }

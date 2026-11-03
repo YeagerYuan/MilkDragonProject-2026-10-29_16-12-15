@@ -10,6 +10,7 @@ public enum DocumentType
 public class DocumentData : ScriptableObject
 {
     public string documentName;
+    [TextArea(4,20)] public string text;
     public DocumentType documentType;
 
     public Sprite[] pages;

@@ -8,7 +8,9 @@ namespace UnderAvatar
     {
         public int sequence;
         public float x,y,lookX,lookY,aspect=1.777778f;
-        public bool sneak,crouch,interact,phone,action;
+        public bool sneak,crouch,interact,phone,action,cancelPhoto;
+        public string taskId;
+        public int uploadPhoto;
         public static PlayerCommand Read(bool captured)
         {
             var c=new PlayerCommand{aspect=(float)Screen.width/Mathf.Max(1,Screen.height)};
@@ -23,22 +25,25 @@ namespace UnderAvatar
             return c;
         }
         public bool Valid => Finite(x)&&Finite(y)&&Finite(lookX)&&Finite(lookY)&&Finite(aspect)&&Mathf.Abs(x)<=1&&Mathf.Abs(y)<=1&&
-            Mathf.Abs(lookX)<=4000&&Mathf.Abs(lookY)<=4000&&aspect>=.3f&&aspect<=5;
+            Mathf.Abs(lookX)<=4000&&Mathf.Abs(lookY)<=4000&&aspect>=.3f&&aspect<=5 && uploadPhoto>=0 && (taskId==null || taskId.Length<=128);
         static bool Finite(float f) => !float.IsNaN(f)&&!float.IsInfinity(f);
         public void Merge(PlayerCommand c)
         {
             x=c.x;y=c.y;sneak=c.sneak;crouch=c.crouch;aspect=c.aspect;
             lookX=Mathf.Clamp(lookX+c.lookX,-4000,4000);lookY=Mathf.Clamp(lookY+c.lookY,-4000,4000);
-            interact|=c.interact;phone|=c.phone;action|=c.action;
+            interact|=c.interact;phone|=c.phone;action|=c.action;cancelPhoto|=c.cancelPhoto;
+            if(c.taskId!=null) taskId=c.taskId;if(c.uploadPhoto>0) uploadPhoto=c.uploadPhoto;
         }
-        public void ConsumeEdges() { lookX=lookY=0;interact=phone=action=false; }
+        public void ConsumeEdges() { lookX=lookY=0;interact=phone=action=cancelPhoto=false;taskId=null;uploadPhoto=0; }
         public PlayerCommand Copy() => (PlayerCommand)MemberwiseClone();
     }
     [Serializable] public sealed class ActorSnapshot
     {
         public Vector3 position;
+        public Vector3 planarVelocity;
         public float yaw,pitch,vertical;
         public bool crouched,hidden,phone,sneaking;
+        public string hidingPlaceId;
     }
     [Serializable] public sealed class FlappySnapshot
     {
@@ -56,18 +61,29 @@ namespace UnderAvatar
         public StreamerState state;
         public int broadcast,score,photos,photographedRound,messageId,inputAck;
         public float hostFps;
+        public float serverTime;
+        public int fans;
+        public float returnElapsed;
         public float roamRemaining,stateRemaining,progress,alertRemaining,flashRemaining,messageRemaining;
         public string result,message;
         public string[] completedQuests;
         public DoorSnapshot[] doors;
+        public DoorSnapshot[] hidingPlaces;
         public NoiseSnapshot[] noises;
         public FlappySnapshot flappy;
+        public TaskPropSnapshot[] taskProps;
+        public string heldProp,selectedTask;
+        public PhotoEvidence pendingPhoto;
+        public int lastSubmittedPhoto;
     }
     [Serializable] public sealed class LanMessage
     {
-        public const int Version=2;
+        public const int Version=8;
         public int protocol=Version;
         public string type,text,map;
+        public string trainingMap;
+        public bool training;
+        public int sessionId;
         public TestRole role;
         public bool hostReady,guestReady;
         public float stamp;

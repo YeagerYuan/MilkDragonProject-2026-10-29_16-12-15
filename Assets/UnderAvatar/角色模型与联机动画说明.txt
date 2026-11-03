@@ -1,0 +1,40 @@
+角色模型与联机动画（当前协议 v8）
+
+Unity 编辑器配置
+1. 停止 Play，打开 Tools > Under Avatar > Character Models。
+   房屋编辑器的“配置狗仔 / 主播模型及联机动画”按钮也可打开。
+2. 配置资产：Assets/UnderAvatar/Resources/CharacterVisuals.asset。
+   狗仔和主播分别拖入模型 Prefab，可调整位置、旋转、缩放以及 Animator 参数名称。
+   场景 PrototypeApp 的 Character Visuals 字段也可指定另一份配置；留空使用上述默认资源。
+3. 保存，然后重新开始单人或局域网测试。配置不在游戏运行界面修改。
+
+当前接入
+- 狗仔：Assets/UnderAvatar/Characters/Reporter_DouJie.prefab。
+  来源 Assets/Models/你豆姐，使用原有蒙皮和骨骼。
+  配有 Idle、Walk、QuietWalk、CrouchIdle、CrouchWalk 五个循环片段。
+  这些是为当前骨骼制作的基础 Generic 关键帧动画，不是动作捕捉；手持物随原骨骼移动。
+- 主播：Assets/UnderAvatar/Characters/Streamer_HorrorMilkDragon.prefab。
+  来源 Assets/Models/恐怖奶龙。目前源模型无骨骼，作为静态外观移动。
+  游戏默认使用 Characters/HorrorMilkDragon_Game.fbx 简化副本，约 200 万三角面降为 5 万；原 FBX 保留。
+- 原 FBX 保留。预制体将脚底归到原点，面向 +Z，并配置独立的哑光材质。
+  贴图法线按 Normal Map 导入。模型高度分别约 1.65 米和 1.9 米，可在配置中修改。
+
+换正式模型
+- 推荐拖入包含模型、骨骼和 Animator 的外观 Prefab，脚底为原点，正面朝 +Z。
+- “动画控制器覆盖”留空时使用 Prefab 自带控制器。替换骨骼后，请提供匹配的控制器和动画；本次 Generic 片段不能直接套到任意骨骼。
+- 默认参数：Speed（Float，实际水平速度，米/秒）、MoveX / MoveZ（Float，相对角色朝向的左右 / 前后速度）、Crouched / Sneaking（Bool）。
+- 内置控制器使用 Speed 和两个姿态 Bool；MoveX / MoveZ 可用于后续八方向混合树。
+- Animator 禁用 Root Motion。运行时模型内的脚本、碰撞、刚体驱动、相机、灯光、音源不会接管玩法；使用原角色控制器。
+- 狗仔本机相机不绘制自己的模型，主播相机可看到狗仔；躲入藏身点立即隐藏整个外观。
+
+网络延迟方案
+- 房主只同步位置、朝向、真实移动速度、蹲下和静步状态，并附带房主时间戳。不发送逐骨骼变换或每帧重播动画。
+- 接收端本地 Animator 连续播放并混合动作。速度来自实际碰撞移动，撞墙不持续跑动；客户端校正时重演的输入不计算为新的动画速度。
+- 非本机角色的外观在独立的时间缓冲中插值；默认缓冲 0.10 秒，消息成批到达时逐步调整播放时间。
+- 最多外推 0.08 秒；超过 0.35 秒没有新状态时停止移动动画。收到旧时间戳不回退，传送或躲藏立即重置。
+- 外观的世界位置独立于玩法根节点平滑，避免继承网络位置校正的跳变。第一人称输入、镜头和碰撞仍使用原有客户端预测。
+- 所有这些参数都在 Character Models 面板可调整。缓冲能减轻抖动，但不能消除真实网络延迟；捕获、拍照和胜负仍由房主实时位置判定。
+- 角色资产不通过网络传输。两台电脑必须使用同一份资源和 v8 构建；旧版本客户端会被版本检查拒绝。
+
+协作提交时保留 .meta：Assets/Models、Assets/UnderAvatar/Characters、CharacterVisuals.asset，以及本次相关脚本和测试。
+不要只发送 Prefab 而漏掉其引用的 FBX、贴图、材质、控制器或动画片段。

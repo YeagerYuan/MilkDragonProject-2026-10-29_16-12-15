@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4c145dc550dcb445ba3a3e407309b84, type: 3}
+  m_Name: LevelObjects
+  m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.LevelObjectCatalog
+  objects:
+  - id: builtin_0
+    displayName: "\u5899\u4F53"
+    builtIn: 1
+    type: 0
+    wardrobe: 0
+    prefab: {fileID: 0}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: builtin_1
+    displayName: "\u4EA4\u4E92\u95E8"
+    builtIn: 1
+    type: 1
+    wardrobe: 0
+    prefab: {fileID: 6476086503482487203, guid: 60e70ce00f5009a4588fe0d25dc0cc0e,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: builtin_2
+    displayName: "\u5BB6\u5177"
+    builtIn: 1
+    type: 2
+    wardrobe: 0
+    prefab: {fileID: 2608953080218922414, guid: 9dde1151330b8b64fbb7b81bedf2e62c,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: builtin_3
+    displayName: "\u4EFB\u52A1\u7269\u54C1"
+    builtIn: 1
+    type: 3
+    wardrobe: 0
+    prefab: {fileID: 0}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: builtin_4
+    displayName: "\u4E3B\u64AD\u7535\u8111\u684C"
+    builtIn: 1
+    type: 4
+    wardrobe: 0
+    prefab: {fileID: 3980827063446245806, guid: 02de356e4f3f5f84bb95820c79a0a713,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0.375}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 0.5833333}
+  - id: builtin_5
+    displayName: "\u6298\u8FD4\u697C\u68AF"
+    builtIn: 1
+    type: 5
+    wardrobe: 0
+    prefab: {fileID: 0}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: builtin_6
+    displayName: "\u5E8A"
+    builtIn: 1
+    type: 6
+    wardrobe: 0
+    prefab: {fileID: 6682363844692477273, guid: 87d21ea6a709c874f8922b416e61a5f3,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: builtin_wardrobe
+    displayName: "\u8863\u67DC"
+    builtIn: 1
+    type: 2
+    wardrobe: 1
+    prefab: {fileID: 5917860385758902094, guid: dfdc71914d4523443b429bd1e042e089,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: task_example_apple
+    displayName: "\u4EFB\u52A1\u793A\u4F8B \xB7 apple"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 7095737614464535940, guid: d8a40adac07dfc64b8b66fe967ce2e87,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: task_example_ball
+    displayName: "\u4EFB\u52A1\u793A\u4F8B \xB7 ball"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 6131675048118166846, guid: 528f0499992def24b99e1a1ccfd5a76a,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: task_example_bottle
+    displayName: "\u4EFB\u52A1\u793A\u4F8B \xB7 bottle"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 8314121250455546647, guid: 2bf5b31a9ef12744997b7b66296d7bd3,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: task_example_table
+    displayName: "\u4EFB\u52A1\u793A\u4F8B \xB7 table"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 8636706240975732640, guid: b22b7baa92bd72a4195f369acb546702,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}

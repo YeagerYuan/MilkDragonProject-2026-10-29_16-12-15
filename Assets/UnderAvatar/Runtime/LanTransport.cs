@@ -97,7 +97,7 @@ namespace UnderAvatar
                     var accepted=listener.AcceptSocket();
                     if(socket!=null)
                     {
-                        byte[] full=LanFrameDecoder.Frame("{\"type\":\"reject\",\"protocol\":2,\"text\":\"房间已满，只支持两名玩家。\"}");
+                        byte[] full=LanFrameDecoder.Frame(UnityEngine.JsonUtility.ToJson(new LanMessage{type="reject",text="房间已满，只支持两名玩家。"}));
                         accepted.SendTimeout=100;accepted.Send(full);accepted.Close();
                     }
                     else Activate(accepted);

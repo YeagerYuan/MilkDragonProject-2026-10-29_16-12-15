@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21632aa20b6e46242a7832f99700e802, type: 3}
+  m_Name: CharacterVisuals
+  m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.CharacterVisualProfile
+  reporter:
+    prefab: {fileID: 7532826056880330205, guid: 00e150deec3954d4eb70c89d1bab2b63,
+      type: 3}
+    animatorController: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    speedParameter: Speed
+    moveXParameter: MoveX
+    moveZParameter: MoveZ
+    crouchedParameter: Crouched
+    sneakingParameter: Sneaking
+    animationDamping: 0.1
+  streamer:
+    prefab: {fileID: 2465769121314064341, guid: 7d2f1890268df5943916a5b60bdf4d2c,
+      type: 3}
+    animatorController: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    speedParameter: Speed
+    moveXParameter: MoveX
+    moveZParameter: MoveZ
+    crouchedParameter: Crouched
+    sneakingParameter: Sneaking
+    animationDamping: 0.1
+  interpolationDelay: 0.1
+  maxExtrapolation: 0.08
+  positionSmoothing: 0.04
+  staleAfter: 0.35

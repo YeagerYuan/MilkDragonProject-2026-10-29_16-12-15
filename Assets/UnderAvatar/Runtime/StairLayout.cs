@@ -91,7 +91,8 @@ namespace UnderAvatar
             Color stone=PrototypeVisuals.ItemColors[(int)ItemType.Stairs];
             Color rail=new Color(.26f,.32f,.40f);
             GameObject Box(string name,Vector3 p,Vector3 size,Color c,bool solid=true) =>
-                palette.Box(root,name,p,size,c,"UA_Props",solid,ghost);
+                palette.SurfaceBox(root,name,p,size,c,name.Contains("Guard")?BuildingSurfaceKind.Metal:BuildingSurfaceKind.Concrete,
+                    root.position.y,Height,"UA_Props",solid,ghost);
             int steps=Mathf.CeilToInt(half/.18f);
             float tread=Run/steps;
             for(int n=0;n<steps;n++)

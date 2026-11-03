@@ -2,59 +2,35 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnderAvatar;
 
-public class ReporterInteraction : MonoBehaviour
+// Runs after session input capture, before either controller or LAN input sampling.
+[DefaultExecutionOrder(-90)]
+public sealed class ReporterInteraction : MonoBehaviour
 {
-    private ReporterController reporter;
-
-    [SerializeField] private float interactionDistance = 5f;
-
-    void Awake()
+    ReporterController reporter;
+    [SerializeField,Min(.1f)] float interactionDistance=5f;
+    public DocumentInteractable Target { get; private set; }
+    public bool CanRead => reporter && reporter.IsHuman && !reporter.Hidden && !reporter.PhoneOpen && !(reporter.Session?.TaskWorld?.Held) &&
+        reporter.Session && !reporter.Session.Finished && !reporter.Session.DebugOpen &&
+        reporter.Session.InputCaptured && !DocumentManager.BlocksGameplayInput;
+    void Awake() { reporter=GetComponent<ReporterController>(); }
+    public DocumentInteractable FindTarget()
     {
-        reporter = GetComponent<ReporterController>();
+        if(!reporter || !reporter.View) return null;
+        var ray=reporter.View.ViewportPointToRay(new Vector3(.5f,.5f));
+        int mask=~LayerMask.GetMask("UA_Reporter","UA_Sound");
+        return Physics.Raycast(ray,out var hit,interactionDistance,mask,QueryTriggerInteraction.Ignore)
+            ?hit.collider.GetComponentInParent<DocumentInteractable>():null;
     }
-
-void Update()
-{
-    if (DocumentManager.BlocksGameplayInput) return;
-    if (Mouse.current != null &&
-        Mouse.current.leftButton.wasPressedThisFrame)
+    public bool TryRead()
     {
-        Debug.Log("Mouse clicked!");
-        Interact();
+        if(!CanRead) return false;
+        Target=FindTarget();if(!Target) return false;
+        Target.Interact(reporter.Session);
+        return DocumentManager.Instance && DocumentManager.Instance.IsOpen;
     }
-}
-
-    void Interact()
+    void Update()
     {
-        if (reporter == null || reporter.View == null)
-        {
-            Debug.LogError("Reporter camera not found!");
-            return;
-        }
-
-        Ray ray = reporter.View.ViewportPointToRay(
-            new Vector3(0.5f, 0.5f, 0f)
-        );
-
-        if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance))
-        {
-            Debug.Log("Raycast hit: " + hit.collider.name);
-
-            DocumentInteractable document =
-                hit.collider.GetComponentInParent<DocumentInteractable>();
-
-            if (document != null)
-            {
-                document.Interact();
-            }
-            else
-            {
-                Debug.Log("Object has no DocumentInteractable!");
-            }
-        }
-        else
-        {
-            Debug.Log("Raycast hit nothing!");
-        }
+        Target=CanRead?FindTarget():null;
+        if(Target && Mouse.current?.leftButton.wasPressedThisFrame==true) TryRead();
     }
 }

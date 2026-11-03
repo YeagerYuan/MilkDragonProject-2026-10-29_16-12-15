@@ -3,7 +3,9 @@
   "rootNamespace": "UnderAvatar",
   "references": [
     "Unity.InputSystem",
-    "UnderAvatar.PageCurl"
+    "Unity.RenderPipelines.Universal.Runtime",
+    "UnderAvatar.PageCurl",
+    "Unity.ugui"
   ],
   "autoReferenced": true
 }

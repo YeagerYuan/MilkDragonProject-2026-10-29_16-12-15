@@ -1,0 +1,23 @@
+场景模型替换
+
+床、衣柜、电脑桌、门扇与普通桌子现已使用 Assets/Models 下提供的模型，正式关卡及教学大厅共用。
+床直接引用原始高面数 FBX，没有简化或改写模型文件。
+床与衣柜保留躲藏、搜查、音效与联机反馈；当前为整体网格，不播放床垫或柜门开合动画。
+门扇沿原门轴旋转，开关和碰撞仍由房主同步。
+
+修改入口
+Tools > Under Avatar > Level Object Catalog。
+展开内置“床”“衣柜”“主播电脑桌”“交互门”“家具”，可替换外观预制体，调整位置、朝向与缩放。
+保存物体库并更新预览后重新开始 Play 测试。
+
+预制体：Assets/UnderAvatar/Props/Bed、Wardrobe、ComputerDesk、DoorLeaf、Table.prefab。
+材质与金属度/光滑度贴图：Assets/UnderAvatar/Props/Materials。
+预制体保留原 FBX 引用；原模型文件和基础颜色贴图不变。法线按 Normal Map 导入，金属度/粗糙度按线性数据读取，再合成为 URP 金属度/光滑度贴图。
+碰撞、交互距离、藏身位置和电脑交互点沿用现有玩法尺寸。模型内部不会额外增加碰撞或网络组件。
+
+重新从同一路径生成：Tools > Under Avatar > Import Provided Prop Models。
+此命令会重新生成上述五个预制体/材质，并重置它们在物体库中的位置、旋转、缩放设置。
+只需日常微调时，请直接修改物体库，不执行重新生成。
+
+联机协议为 v8；两端使用本次模型更新包可显示相同的资源。
+验证记录、模型预览和联机报告：Builds/PropVerification。

@@ -12,6 +12,8 @@ namespace UnderAvatar.Editor
     {
         public static PrototypeApp Target { get; private set; }
         public static BuildingWorld World { get; private set; }
+        public static GameObject Documents { get; private set; }
+        public static TaskWorld Tasks { get; private set; }
         public static int Floor { get; private set; }
         public static bool IsRebuilding { get; private set; }
         public static string Error { get; private set; }
@@ -19,6 +21,47 @@ namespace UnderAvatar.Editor
         static string snapshot;
         static double nextCheck;
         static BuildingAsset observedAsset;
+        static string documentSnapshot;
+
+        static string DocumentSnapshot()
+        {
+            if(!Target || !Target.DocumentsEnabled) return "disabled";
+            var prefab=Target.DocumentPropsPrefab;
+            if(!prefab) return "missing";
+            string path=AssetDatabase.GetAssetPath(prefab);
+            return path+":"+AssetDatabase.GetAssetDependencyHash(path);
+        }
+
+        static void SetDocumentFloor()
+        {
+            if(!Documents || !World) return;
+            // Match the house preview: retain this floor and those below it.
+            foreach(Transform group in Documents.transform)
+            {
+                var source=PrefabUtility.GetCorrespondingObjectFromSource(group.gameObject);
+                if(source && !source.activeSelf) { group.gameObject.SetActive(false);continue; }
+                var renderers=group.GetComponentsInChildren<Renderer>(true);
+                var bounds=new Bounds(group.position,Vector3.zero);
+                if(renderers.Length>0)
+                {
+                    bounds=renderers[0].bounds;
+                    foreach(var renderer in renderers.Skip(1)) bounds.Encapsulate(renderer.bounds);
+                }
+                int floor=Mathf.Max(0,Mathf.FloorToInt((bounds.center.y+.05f)/World.Data.floorHeight));
+                group.gameObject.SetActive(floor<=Floor && floor<World.Data.floors.Count);
+            }
+        }
+
+        public static void FrameDocuments()
+        {
+            if(!Documents) return;
+            var renderers=Documents.GetComponentsInChildren<Renderer>();
+            if(renderers.Length==0) return;
+            var bounds=renderers[0].bounds;
+            foreach(var renderer in renderers.Skip(1)) bounds.Encapsulate(renderer.bounds);
+            var view=SceneView.lastActiveSceneView ?? EditorWindow.GetWindow<SceneView>();
+            view.sceneLighting=false;view.Frame(bounds,false);view.Show();view.Focus();
+        }
 
         static BuildingEditorPreview()
         {
@@ -49,6 +92,8 @@ namespace UnderAvatar.Editor
             if(!Target || !Target.Building) return;
             Floor=Mathf.Clamp(floor,0,Target.Building.Data.floors.Count-1);
             if(World) World.SetMode(true,Floor);
+            SetDocumentFloor();
+            if(Tasks) Tasks.SetEditorFloor(Floor);
             Updated?.Invoke(); SceneView.RepaintAll();
         }
         static void Tick()
@@ -57,7 +102,7 @@ namespace UnderAvatar.Editor
             nextCheck=EditorApplication.timeSinceStartup+.35;
             if(!Target) { if(World) Clear(); Restore(); return; }
             if(!Target.Building) { if(World) Clear(); return; }
-            if(!World || observedAsset!=Target.Building || snapshot!=Target.Building.Data.ToJson()) Rebuild();
+            if(!World || observedAsset!=Target.Building || snapshot!=Target.Building.Data.ToJson() || documentSnapshot!=DocumentSnapshot()) Rebuild();
         }
         static void OnAssetChanged(BuildingAsset asset) { if(Target && Target.Building==asset) Rebuild(); }
         static void OnPlayMode(PlayModeStateChange state)
@@ -84,8 +129,21 @@ namespace UnderAvatar.Editor
                 root.AddComponent<BuildingPreviewMarker>();
                 SceneManager.MoveGameObjectToScene(root,Target.gameObject.scene);
                 World=root.AddComponent<BuildingWorld>(); World.Rebuild(data); World.SetMode(true,Floor);
+                if(Target.DocumentsEnabled && Target.DocumentPropsPrefab)
+                {
+                    Documents=(GameObject)PrefabUtility.InstantiatePrefab(Target.DocumentPropsPrefab,root.transform);
+                    Documents.name="文档布置（预览；通过编辑文档布置修改）";
+                    foreach(var behaviour in Documents.GetComponentsInChildren<MonoBehaviour>(true)) behaviour.enabled=false;
+                    SetDocumentFloor();
+                }
+                var taskRoot=new GameObject("任务编辑预览");taskRoot.transform.SetParent(root.transform,false);
+                Tasks=taskRoot.AddComponent<TaskWorld>();Tasks.Initialize(data);Tasks.SetEditorFloor(Floor);
                 SetFlags(root);
+                foreach(var node in taskRoot.GetComponentsInChildren<Transform>(true)) node.gameObject.hideFlags|=HideFlags.NotEditable;
+                if(Documents)
+                    foreach(var node in Documents.GetComponentsInChildren<Transform>(true)) node.gameObject.hideFlags|=HideFlags.NotEditable;
                 observedAsset=Target.Building; snapshot=observedAsset.Data.ToJson();
+                documentSnapshot=DocumentSnapshot();
                 if(selectedId!=null)
                 {
                     var replacement=World.Find(selectedId);
@@ -107,7 +165,7 @@ namespace UnderAvatar.Editor
                 World.ReleaseMaterials();
                 UnityEngine.Object.DestroyImmediate(World.gameObject);
             }
-            World=null;
+            World=null; Documents=null;Tasks=null;
             foreach(var orphan in Resources.FindObjectsOfTypeAll<BuildingPreviewMarker>())
                 if(orphan && orphan.gameObject.scene.IsValid())
                 {

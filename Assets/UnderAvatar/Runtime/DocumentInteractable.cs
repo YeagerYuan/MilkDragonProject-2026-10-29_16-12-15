@@ -3,8 +3,11 @@ using UnityEngine;
 public class DocumentInteractable : MonoBehaviour
 {
     [SerializeField] private DocumentData documentData;
+    public DocumentData Data => documentData;
+    public void Initialize(DocumentData data) { documentData=data; }
+    public string DisplayName => documentData && !string.IsNullOrWhiteSpace(documentData.documentName)?documentData.documentName:gameObject.name;
 
-    public void Interact()
+    public void Interact(UnderAvatar.MatchSession owner=null)
     {
         if (documentData == null)
         {
@@ -18,6 +21,6 @@ public class DocumentInteractable : MonoBehaviour
             Debug.LogWarning("No active DocumentManager in the scene!", this);
             return;
         }
-        DocumentManager.Instance.OpenDocument(documentData);
+        DocumentManager.Instance.OpenDocument(documentData,owner);
     }
 }
