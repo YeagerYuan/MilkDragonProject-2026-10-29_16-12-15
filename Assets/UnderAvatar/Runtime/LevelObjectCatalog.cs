@@ -14,6 +14,8 @@ namespace UnderAvatar
         public bool wardrobe;
         public GameObject prefab;
         public Vector3 customSize=new Vector3(1.5f,1.5f,1.5f);
+        public bool overrideColliderSize;
+        public Vector3 colliderSize=new Vector3(1.5f,1.5f,1.5f);
         public bool fitToPrototype=true;
         public Vector3 offset;
         public Vector3 rotation;

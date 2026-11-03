@@ -159,7 +159,7 @@ MonoBehaviour:
     maxPhotoDistance: 8
     maxScore: 3
     patrolSeconds: 30
-    flappyTargetScore: 12
+    flappyTargetScore: 1
     broadcastTargets: []
     flappyRules:
       gravity: 3.1
@@ -188,6 +188,9 @@ MonoBehaviour:
       intensity: 9
       followSeconds: 0.065
       cookieStrength: 0.45
+  enableDocuments: 1
+  documentReaderPrefab: {fileID: 0}
+  documentPropsPrefab: {fileID: 0}
 --- !u!4 &1852418220
 Transform:
   m_ObjectHideFlags: 0

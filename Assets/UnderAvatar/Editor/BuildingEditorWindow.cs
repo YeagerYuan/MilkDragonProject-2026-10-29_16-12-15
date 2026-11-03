@@ -173,7 +173,7 @@ namespace UnderAvatar.Editor
                 int newRotation=EditorGUILayout.IntPopup("摆放旋转",rotation,new[]{"0°","90°","180°","270°"},new[]{0,90,180,270});
                 if(newRotation!=rotation) { rotation=newRotation; ClearGhost(); }
                 if(brush==ItemType.Stairs)
-                    EditorGUILayout.HelpBox("放在下层即可连接上一层，并自动开楼板洞口。占地 2 × "+new StairLayout(data,0,new PlacedItemData()).DepthCells+" 格，两层范围都需空出；上楼直接走台阶。",MessageType.Info);
+                    EditorGUILayout.HelpBox("在上一级楼梯上端所在层，使用相同网格位置和旋转放置，可直接堆叠并连接到再上一层，楼板洞口自动生成。占地 2 × "+new StairLayout(data,0,new PlacedItemData()).DepthCells+" 格；堆叠以外的重叠仍不允许。",MessageType.Info);
                 if(brush==ItemType.Furniture)
                 {
                     bool value=EditorGUILayout.Toggle("作为可躲藏衣柜",wardrobe);
@@ -336,7 +336,15 @@ namespace UnderAvatar.Editor
             int selectedModel=EditorGUILayout.Popup("外观物体定义",modelIndex,new[]{"使用内置类型的外观"}.Concat(modelOptions.Select(d=>d.displayName)).ToArray());
             string modelId=selectedModel==modelIndex?item.definitionId:selectedModel==0?"":modelOptions[selectedModel-1].id;
             Vector3 customSize=item.customSize;
-            if(item.type==ItemType.Custom) customSize=EditorGUILayout.Vector3Field("碰撞尺寸（米）",customSize);
+            bool customSizeOverride=item.customSizeOverride;
+            if(item.type==ItemType.Custom)
+            {
+                customSizeOverride=EditorGUILayout.Toggle("覆盖物体库碰撞尺寸",customSizeOverride);
+                if(customSizeOverride) customSize=EditorGUILayout.Vector3Field("碰撞尺寸（米）",customSize);
+                else if(!string.IsNullOrEmpty(item.definitionId))
+                    EditorGUILayout.HelpBox("使用物体库中该自定义物体的碰撞尺寸。",MessageType.None);
+                else customSize=EditorGUILayout.Vector3Field("碰撞尺寸（米）",customSize);
+            }
             string id=item.questId,description=item.questDescription;
             bool hideable=item.hideable;
             if(item.type==ItemType.QuestItem)
@@ -348,7 +356,7 @@ namespace UnderAvatar.Editor
             }
             if(item.type==ItemType.Furniture) hideable=EditorGUILayout.Toggle("可躲藏衣柜",hideable);
             if(EditorGUI.EndChangeCheck())
-                Try(()=>BuildingEditorModel.EditItem(Asset,item.id,i=>{i.gridX=x;i.gridZ=z;i.rotationY=angle;i.questId=id;i.questDescription=description;i.hideable=hideable;i.displayName=displayName;i.customSize=customSize;i.definitionId=modelId;}));
+                Try(()=>BuildingEditorModel.EditItem(Asset,item.id,i=>{i.gridX=x;i.gridZ=z;i.rotationY=angle;i.questId=id;i.questDescription=description;i.hideable=hideable;i.displayName=displayName;i.customSize=customSize;i.customSizeOverride=customSizeOverride;i.definitionId=modelId;}));
             if(GUILayout.Button("删除选中物品")) Try(()=>{ BuildingEditorModel.Delete(Asset,item.id); selectedId=null; });
         }
 
@@ -379,7 +387,11 @@ namespace UnderAvatar.Editor
             Vector3 position=ray.GetPoint(distance);
             int x=Mathf.RoundToInt(position.x/data.gridSize),z=Mathf.RoundToInt(position.z/data.gridSize);
             if(!data.ContainsCell(x,z)) { if(ghost) ghost.SetActive(false); return; }
-            var existing=BuildingEditorPreview.World.ItemAt(floor,x,z)?.Data;
+            var existingView=BuildingEditorPreview.World.ItemAt(floor,x,z);
+            bool stackSlot=brush==ItemType.Stairs && existingView && existingView.Data.type==ItemType.Stairs &&
+                existingView.Floor+1==floor && existingView.Data.gridX==x && existingView.Data.gridZ==z &&
+                existingView.Data.rotationY==rotation && data.At(floor,x,z)==null;
+            var existing=stackSlot?null:existingView?.Data;
             if(existing==null)
             {
                 EnsureGhost();

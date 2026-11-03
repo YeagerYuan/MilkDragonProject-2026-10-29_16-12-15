@@ -34,8 +34,16 @@ namespace UnderAvatar.Editor
                 using(new EditorGUI.DisabledScope(builtIn)) { Field(entry,"type","基础行为");if(entry.FindPropertyRelative("type").enumValueIndex==(int)ItemType.Furniture) Field(entry,"wardrobe","可躲藏衣柜"); }
                 Field(entry,"prefab","外观预制体");Field(entry,"fitToPrototype","自动匹配原物体尺寸");
                 Field(entry,"offset","模型位置修正");Field(entry,"rotation","模型旋转修正");Field(entry,"scale","模型缩放倍率");
-                if(entry.FindPropertyRelative("type").enumValueIndex==(int)ItemType.Custom) Field(entry,"customSize","默认碰撞尺寸（米）");
-                EditorGUILayout.HelpBox("行为类型仅影响之后新放置的物体；已放置物体保留原来的行为。自定义物体暂占一格。",MessageType.None);
+                int type=entry.FindPropertyRelative("type").enumValueIndex;
+                if(type==(int)ItemType.Custom)
+                    Field(entry,"customSize","物体库碰撞尺寸（米）");
+                if(type==(int)ItemType.Furniture)
+                {
+                    Field(entry,"overrideColliderSize","覆盖碰撞体尺寸");
+                    if(entry.FindPropertyRelative("overrideColliderSize").boolValue)
+                        Field(entry,"colliderSize","物体库碰撞尺寸（米）");
+                }
+                EditorGUILayout.HelpBox("自定义物体的物体库碰撞尺寸会更新所有使用该定义的摆放项；单个摆放项可启用尺寸覆盖。碰撞尺寸可大于一格，但摆放占位仍按一个网格格子计算，请自行留出空间。家具可启用物体库碰撞尺寸覆盖。Prefab 自带碰撞体不会启用。",MessageType.None);
                 EditorGUI.indentLevel--;
             }
             bool changed=serializedObject.ApplyModifiedProperties();

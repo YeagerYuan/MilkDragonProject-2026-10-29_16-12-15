@@ -22,6 +22,7 @@ namespace UnderAvatar
         public string definitionId="";
         public string displayName="";
         public Vector3 customSize=new Vector3(1.5f,1.5f,1.5f);
+        public bool customSizeOverride;
         public bool IsHidingPlace => type==ItemType.Bed || type==ItemType.Furniture && hideable;
     }
 
@@ -99,8 +100,8 @@ namespace UnderAvatar
                     if (!cells.Add(new Vector2Int(item.gridX, item.gridZ)))
                         throw new ArgumentException("同一网格不能重复放置物品。");
                     if(item.type==ItemType.Custom && (!ValidSize(item.customSize.x) || !ValidSize(item.customSize.y) || !ValidSize(item.customSize.z) ||
-                        item.customSize.x>gridSize || item.customSize.z>gridSize || item.customSize.y>floorHeight))
-                        throw new ArgumentException("自定义物体尺寸必须为正数，且不能超出所在网格和层高。");
+                        item.customSize.y>floorHeight))
+                        throw new ArgumentException("自定义物体尺寸必须至少为 0.1 米，且高度不能超出层高。");
                     if (item.type == ItemType.QuestItem &&
                         (string.IsNullOrWhiteSpace(item.questId) || string.IsNullOrWhiteSpace(item.questDescription) || !quests.Add(item.questId)))
                         throw new ArgumentException("任务 ID 必须唯一，且任务说明不能为空。");

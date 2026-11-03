@@ -123,6 +123,8 @@ namespace UnderAvatar
             catch(Exception e)
             {
                 DisposeMatch();
+                if(World) World.gameObject.SetActive(false);
+                if(menuCamera) menuCamera.enabled=true;
                 StartupError="无法开始测试："+e.Message;
                 Report(StartupError);
                 Cursor.lockState=CursorLockMode.None; Cursor.visible=true;

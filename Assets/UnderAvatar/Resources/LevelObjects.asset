@@ -20,6 +20,8 @@ MonoBehaviour:
     wardrobe: 0
     prefab: {fileID: 0}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -32,6 +34,8 @@ MonoBehaviour:
     prefab: {fileID: 6476086503482487203, guid: 60e70ce00f5009a4588fe0d25dc0cc0e,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -44,6 +48,8 @@ MonoBehaviour:
     prefab: {fileID: 2608953080218922414, guid: 9dde1151330b8b64fbb7b81bedf2e62c,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -55,6 +61,8 @@ MonoBehaviour:
     wardrobe: 0
     prefab: {fileID: 0}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -67,6 +75,8 @@ MonoBehaviour:
     prefab: {fileID: 3980827063446245806, guid: 02de356e4f3f5f84bb95820c79a0a713,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0.375}
     rotation: {x: 0, y: 0, z: 0}
@@ -78,6 +88,8 @@ MonoBehaviour:
     wardrobe: 0
     prefab: {fileID: 0}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -90,10 +102,12 @@ MonoBehaviour:
     prefab: {fileID: 6682363844692477273, guid: 87d21ea6a709c874f8922b416e61a5f3,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
-    offset: {x: 0, y: 0, z: 0}
+    offset: {x: 0.7, y: 0, z: 1}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
+    scale: {x: 1.5, y: 1, z: 1.5}
   - id: builtin_wardrobe
     displayName: "\u8863\u67DC"
     builtIn: 1
@@ -102,10 +116,12 @@ MonoBehaviour:
     prefab: {fileID: 5917860385758902094, guid: dfdc71914d4523443b429bd1e042e089,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
-    scale: {x: 1, y: 1, z: 1}
+    scale: {x: 1.34, y: 1, z: 1}
   - id: task_example_apple
     displayName: "\u4EFB\u52A1\u793A\u4F8B \xB7 apple"
     builtIn: 0
@@ -114,6 +130,8 @@ MonoBehaviour:
     prefab: {fileID: 7095737614464535940, guid: d8a40adac07dfc64b8b66fe967ce2e87,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -126,6 +144,8 @@ MonoBehaviour:
     prefab: {fileID: 6131675048118166846, guid: 528f0499992def24b99e1a1ccfd5a76a,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -138,6 +158,8 @@ MonoBehaviour:
     prefab: {fileID: 8314121250455546647, guid: 2bf5b31a9ef12744997b7b66296d7bd3,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}
@@ -150,6 +172,259 @@ MonoBehaviour:
     prefab: {fileID: 8636706240975732640, guid: b22b7baa92bd72a4195f369acb546702,
       type: 3}
     customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: task_6479236095104e639bad77a17d127ce3
+    displayName: "\u4EFB\u52A1\u9053\u5177"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 7614022344465667579, guid: c50ade3f882f1804689d08a2570c8f2f,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: bbbbd0792429449a9632506cc449fe45
+    displayName: "\u4E66\u67DC"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 5803910932660889622, guid: 8bc083ec33813e14aabb5f2a0757ce0a,
+      type: 3}
+    customSize: {x: 2, y: 4, z: 1}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: c01cb99d8f2a45899a589f8f297b36ea
+    displayName: "\u61D2\u4EBA\u6C99\u53D1"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 919132149155446097, guid: f4157522e62e3c04b937d9310c965160, type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1.5, y: 1, z: 1}
+  - id: 3a61d4b1ecc849718c45ff16d2ca7d66
+    displayName: "\u6B63\u65B9\u5F62\u5730\u6BEF"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: f4b2525295f92a74599de7ac1a01fcaf,
+      type: 3}
+    customSize: {x: 3, y: 0.001, z: 3}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 3, y: 0, z: 3}
+  - id: 97f70a7c898d42ed8fe49fd760e6e141
+    displayName: "\u978B\u67DC"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 1124241095514953310, guid: d058a03960edc3b4ba880648410c355c,
+      type: 3}
+    customSize: {x: 2, y: 1.7, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 7da5416b6c244461b8a63301c15ac938
+    displayName: "\u5395\u6240"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: e6ca96d52d3dfd147846175d4e32c913,
+      type: 3}
+    customSize: {x: 2, y: 2, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: a07fcbbc547247feab8dd4ed5fbe4580
+    displayName: "\u6D74\u7F38"
+    builtIn: 0
+    type: 2
+    wardrobe: 1
+    prefab: {fileID: -6689036041284674117, guid: 1dad7b8952bf1ce478f5801b040d42d2,
+      type: 3}
+    customSize: {x: 2, y: 2, z: 1}
+    overrideColliderSize: 1
+    colliderSize: {x: 4, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: -0.15, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 2.5, y: 1, z: 2}
+  - id: e49575a5f0714f8e91a1da748b13c1be
+    displayName: "\u6C34\u6C60"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: 59bf20d0718f1bf468bd6d385ed0bbd3,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 7595c29af79242a29976c06ed1131b08
+    displayName: "\u6D17\u8863\u673A"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: 897db532e8ead284c9aa589d3db791c7,
+      type: 3}
+    customSize: {x: 1.5, y: 1.75, z: 1.6}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 6910b2ef1bb9460ab54417f8108db48e
+    displayName: "\u51B0\u7BB1"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 8128668236925612103, guid: 4ff25ea4a6875cd4ea8f6688239497c6,
+      type: 3}
+    customSize: {x: 1.5, y: 3, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: d6bdd0ea8aed4b9d88eb5a6ba5178e59
+    displayName: "\u70E4\u7BB1"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: c6d5d8775cdc3a6488b47d6ab54e23fb,
+      type: 3}
+    customSize: {x: 2, y: 1.7, z: 2}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 99284fd4542944a998c28e0a713e8ee9
+    displayName: "\u94C1\u67DC"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: 87342eddd7b824f4293a4c70d97b7d49,
+      type: 3}
+    customSize: {x: 2, y: 3.5, z: 1}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 07d89a1ecf8147a2867fa4cfd0a5abed
+    displayName: "\u6A71\u67DC"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -5787161762358356715, guid: f89cc897c55ab9e44aaefa64dbe6060e,
+      type: 3}
+    customSize: {x: 2.1, y: 4, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 560447d872b44f898b732a12eb39c3f0
+    displayName: "\u7535\u89C6\u67DC"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -4938801830598248467, guid: 0d614b80063e7244983a45eb2010bf1c,
+      type: 3}
+    customSize: {x: 4, y: 2.5, z: 1}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: b16d663e94c848138a0ebb9457119341
+    displayName: "\u6905\u5B50"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -6689036041284674117, guid: 2154ea8422012404882dd528bf7405d4,
+      type: 3}
+    customSize: {x: 1, y: 1, z: 1}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 06369368447f430abb6eb3784f4843a2
+    displayName: "\u6C99\u53D1"
+    builtIn: 0
+    type: 2
+    wardrobe: 1
+    prefab: {fileID: -6689036041284674117, guid: 977d390e3c2d38645935580439177488,
+      type: 3}
+    customSize: {x: 1.5, y: 1.5, z: 1.5}
+    overrideColliderSize: 1
+    colliderSize: {x: 3, y: 1, z: 1.5}
+    fitToPrototype: 0
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 0.7, z: 1}
+  - id: 8ed28aa95187451e964b0aef1136ea83
+    displayName: "\u667E\u8863\u6746"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: -2517496821563278632, guid: 399bd951e00785b44bb05fc2664e197d,
+      type: 3}
+    customSize: {x: 2, y: 2, z: 1.5}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
+    fitToPrototype: 1
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+  - id: 41083e7689854921a5f50ca2dc92ce85
+    displayName: "\u957F\u65B9\u5F62\u5730\u6BEF"
+    builtIn: 0
+    type: 7
+    wardrobe: 0
+    prefab: {fileID: 6667707873194956863, guid: 5e59c944a5aa2cb409425f067953092b,
+      type: 3}
+    customSize: {x: 1, y: 0.1, z: 2}
+    overrideColliderSize: 0
+    colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
     offset: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0}

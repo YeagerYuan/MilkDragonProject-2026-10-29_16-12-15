@@ -160,6 +160,11 @@ namespace UnderAvatar.Editor
         }
         public static void Clear()
         {
+            // Unity's Inspector can retain stale targets if a generated preview
+            // object remains selected while the preview is destroyed.
+            var selected=Selection.objects;
+            if(selected!=null && selected.Any(IsPreviewSelection))
+                Selection.objects=Array.Empty<UnityEngine.Object>();
             if(World)
             {
                 World.ReleaseMaterials();
@@ -172,6 +177,14 @@ namespace UnderAvatar.Editor
                     var world=orphan.GetComponent<BuildingWorld>(); if(world) world.ReleaseMaterials();
                     UnityEngine.Object.DestroyImmediate(orphan.gameObject);
                 }
+        }
+        static bool IsPreviewSelection(UnityEngine.Object value)
+        {
+            GameObject go=value as GameObject;
+            if(!go && value is Component component) go=component?component.gameObject:null;
+            if(!go) return false;
+            if(World && (go==World.gameObject || go.transform.IsChildOf(World.transform))) return true;
+            return go.GetComponentInParent<BuildingPreviewMarker>();
         }
         public static void Frame()
         {

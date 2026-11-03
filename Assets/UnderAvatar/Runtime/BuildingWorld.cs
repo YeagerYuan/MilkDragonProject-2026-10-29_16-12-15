@@ -82,7 +82,8 @@ namespace UnderAvatar
             go.transform.SetParent(floors[floor].transform,false);
             go.transform.localPosition = new Vector3(item.gridX*Data.gridSize,0,item.gridZ*Data.gridSize);
             var view = go.AddComponent<PlacedItemView>();
-            view.Initialize(item,floor,Data.gridSize,Data.floorHeight,Palette);
+            bool stackedAbove=item.type==ItemType.Stairs && Stairs.Any(st=>st.Floor==floor+1 && st.Item.gridX==item.gridX && st.Item.gridZ==item.gridZ && st.Item.rotationY==item.rotationY);
+            view.Initialize(item,floor,Data.gridSize,Data.floorHeight,Palette,false,stackedAbove);
             items.Add(view);
             return view;
         }
