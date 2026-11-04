@@ -41,6 +41,7 @@ namespace UnderAvatar.Editor
                 foreach(var p in data.taskProps) p.position=shift(p.position);
                 foreach(var c in data.taskClues) c.position=shift(c.position);
                 foreach(var task in data.tasks) task.regionPosition=shift(task.regionPosition);
+                foreach(var item in data.decorations) item.position=shift(item.position);
                 data.floorHeight=wallHeight; data.halfWidth=(widthCells-1)/2; data.halfDepth=(depthCells-1)/2;
             });
         }
@@ -70,6 +71,8 @@ namespace UnderAvatar.Editor
                 data.name=imported.name; data.floorHeight=imported.floorHeight; data.gridSize=imported.gridSize;
                 data.halfWidth=imported.halfWidth; data.halfDepth=imported.halfDepth; data.floors=imported.floors;
                 data.useTaskEditor=imported.useTaskEditor;data.tasks=imported.tasks;data.taskProps=imported.taskProps;data.taskClues=imported.taskClues;
+                data.decorations=imported.decorations;
+                data.requireLiveEvidence=imported.requireLiveEvidence;
             });
         }
         public static void Export(BuildingAsset asset,string path)

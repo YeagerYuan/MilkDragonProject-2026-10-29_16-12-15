@@ -110,11 +110,13 @@ namespace UnderAvatar
                 matchRoot.transform.SetParent(transform,false);
                 Session=matchRoot.AddComponent<MatchSession>();
                 Session.Initialize(this,spawn,networked,authority,training);
+                GameObject documentRoot=null;
                 if(enableDocuments && !training)
                 {
                     var documents=DocumentPropsPrefab;
-                    if(documents) Instantiate(documents,matchRoot.transform,false);
+                    if(documents) documentRoot=Instantiate(documents,matchRoot.transform,false);
                 }
+                if(!training) Session.RegisterDocumentTargets(documentRoot);
                 if(training) { Report("教学大厅：自由练习交互，Tab 打开准备菜单。");return; }
                 Report(Role==TestRole.Streamer
                     ? "主播测试：空格 / 左键拍翅；达到目标分数后，WASD 搜捕。Tab 调试，Esc 退出。"

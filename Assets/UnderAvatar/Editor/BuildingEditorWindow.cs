@@ -120,6 +120,7 @@ namespace UnderAvatar.Editor
                 DrawGameplaySettings(target);
                 DrawDocumentSettings(target);
                 if(GUILayout.Button("任务编辑器 / 拍摄与搬运任务",GUILayout.Height(34))) TaskEditorWindow.Open();
+                if(GUILayout.Button("自由摆放 / 柜顶装饰物",GUILayout.Height(34))) {painting=false;ClearGhost();FreePlacementWindow.Open();}
                 var taskRules=new SerializedObject(target);taskRules.Update();
                 var mistakes=taskRules.FindProperty("settings.maxScore");
                 mistakes.intValue=Mathf.Clamp(EditorGUILayout.IntField("狗仔失误上限",mistakes.intValue),1,999);
@@ -206,6 +207,8 @@ namespace UnderAvatar.Editor
                         var value=BuildingData.CreateDefault(); d.name=value.name; d.floors=value.floors; d.floorHeight=value.floorHeight;
                         d.gridSize=value.gridSize; d.halfWidth=value.halfWidth; d.halfDepth=value.halfDepth;
                         d.useTaskEditor=false;d.tasks.Clear();d.taskProps.Clear();d.taskClues.Clear();
+                        d.decorations.Clear();
+                        d.requireLiveEvidence=value.requireLiveEvidence;
                     }));
                 if(GUILayout.Button("另存为新关卡资源")) CreateAsset();
                 bool expand=EditorGUILayout.Toggle("测试时展开 Game 视图",PrototypePlayView.ExpandOnPlay);
@@ -362,7 +365,7 @@ namespace UnderAvatar.Editor
 
         void OnSceneGUI(SceneView view)
         {
-            if(TaskEditorWindow.EditingScene || PrefabStageUtility.GetCurrentPrefabStage()!=null) { ClearGhost();Tools.hidden=oldToolsHidden;return; }
+            if(FreePlacementWindow.EditingScene || TaskEditorWindow.EditingScene || PrefabStageUtility.GetCurrentPrefabStage()!=null) { ClearGhost();Tools.hidden=oldToolsHidden;return; }
             if(!Asset || !BuildingEditorPreview.World || EditorApplication.isPlayingOrWillChangePlaymode) { ClearGhost(); Tools.hidden=oldToolsHidden; return; }
             var e=Event.current;
             var selectedView=Selection.activeGameObject?Selection.activeGameObject.GetComponentInParent<PlacedItemView>():null;

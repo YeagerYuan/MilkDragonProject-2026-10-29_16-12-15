@@ -15,8 +15,11 @@ namespace UnderAvatar.Editor
         string error;
         readonly BoxBoundsHandle boundsHandle=new BoxBoundsHandle();
         BuildingAsset Asset => BuildingEditorPreview.Target?BuildingEditorPreview.Target.Building:null;
+        DocumentInteractable[] DocumentTargets => BuildingEditorPreview.Target && BuildingEditorPreview.Target.DocumentsEnabled && BuildingEditorPreview.Target.DocumentPropsPrefab
+            ?BuildingEditorPreview.Target.DocumentPropsPrefab.GetComponentsInChildren<DocumentInteractable>(true).Where(d=>d.PhotoTargetId!=null).ToArray():Array.Empty<DocumentInteractable>();
+        public static void EndSceneEditing() {if(instance) instance.index=-1;}
         [MenuItem("Tools/Under Avatar/Task Editor")]
-        public static void Open() {BuildingEditorPreview.Restore();var window=GetWindow<TaskEditorWindow>("任务编辑器");window.minSize=new Vector2(370,450);window.Show();}
+        public static void Open() {FreePlacementWindow.EndSceneEditing();BuildingEditorPreview.Restore();var window=GetWindow<TaskEditorWindow>("任务编辑器");window.minSize=new Vector2(370,450);window.Show();}
         void OnEnable() {instance=this;SceneView.duringSceneGui+=SceneGUI;Undo.undoRedoPerformed+=Repaint;}
         void OnDisable() {SceneView.duringSceneGui-=SceneGUI;Undo.undoRedoPerformed-=Repaint;}
         void Edit(string label,Action<BuildingData> action)
@@ -43,12 +46,16 @@ namespace UnderAvatar.Editor
                     if(GUILayout.Button("启用任务编辑并导入现有任务")) Edit("导入现有任务",d=>{d.tasks=InvestigationData.Tasks(d);d.useTaskEditor=true;});
                     return;
                 }
+                bool live=EditorGUILayout.Toggle("额外要求 3 场直播证据",Asset.Data.requireLiveEvidence);
+                if(live!=Asset.Data.requireLiveEvidence) Edit("修改直播证据要求",d=>d.requireLiveEvidence=live);
+                EditorGUILayout.HelpBox(live?"除下方任务外，还必须在三个不同直播场次各上传一张主播照片。":"只需完成下方配置的任务；不会添加额外直播证据任务。",MessageType.None);
                 int next=GUILayout.Toolbar(tab,new[]{"任务","道具","线索"});if(next!=tab) {tab=next;index=-1;}
                 scroll=EditorGUILayout.BeginScrollView(scroll);
                 var names=tab==0?Asset.Data.tasks.Select(t=>t.title).ToArray():tab==1?Asset.Data.taskProps.Select(p=>p.name).ToArray():Asset.Data.taskClues.Select(c=>c.title).ToArray();
-                for(int i=0;i<names.Length;i++) if(GUILayout.Toggle(index==i,names[i],"Button")) index=i;
+                for(int i=0;i<names.Length;i++) if(GUILayout.Toggle(index==i,names[i],"Button")) {index=i;FreePlacementWindow.EndSceneEditing();}
                 if(GUILayout.Button("＋ 新增"+(tab==0?"任务":tab==1?"道具":"线索")))
                 {
+                    FreePlacementWindow.EndSceneEditing();
                     Vector3 position=Spawn();
                     Edit("新增任务内容",d=>
                     {
@@ -71,7 +78,7 @@ namespace UnderAvatar.Editor
                             if(tab==1)
                             {
                                 string id=d.taskProps[index].id;
-                                if(d.tasks.Any(t=>t.targetId==id)) throw new ArgumentException("请先解除任务对这个道具的目标绑定。");
+                                if(d.tasks.Any(t=>t.PhotoTargets.Contains(id))) throw new ArgumentException("请先解除任务对这个道具的目标绑定。");
                                 d.taskProps.RemoveAt(index);
                             }
                             if(tab==2) {string id=d.taskClues[index].id;d.taskClues.RemoveAt(index);foreach(var t in d.tasks) t.clueIds?.Remove(id);}
@@ -92,15 +99,38 @@ namespace UnderAvatar.Editor
             string title=EditorGUILayout.DelayedTextField("任务名称",t.title);
             var kind=(InvestigationKind)EditorGUILayout.Popup("任务类型",(int)t.kind,new[]{"拍摄类","搬运后拍摄"});
             EditorGUILayout.LabelField("手机任务描述");string description=EditorGUILayout.TextArea(t.description,GUILayout.MinHeight(70));
-            var ids=new[]{""}.Concat(Asset.Data.taskProps.Select(p=>p.id)).Concat(Asset.Data.floors.SelectMany(f=>f.items).Where(p=>p.type==ItemType.QuestItem).Select(p=>p.id)).ToArray();
-            var labels=new[]{"尚未绑定"}.Concat(Asset.Data.taskProps.Select(p=>p.name)).Concat(Asset.Data.floors.SelectMany(f=>f.items).Where(p=>p.type==ItemType.QuestItem).Select(p=>string.IsNullOrEmpty(p.displayName)?p.questDescription:p.displayName)).ToArray();
+            var documents=DocumentTargets;
+            var ids=new[]{"",InvestigationData.StreamerTarget,InvestigationData.ComputerTarget}.Concat(Asset.Data.taskProps.Select(p=>p.id)).Concat(Asset.Data.floors.SelectMany(f=>f.items).Where(p=>p.type==ItemType.QuestItem).Select(p=>p.id)).Concat(documents.Select(d=>d.PhotoTargetId)).ToArray();
+            var labels=new[]{"尚未绑定","主播（跟随角色）","主播电脑"}.Concat(Asset.Data.taskProps.Select(p=>p.name)).Concat(Asset.Data.floors.SelectMany(f=>f.items).Where(p=>p.type==ItemType.QuestItem).Select(p=>string.IsNullOrEmpty(p.displayName)?p.questDescription:p.displayName)).Concat(documents.Select(d=>"可阅读文档："+d.DisplayName)).ToArray();
+            var missing=t.PhotoTargets.Where(id=>!string.IsNullOrEmpty(id) && !ids.Contains(id)).Distinct().ToArray();
+            ids=ids.Concat(missing).ToArray();labels=labels.Concat(missing.Select(id=>"缺失目标："+id)).ToArray();
             int target=EditorGUILayout.Popup("正确目标物体",Mathf.Max(0,Array.IndexOf(ids,t.targetId)),labels);
+            var additional=new System.Collections.Generic.List<string>(t.additionalTargetIds??new System.Collections.Generic.List<string>());
+            for(int i=0;i<additional.Count;i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                int selected=EditorGUILayout.Popup("同张照片还需包含",Mathf.Max(0,Array.IndexOf(ids,additional[i])),labels);
+                additional[i]=ids[selected];
+                bool remove=GUILayout.Button("移除",GUILayout.Width(45));
+                EditorGUILayout.EndHorizontal();
+                if(remove) {additional.RemoveAt(i);GUI.changed=true;break;}
+            }
+            if(additional.Count<10 && GUILayout.Button("＋ 添加同张照片目标"))
+            {
+                var available=ids.Skip(1).FirstOrDefault(id=>id!=ids[target] && !additional.Contains(id));
+                if(available!=null) {additional.Add(available);GUI.changed=true;}
+            }
+            if(ids[target]==InvestigationData.StreamerTarget || additional.Contains(InvestigationData.StreamerTarget))
+                EditorGUILayout.HelpBox("主播目标使用角色当前的拍照点，随角色移动；所有目标必须在按下快门时同时入镜。",MessageType.Info);
+            if(InvestigationData.IsDocumentTarget(ids[target]) || additional.Any(InvestigationData.IsDocumentTarget))
+                EditorGUILayout.HelpBox("直接拍摄文档布置中的原物体，不会生成副本；阅读界面打开时不能拍照。",MessageType.Info);
             Vector3 position=t.regionPosition,size=t.regionSize;float yaw=t.regionYaw;
             if(kind==InvestigationKind.PlaceAndPhotograph)
             {
                 position=EditorGUILayout.Vector3Field("目标区域中心",position);size=EditorGUILayout.Vector3Field("目标区域尺寸",size);yaw=EditorGUILayout.FloatField("区域旋转 Y",yaw);
             }
-            if(EditorGUI.EndChangeCheck()) Edit("修改任务",d=>{var v=d.tasks[index];v.title=title;v.description=description;v.kind=kind;v.targetId=ids[target];v.regionPosition=position;v.regionSize=size;v.regionYaw=yaw;});
+            if(EditorGUI.EndChangeCheck()) Edit("修改任务",d=>{var v=d.tasks[index];v.title=title;v.description=description;v.kind=kind;v.targetId=ids[target];v.additionalTargetIds=additional;v.regionPosition=position;v.regionSize=size;v.regionYaw=yaw;});
+            EditorGUILayout.HelpBox("添加可阅读文档目标：编辑文档布置，在文档的 DocumentInteractable 上填写唯一 Photo Target Id，保存后即可在上方选择。文档须在关卡中启用。",MessageType.None);
             EditorGUILayout.LabelField("关联线索（仅编辑辅助，不强制阅读）",EditorStyles.boldLabel);
             foreach(var c in Asset.Data.taskClues)
             {
@@ -142,6 +172,14 @@ namespace UnderAvatar.Editor
             if(tab==0 && index<Asset.Data.tasks.Count)
             {
                 var t=Asset.Data.tasks[index];if(t.kind==InvestigationKind.PlaceAndPhotograph) return t.regionPosition;
+                if(InvestigationData.IsDocumentTarget(t.targetId) && BuildingEditorPreview.Documents)
+                {
+                    var document=BuildingEditorPreview.Documents.GetComponentsInChildren<DocumentInteractable>(true).FirstOrDefault(d=>d.PhotoTargetId==t.targetId);
+                    if(document) return document.PhotoPoint;
+                }
+                if(t.targetId==InvestigationData.StreamerTarget || t.targetId==InvestigationData.ComputerTarget)
+                    foreach(var floor in Asset.Data.floors)
+                    {var pc=floor.items.Find(i=>i.type==ItemType.StreamerPC);if(pc!=null) return Asset.Data.Position(floor.floorIndex,pc);}
                 var p=Asset.Data.taskProps.Find(v=>v.id==t.targetId);if(p!=null) return p.position;
                 foreach(var f in Asset.Data.floors) {var i=f.items.Find(v=>v.id==t.targetId);if(i!=null) return Asset.Data.Position(f.floorIndex,i);}
             }

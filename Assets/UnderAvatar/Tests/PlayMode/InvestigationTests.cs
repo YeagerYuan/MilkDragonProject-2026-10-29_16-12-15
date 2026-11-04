@@ -14,6 +14,7 @@ namespace UnderAvatar.Tests
         MatchSession match;
         TaskPropData prop;
         InvestigationTaskData task;
+        DocumentData documentData;
         void Start(InvestigationKind kind=InvestigationKind.Photograph,int mistakes=3,bool network=false)
         {
             var data=BuildingData.CreateDefault();data.useTaskEditor=true;
@@ -30,8 +31,100 @@ namespace UnderAvatar.Tests
             Aim();
         }
         void Aim() {match.Reporter.SetLookAt(match.TaskWorld.Props.Single().PhotoPoint);Physics.SyncTransforms();}
+        [UnityTest] public IEnumerator AuthoredTasksCanWinWithoutTheOptionalLiveObjective()
+        {
+            Start();yield return null;match.World.Data.requireLiveEvidence=false;
+            Assert.That(match.RequiresLiveEvidence,Is.False);Assert.That(match.StreamerPhotoAvailable,Is.False);
+            match.SelectTask(InvestigationData.LiveTask);Assert.That(match.SelectedTaskId,Is.EqualTo(task.id));
+            match.ApplyPhoneCommand(new PlayerCommand{taskId=InvestigationData.LiveTask});Assert.That(match.SelectedTaskId,Is.EqualTo(task.id));
+            match.QueuePhoneAction(InvestigationData.LiveTask);Assert.That(match.SelectedTaskId,Is.EqualTo(task.id));
+            Aim();match.TakePhoto();Assert.That(match.PendingPhoto.objectCorrect,Is.True);
+            match.UploadPhoto(match.PendingPhoto.id);Assert.That(match.Finished,Is.True);
+            Assert.That(match.StreamerPhotos,Is.Zero);Assert.That(match.Result,Does.Contain("狗仔获胜"));
+        }
+        [UnityTest] public IEnumerator ReadableDocumentIsPhotographableOnlyOutsideReadingAndUploadCompletesTask()
+        {
+            Start();yield return null;
+            match.Streamer.Controller.enabled=false;
+            var documents=new GameObject("ReadableTaskDocuments");documents.transform.SetParent(root.transform,false);
+            var page=GameObject.CreatePrimitive(PrimitiveType.Cube);page.transform.SetParent(documents.transform,false);
+            page.layer=PrototypeLayers.Get("UA_Target");page.transform.position=new Vector3(100,1.3f,100);page.transform.localScale=new Vector3(1,1,.03f);
+            var doc=page.AddComponent<DocumentInteractable>();JsonUtility.FromJsonOverwrite("{\"photoTargetId\":\"test_document\"}",doc);
+            documentData=ScriptableObject.CreateInstance<DocumentData>();documentData.text="Readable task document";doc.Initialize(documentData);
+            match.World.Data.tasks.Single().targetId=doc.PhotoTargetId;match.RegisterDocumentTargets(documents);
+            match.Reporter.Teleport(new Vector3(100,0,97));match.Reporter.SetLookAt(doc.PhotoPoint);Physics.SyncTransforms();
+            Assert.That(match.TargetInPhoto(doc.PhotoTargetId),Is.True);
+            Assert.That(doc.enabled,Is.True,"Registering a photo target must preserve document reading.");
+            var reader=DocumentManager.Instance;reader.OpenDocument(documentData,match);yield return null;
+            Assert.That(reader.IsOpen,Is.True);Assert.That(match.TargetInPhoto(doc.PhotoTargetId),Is.False);
+            int pulses=match.Pulses.Count;match.TakePhoto();Assert.That(match.PendingPhoto,Is.Null);Assert.That(match.Pulses.Count,Is.EqualTo(pulses));
+            reader.CloseDocument();match.TakePhoto();Assert.That(match.PendingPhoto,Is.Null,"The closing click must not take a photo.");yield return null;
+            var blocker=GameObject.CreatePrimitive(PrimitiveType.Cube);blocker.transform.SetParent(documents.transform,false);
+            blocker.layer=PrototypeLayers.Get("UA_Wall");blocker.transform.position=new Vector3(100,1.3f,98.5f);blocker.transform.localScale=new Vector3(2,3,.2f);
+            Physics.SyncTransforms();Assert.That(match.TargetInPhoto(doc.PhotoTargetId),Is.False);
+            Object.Destroy(blocker);yield return null;
+            match.TakePhoto();Assert.That(match.PendingPhoto.objectCorrect,Is.True);
+            match.UploadPhoto(match.PendingPhoto.id);Assert.That(match.Quests.Single().Complete,Is.True);
+            Assert.That(match.Score,Is.EqualTo(3));
+        }
+        [UnityTest] public IEnumerator MissingAndDuplicateDocumentTargetsAreRejected()
+        {
+            Start();yield return null;
+            match.World.Data.tasks.Single().targetId="document:missing";
+            Assert.Throws<System.InvalidOperationException>(()=>match.RegisterDocumentTargets(null));
+            var documents=new GameObject("DuplicateDocuments");documents.transform.SetParent(root.transform,false);
+            for(int i=0;i<2;i++)
+            {
+                var page=new GameObject("Page");page.transform.SetParent(documents.transform,false);
+                var doc=page.AddComponent<DocumentInteractable>();JsonUtility.FromJsonOverwrite("{\"photoTargetId\":\"missing\"}",doc);
+            }
+            Assert.Throws<System.InvalidOperationException>(()=>match.RegisterDocumentTargets(documents));
+        }
+        [UnityTest] public IEnumerator StreamerAndComputerMustShareTheShotAndEvidenceSurvivesMovement()
+        {
+            Start();yield return null;
+            var liveTask=match.World.Data.tasks.Single();
+            liveTask.targetId=InvestigationData.StreamerTarget;
+            liveTask.additionalTargetIds.Add(InvestigationData.ComputerTarget);
+            match.Streamer.Controller.enabled=false;
+            var pc=match.Streamer.Computer;
+            // Isolate framing and obstruction from the authored map's walls and furnishings.
+            pc.transform.position=new Vector3(100,0,100);
+            match.Streamer.transform.position=new Vector3(101,0,100);
+            match.Reporter.Teleport(new Vector3(100,0,95));
+            match.Reporter.SetLookAt(match.TaskPhotoPoint(liveTask).Value);Physics.SyncTransforms();
+            Assert.That(match.TargetInPhoto(InvestigationData.StreamerTarget),Is.True);
+            Assert.That(match.TargetInPhoto(InvestigationData.ComputerTarget),Is.True);
+            Assert.That(match.TaskInPhoto(liveTask),Is.True);
+            match.Streamer.transform.position+=Vector3.right*20;Physics.SyncTransforms();
+            Assert.That(match.TaskInPhoto(liveTask),Is.False,"The computer alone must not satisfy task 4.");
+            var streamerOnly=new InvestigationTaskData{targetId=InvestigationData.StreamerTarget};
+            match.Reporter.SetLookAt(match.Streamer.PhotoPoint);Physics.SyncTransforms();
+            Assert.That(match.TaskInPhoto(streamerOnly),Is.False,"Range is still enforced.");
+            match.Reporter.Teleport(new Vector3(121,0,95));
+            match.Reporter.SetLookAt(match.Streamer.PhotoPoint);Physics.SyncTransforms();
+            Assert.That(match.TaskInPhoto(streamerOnly),Is.True);
+            Assert.That(match.TaskInPhoto(liveTask),Is.False,"The streamer alone must not satisfy task 4.");
+            match.Reporter.Teleport(new Vector3(100,0,95));
+            match.Streamer.transform.position=new Vector3(99,0,100);
+            match.Reporter.SetLookAt(match.Streamer.PhotoPoint);Physics.SyncTransforms();
+            Assert.That(match.TaskInPhoto(streamerOnly),Is.True,"Task 5 follows the same point after movement.");
+            match.Reporter.SetLookAt(match.TaskPhotoPoint(liveTask).Value);Physics.SyncTransforms();
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);wall.transform.SetParent(root.transform,false);
+            wall.layer=PrototypeLayers.Get("UA_Wall");wall.transform.position=new Vector3(100,1.2f,98);wall.transform.localScale=new Vector3(4,3,.2f);
+            Physics.SyncTransforms();Assert.That(match.TaskInPhoto(liveTask),Is.False);
+            wall.layer=PrototypeLayers.Get("UA_Target");Physics.SyncTransforms();
+            Assert.That(match.TaskInPhoto(streamerOnly),Is.False,"Task-prop colliders must also obscure the streamer.");
+            Object.Destroy(wall);yield return null;
+            match.TakePhoto();Assert.That(match.PendingPhoto.objectCorrect,Is.True);
+            match.Streamer.transform.position+=Vector3.right*20;Physics.SyncTransforms();
+            Assert.That(match.TaskInPhoto(liveTask),Is.False);
+            match.UploadPhoto(match.PendingPhoto.id);
+            Assert.That(match.Quests.Single().Complete,Is.True,"Movement after the shutter must not invalidate evidence.");
+            Assert.That(match.StreamerPhotos,Is.Zero,"Authored streamer tasks do not consume live-photo slots.");
+        }
         [UnityTearDown] public IEnumerator Cleanup()
-        {if(root) Object.Destroy(root);if(guestRoot) Object.Destroy(guestRoot);if(building) Object.Destroy(building);yield return null;}
+        {if(root) Object.Destroy(root);if(guestRoot) Object.Destroy(guestRoot);if(building) Object.Destroy(building);if(documentData) Object.Destroy(documentData);yield return null;}
         [UnityTest] public IEnumerator ReadingIsOptionalAndOnlyUploadCompletesSelectedTask()
         {
             Start();yield return null;

@@ -15,12 +15,14 @@ MonoBehaviour:
   building:
     version: 1
     useTaskEditor: 1
+    requireLiveEvidence: 0
     tasks:
     - id: item_medicine
       title: "\u62CD\u6444\u4E3B\u64AD\u72D7\u72D7"
       description: "\u6211\u5F88\u4E45\u90FD\u6CA1\u770B\u5230\u4E3B\u64AD\u7684\u72D7\u72D7\u4E86\uFF0C\u4F60\u80FD\u62CD\u5F20\u5B83\u73A9\u800D\u7684\u7167\u7247\u5417\uFF1F"
-      targetId: 6479236095104e639bad77a17d127ce3
+      targetId: document:dog_photo
       kind: 0
+      additionalTargetIds: []
       clueIds: []
       regionPosition: {x: 0, y: 0.4, z: 0}
       regionSize: {x: 2, y: 0.8, z: 2}
@@ -28,17 +30,19 @@ MonoBehaviour:
     - id: item_contract
       title: "\u62CD\u6444\u4E3B\u64AD\u7231\u5403\u7684\u98DF\u7269"
       description: "\u542C\u8BF4\u4E3B\u64AD\u5BF9\u5403\u7684\u5F88\u6311\u5254\u3002\u6211\u60F3\u77E5\u9053\u4ED6\u5E73\u65F6\u5230\u5E95\u5403\u4EC0\u4E48\uFF0C\u5C24\u5176\u662F\u4ED6\u6700\u559C\u6B22\u7684\u98DF\u7269\u3002"
-      targetId: 
+      targetId: 338ec9aaa548424fa0a8a9db0d6d8714
       kind: 0
+      additionalTargetIds: []
       clueIds: []
       regionPosition: {x: 0, y: 0.4, z: 0}
       regionSize: {x: 2, y: 0.8, z: 2}
       regionYaw: 0
     - id: c23a34a817284331be1d9cd55895b4e3
       title: "\u62CD\u6444\u4E3B\u64AD\u7684\u8863\u670D"
-      description: "\u4E3B\u64AD\u4ECE\u6765\u6CA1\u6709\u516C\u5F00\u8FC7\u81EA\u5DF1\u7684\u771F\u5B9E\u8EAB\u6750\u3002\u6211\u8FD8\u60F3\u77E5\u9053\u4ED6\u5E73\u65F6\u7A7F\u4EC0\u4E48\u5C3A\u5BF8\u7684\u8863\u670D\uFF0C\u6709\u6CA1\u6709\u4EC0\u4E48\u72EC\u7279\u6B3E\u5F0F\uFF1F"
-      targetId: 
+      description: "\u4E3B\u64AD\u4ECE\u6765\u6CA1\u6709\u516C\u5F00\u8FC7\u81EA\u5DF1\u7684\u771F\u5B9E\u8EAB\u6750\uFF0C\u6211\u60F3\u77E5\u9053\u4ED6\u5E73\u65F6\u7A7F\u4EC0\u4E48\u5C3A\u5BF8\u7684\u8863\u670D\u3002"
+      targetId: 7326e77228ac4334a69e786e0295e3a5
       kind: 0
+      additionalTargetIds: []
       clueIds: []
       regionPosition: {x: -7.5942326, y: 0.44, z: -4.4611034}
       regionSize: {x: 2, y: 0.8, z: 2}
@@ -46,8 +50,10 @@ MonoBehaviour:
     - id: 26fe5755df664b7ab37b3be12d54893e
       title: "\u62CD\u4E3B\u64AD\u4FA7\u8138"
       description: "\u6211\u8981\u4E00\u5F20\u4E3B\u64AD\u6253\u6E38\u620F\u4FA7\u8138\u7684\u5E05\u7167\uFF01\u4F60\u5C31\u5077\u5077\u62CD\u4E00\u5F20\uFF0C\u522B\u6253\u6270\u5230\u4ED6\u54E6\u3002"
-      targetId: 
+      targetId: __streamer
       kind: 0
+      additionalTargetIds:
+      - __computer
       clueIds: []
       regionPosition: {x: -7.5942326, y: 0.44, z: -4.4611034}
       regionSize: {x: 2, y: 0.8, z: 2}
@@ -55,21 +61,51 @@ MonoBehaviour:
     - id: e216ccbe74fe48acb5f0e3fcf7c826f4
       title: "\u62CD\u6444\u4E3B\u64AD\u6B63\u8138"
       description: "\u4E0D\u591F\u4E0D\u591F\uFF0C\u6211\u8981\u77E5\u9053\u4E3B\u64AD\u771F\u5B9E\u7684\u957F\u76F8\uFF01\u6211\u4E0D\u60F3\u53EA\u770B\u865A\u62DF\u5F62\u8C61\uFF01"
-      targetId: 
+      targetId: __streamer
       kind: 0
+      additionalTargetIds: []
       clueIds: []
       regionPosition: {x: -7.5942326, y: 0.44, z: -4.4611034}
       regionSize: {x: 2, y: 0.8, z: 2}
       regionYaw: 0
     taskProps:
-    - id: 6479236095104e639bad77a17d127ce3
-      name: "\u5C0F\u72D7\u7167\u7247"
-      definitionId: task_6479236095104e639bad77a17d127ce3
-      position: {x: -6.845, y: -0.19, z: -5.35}
-      rotation: {x: 25, y: 0, z: 0}
-      size: {x: 2.13, y: 2.45, z: 0.33}
-      portable: 1
+    - id: 338ec9aaa548424fa0a8a9db0d6d8714
+      name: "\u8840\u6C7D\u6C34\u7F50"
+      definitionId: task_338ec9aaa548424fa0a8a9db0d6d8714
+      position: {x: 3.5232146, y: 0.81562626, z: -3.862857}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 0.53, y: 0.41, z: 0.35}
+      portable: 0
+    - id: 7326e77228ac4334a69e786e0295e3a5
+      name: "\u667E\u8863\u67B6"
+      definitionId: task_7326e77228ac4334a69e786e0295e3a5
+      position: {x: 5.893402, y: 3.99, z: -0.9203957}
+      rotation: {x: 0, y: 270, z: 0}
+      size: {x: 3, y: 3, z: 3}
+      portable: 0
     taskClues: []
+    decorations:
+    - id: fea2c58e89d049738bb194ba29d8bdb6
+      name: Meat
+      definitionId: d447a11d29894416898d1fe5fbfa0be2
+      position: {x: 4.5301304, y: 1.3340628, z: -8.340879}
+      rotation: {x: 90, y: 302.5181, z: 0}
+      size: {x: 1, y: 1, z: 1}
+      solid: 1
+    - id: b68c8fd6c7ce44b3a5d468c11158896d
+      name: Meat
+      definitionId: d447a11d29894416898d1fe5fbfa0be2
+      position: {x: 12.5, y: 1.3580728, z: -8.1}
+      rotation: {x: 270, y: 110.59998, z: 0}
+      size: {x: 1, y: 1, z: 1}
+      solid: 1
+    - id: b3deb580870a4157a851c4e63d625660
+      name: WelcomeTapestry
+      definitionId: d5f7f98aaf6b4205909984312782a3d2
+      position: {x: 9.06, y: 0.94, z: 3.05}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 2.28, y: 2.47, z: 1}
+      solid: 1
     name: "\u4E3B\u64AD\u7684\u5B85\u90B8"
     floorHeight: 4
     gridSize: 2
@@ -2036,30 +2072,6 @@ MonoBehaviour:
         displayName: "\u6D74\u7F38"
         customSize: {x: 2, y: 2, z: 1}
         customSizeOverride: 0
-      - id: cc2f57033f7a41cfb286e5d7b699fdc1
-        type: 7
-        gridX: 3
-        gridZ: -2
-        rotationY: 90
-        questId: 
-        questDescription: 
-        hideable: 0
-        definitionId: 8ed28aa95187451e964b0aef1136ea83
-        displayName: "\u667E\u8863\u6746"
-        customSize: {x: 1.5, y: 1.5, z: 1.5}
-        customSizeOverride: 0
-      - id: 835f106055904f4b9f4db5ba77d57349
-        type: 7
-        gridX: 3
-        gridZ: -1
-        rotationY: 90
-        questId: 
-        questDescription: 
-        hideable: 0
-        definitionId: 8ed28aa95187451e964b0aef1136ea83
-        displayName: "\u667E\u8863\u6746"
-        customSize: {x: 2, y: 2, z: 1.5}
-        customSizeOverride: 0
       - id: 7018a116e4984b698329e683f03f1396
         type: 2
         gridX: 4
@@ -3321,18 +3333,6 @@ MonoBehaviour:
         definitionId: 
         displayName: 
         customSize: {x: 1.5, y: 1.5, z: 1.5}
-        customSizeOverride: 0
-      - id: fb86ba3af74249619b899c7330bfb7a0
-        type: 7
-        gridX: 2
-        gridZ: -3
-        rotationY: 270
-        questId: 
-        questDescription: 
-        hideable: 0
-        definitionId: b16d663e94c848138a0ebb9457119341
-        displayName: "\u6905\u5B50"
-        customSize: {x: 1, y: 1, z: 1}
         customSizeOverride: 0
     - floorIndex: 3
       items: []

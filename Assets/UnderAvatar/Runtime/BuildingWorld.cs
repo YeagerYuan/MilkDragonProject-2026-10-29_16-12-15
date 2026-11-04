@@ -10,6 +10,8 @@ namespace UnderAvatar
         public IReadOnlyList<PlacedItemView> Items => items;
         public PrototypeVisuals Palette { get; private set; }
         readonly List<PlacedItemView> items = new List<PlacedItemView>();
+        readonly List<FreePlacedObjectView> decorations=new List<FreePlacedObjectView>();
+        public IReadOnlyList<FreePlacedObjectView> Decorations => decorations;
         readonly List<GameObject> floors = new List<GameObject>();
         readonly List<List<Renderer>> slabs = new List<List<Renderer>>();
         readonly Dictionary<Renderer,Material[]> slabMaterials=new Dictionary<Renderer,Material[]>();
@@ -29,7 +31,7 @@ namespace UnderAvatar
             foreach(var floor in floors) { floor.SetActive(false); PrototypeVisuals.Release(floor); }
             if(topCeiling) { topCeiling.SetActive(false);PrototypeVisuals.Release(topCeiling); }
             Palette.ClearSurfaceMeshes();
-            floors.Clear(); slabs.Clear(); grids.Clear(); items.Clear();slabMaterials.Clear();
+            floors.Clear(); slabs.Clear(); grids.Clear(); items.Clear();slabMaterials.Clear();decorations.Clear();
             Data = data;
             Stairs=StairLayout.All(data);
             foreach(var floor in data.floors)
@@ -68,6 +70,14 @@ namespace UnderAvatar
                     Palette.Box(grid.transform,"GridZ",new Vector3(0,.015f,(z-.5f)*data.gridSize),
                         new Vector3((data.halfWidth*2+1)*data.gridSize,.018f,.018f),new Color(.33f,.40f,.46f),"UA_Props",false);
                 foreach(var item in floor.items) CreateView(floor.floorIndex,item);
+            }
+            foreach(var decoration in data.decorations)
+            {
+                int floor=Mathf.Clamp(Mathf.FloorToInt(decoration.position.y/data.floorHeight),0,floors.Count-1);
+                var go=new GameObject();go.transform.SetParent(floors[floor].transform,false);
+                go.transform.localPosition=decoration.position-Vector3.up*floor*data.floorHeight;
+                go.transform.localRotation=Quaternion.Euler(decoration.rotation);
+                var view=go.AddComponent<FreePlacedObjectView>();view.Initialize(decoration,floor);decorations.Add(view);
             }
             topCeiling=Palette.SurfaceBox(transform,"TopCeiling",new Vector3(0,data.floors.Count*data.floorHeight-.12f,0),
                 new Vector3((data.halfWidth*2+1)*data.gridSize,.24f,(data.halfDepth*2+1)*data.gridSize),new Color(.55f,.55f,.52f),

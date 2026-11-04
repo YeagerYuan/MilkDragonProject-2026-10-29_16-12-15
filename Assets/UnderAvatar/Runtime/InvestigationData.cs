@@ -10,6 +10,8 @@ namespace UnderAvatar
     {
         public string id=Guid.NewGuid().ToString("N"),title="新任务",description="阅读线索，找到正确的物体并拍照上传。",targetId="";
         public InvestigationKind kind;
+        public List<string> additionalTargetIds=new List<string>();
+        public IEnumerable<string> PhotoTargets => new[]{targetId}.Concat(additionalTargetIds??Enumerable.Empty<string>());
         public List<string> clueIds=new List<string>();
         public Vector3 regionPosition=new Vector3(0,.4f,0),regionSize=new Vector3(2,.8f,2);
         public float regionYaw;
@@ -40,6 +42,10 @@ namespace UnderAvatar
     public static class InvestigationData
     {
         public const string LiveTask="__live";
+        public const string StreamerTarget="__streamer";
+        public const string ComputerTarget="__computer";
+        public const string DocumentTargetPrefix="document:";
+        public static bool IsDocumentTarget(string id) => id!=null && id.StartsWith(DocumentTargetPrefix,StringComparison.Ordinal) && !string.IsNullOrWhiteSpace(id.Substring(DocumentTargetPrefix.Length));
         public static List<InvestigationTaskData> Tasks(BuildingData map) => map.useTaskEditor?map.tasks:
             map.floors.SelectMany(f=>f.items).Where(i=>i.type==ItemType.QuestItem).Select(i=>new InvestigationTaskData
             {id=i.questId,title=string.IsNullOrWhiteSpace(i.displayName)?i.questDescription:i.displayName,description=i.questDescription,targetId=i.id}).ToList();
@@ -52,6 +58,7 @@ namespace UnderAvatar
             var ids=new HashSet<string>(map.floors.SelectMany(f=>f.items).Select(i=>i.id));
             foreach(var p in map.taskProps)
                 if(p==null || string.IsNullOrWhiteSpace(p.id) || !ids.Add(p.id) || !Vector(p.position,1000) || !Vector(p.rotation,36000) || !Size(p.size,3)) throw new ArgumentException("任务道具 ID、位置或尺寸无效（尺寸须为 0.02–3 米）。");
+            ids.Add(StreamerTarget);ids.Add(ComputerTarget);
             var clues=new HashSet<string>();
             foreach(var c in map.taskClues)
                 if(c==null || string.IsNullOrWhiteSpace(c.id) || !clues.Add(c.id) || !Vector(c.position,1000) || !Vector(c.rotation,36000) || (c.text?.Length??0)>16000) throw new ArgumentException("线索 ID、位置或文本无效。");
@@ -60,7 +67,10 @@ namespace UnderAvatar
             {
                 if(t==null || string.IsNullOrWhiteSpace(t.id) || t.id==LiveTask || !tasks.Add(t.id) || string.IsNullOrWhiteSpace(t.title) || string.IsNullOrWhiteSpace(t.description) || !Enum.IsDefined(typeof(InvestigationKind),t.kind)) throw new ArgumentException("任务 ID、名称、描述或类型无效。");
                 // An empty target is a valid draft; starting a match rejects drafts.
-                if(!string.IsNullOrEmpty(t.targetId) && !ids.Contains(t.targetId)) throw new ArgumentException("任务引用的目标物体不存在，请先解除任务绑定。");
+                if(!string.IsNullOrEmpty(t.targetId) && !ids.Contains(t.targetId) && !IsDocumentTarget(t.targetId)) throw new ArgumentException("任务引用的目标物体不存在，请先解除任务绑定。");
+                if(t.additionalTargetIds==null) t.additionalTargetIds=new List<string>();
+                if(t.additionalTargetIds.Count>10 || t.additionalTargetIds.Any(id=>string.IsNullOrEmpty(id) || !ids.Contains(id) && !IsDocumentTarget(id)) || t.PhotoTargets.Distinct().Count()!=t.additionalTargetIds.Count+1)
+                    throw new ArgumentException("附加拍摄目标须存在且不能重复，最多 10 个。");
                 if(!Vector(t.regionPosition,1000) || !Size(t.regionSize,100) || !Finite(t.regionYaw) || (t.clueIds!=null && t.clueIds.Any(c=>!clues.Contains(c)))) throw new ArgumentException("任务区域或线索关联无效。");
                 if(t.kind==InvestigationKind.PlaceAndPhotograph && !string.IsNullOrEmpty(t.targetId) && !map.taskProps.Any(p=>p.id==t.targetId && p.portable)) throw new ArgumentException("搬运任务须绑定可拿取的任务道具。");
             }

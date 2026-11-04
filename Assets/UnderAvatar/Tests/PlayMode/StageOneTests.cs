@@ -59,6 +59,37 @@ namespace UnderAvatar.Tests
         }
 
         [UnityTest]
+        public IEnumerator DecorationsLoadAboveFurnitureWithoutGridOccupancyOrTaskBehaviour()
+        {
+            var catalog=LevelObjectCatalog.Default;Assert.That(catalog,Is.Not.Null);
+            var model=GameObject.CreatePrimitive(PrimitiveType.Cube);model.transform.position=new Vector3(100,100,100);
+            model.transform.localScale=new Vector3(1,2,1);model.AddComponent<DocumentInteractable>();
+            var definition=new LevelObjectDefinition{prefab=model,displayName="DecorationTest"};catalog.objects.Add(definition);
+            try
+            {
+                var data=asset.CreateRuntimeCopy();
+                var cabinet=data.floors[0].items.First(i=>i.type==ItemType.Furniture && i.hideable);
+                var bottom=data.Position(0,cabinet)+Vector3.up*2.51f;
+                data.decorations.Add(new FreePlacedObjectData{definitionId=definition.id,position=bottom,size=new Vector3(.6f,.6f,.6f)});
+                data.decorations.Add(new FreePlacedObjectData{definitionId=definition.id,position=bottom+Vector3.right*.6f,size=Vector3.one*.3f,solid=false});
+                int count=data.floors.Sum(f=>f.items.Count);asset.SetData(data);
+                app.ReturnToMenu();app.EnterPlay();Assert.That(app.Session,Is.Not.Null,app.StartupError);
+                yield return null;
+                Assert.That(app.World.Decorations.Count,Is.EqualTo(2));Assert.That(app.World.Items.Count,Is.EqualTo(count));
+                Assert.That(app.Session.Quests.Count,Is.EqualTo(InvestigationData.Tasks(data).Count));
+                var first=app.World.Decorations[0];var second=app.World.Decorations[1];
+                Assert.That(first.transform.position,Is.EqualTo(bottom));
+                Assert.That(first.GetComponent<BoxCollider>(),Is.Not.Null);Assert.That(second.GetComponent<BoxCollider>(),Is.Null);
+                Assert.That(first.GetComponentInChildren<DocumentInteractable>().enabled,Is.False);
+                Assert.That(first.GetComponentsInChildren<Collider>().Count(c=>c.enabled),Is.EqualTo(1));
+                Assert.That(first.GetComponentInChildren<Renderer>().bounds.min.y,Is.EqualTo(bottom.y).Within(.001f));
+                Assert.That(app.Session.TargetPoint(data.decorations[0].id),Is.Null);
+                app.World.SetMode(true,0);Assert.That(first.gameObject.activeInHierarchy,Is.True);
+            }
+            finally {catalog.objects.Remove(definition);Object.Destroy(model);}
+        }
+
+        [UnityTest]
         public IEnumerator ClosedDoorBlocksPhotoRaysButOpenDoorDoesNot()
         {
             var door=app.World.Items.First(i=>i.Floor==0 && i.Data.type==ItemType.Door);

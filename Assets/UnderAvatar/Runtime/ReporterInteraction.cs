@@ -18,8 +18,9 @@ public sealed class ReporterInteraction : MonoBehaviour
         if(!reporter || !reporter.View) return null;
         var ray=reporter.View.ViewportPointToRay(new Vector3(.5f,.5f));
         int mask=~LayerMask.GetMask("UA_Reporter","UA_Sound");
-        return Physics.Raycast(ray,out var hit,interactionDistance,mask,QueryTriggerInteraction.Ignore)
+        var document=Physics.Raycast(ray,out var hit,interactionDistance,mask,QueryTriggerInteraction.Ignore)
             ?hit.collider.GetComponentInParent<DocumentInteractable>():null;
+        return document && document.isActiveAndEnabled?document:null;
     }
     public bool TryRead()
     {
