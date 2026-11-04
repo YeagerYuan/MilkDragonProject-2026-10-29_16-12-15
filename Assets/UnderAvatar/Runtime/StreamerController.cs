@@ -45,6 +45,26 @@ namespace UnderAvatar
         public const float HuntSeconds=30, ReturnAnnouncementSeconds=3, ViewerDrainSeconds=30;
         public float NextFanLossIn => Mathf.Max(0,Session.Settings.returnGraceSeconds+(lateDeductions+1)*Mathf.Max(.1f,Session.Settings.lateFanLossInterval)-ReturnElapsed);
         public bool OnStairs => stairRoute!=null;
+        public string InteractionPrompt
+        {
+            get
+            {
+                if(!IsHuman || Session.Finished || Actor.State!=StreamerState.Roaming && Actor.State!=StreamerState.Returning) return null;
+                if(Actor.Computer && Vector3.Distance(transform.position,Actor.Computer.Front)<2.3f &&
+                    !Physics.Linecast(Actor.View.transform.position,Actor.Computer.Front+Vector3.up,PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore))
+                    return Session.IsTraining?"体验电脑":"开始直播";
+                if(Physics.Raycast(Actor.View.transform.position,Actor.View.transform.forward,out var hit,3,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
+                {
+                    var item=hit.collider.GetComponentInParent<PlacedItemView>();
+                    if(item && item.IsHidingPlace) return Actor.State==StreamerState.Roaming && !item.IsOpen?"翻查 "+item.DisplayName:null;
+                    if(item && item.Data.type==ItemType.Door) return item.IsOpen?"关闭门":"打开门";
+                }
+                var openDoor=Session.World.Items.FirstOrDefault(i=>i.Data.type==ItemType.Door && i.IsOpen &&
+                    Vector3.Distance(i.transform.position,transform.position)<2.3f &&
+                    !Physics.Linecast(Actor.View.transform.position,i.transform.position+Vector3.up,PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore));
+                return openDoor?"关闭门":null;
+            }
+        }
 
         public void Initialize(StreamerActor actor)
         {

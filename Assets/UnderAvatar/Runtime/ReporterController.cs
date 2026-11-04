@@ -167,6 +167,7 @@ namespace UnderAvatar
                 { if(IsHuman) session.Notice("藏身点出口被阻挡，暂时无法离开。"); return; }
                 Hidden=false;HidingPlaceId=null; Appearance.SetVisible(true); Teleport(hidingExit); if(IsHuman) session.Notice("已离开藏身点。"); return;
             }
+            if(Documents && Documents.TryRead()) return;
             if(session.TaskWorld?.Held && Physics.Raycast(View.transform.position,View.transform.forward,out var doorHit,3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
             {
                 var heldDoor=doorHit.collider.GetComponentInParent<PlacedItemView>();

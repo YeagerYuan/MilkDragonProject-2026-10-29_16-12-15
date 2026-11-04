@@ -223,7 +223,9 @@ namespace UnderAvatar
             {
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(.005f,.008f,.012f,.98f));
                 GUI.Label(new Rect(430,330,500,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"你躲在床下":"你躲在衣柜里",title);
-                GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机，按 E 离开。",notice);
+                GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机。",notice);
+                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
+                paparazziOverlay.DrawInteractionHint("离开藏身点");
             }
             if(!match.IsStreamerPlayer && match.DebugOpen)
             {
@@ -247,19 +249,6 @@ namespace UnderAvatar
             if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
             else if(!match.Reporter.Hidden)
             {
-                if(!match.Reporter.PhoneOpen)
-                {
-                    var held=match.TaskWorld?match.TaskWorld.Held:null;
-                    var movable=match.TaskWorld && !held?match.TaskWorld.AimProp():null;
-                    if(held) GUI.Label(new Rect(440,470,520,36),"手持："+held.Data.name+" · E 放下 · 绿框可放 / 红框受阻",notice);
-                    else if(movable && movable.Data.portable) GUI.Label(new Rect(440,470,450,36),"E 拿起："+movable.Data.name,notice);
-                    var target=match.Reporter.Documents?match.Reporter.Documents.Target:null;
-                    if(target)
-                    {
-                        Fill(new Rect(440,428,400,36),new Color(.035f,.055f,.075f,.94f));
-                        GUI.Label(new Rect(452,432,376,30),"鼠标左键阅读："+target.DisplayName,notice);
-                    }
-                }
                 if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
                 paparazziOverlay.Draw(match);
             }
@@ -492,6 +481,14 @@ namespace UnderAvatar
             DrawSoundPulses(match,actor.View,new Rect(20,112,1240,620));
             if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
             broadcastOverlay.DrawHunt(match);
+            bool huntAnnouncement=!match.IsTraining && (actor.State==StreamerState.Returning
+                ? brain.ReturnElapsed<StreamerController.ReturnAnnouncementSeconds
+                : brain.RoamRemaining>StreamerController.HuntSeconds-3);
+            if(!match.DebugOpen && match.InputCaptured && !huntAnnouncement)
+            {
+                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
+                paparazziOverlay.DrawInteractionHint(brain.InteractionPrompt);
+            }
             if(Time.time<actor.AlertUntil)
             {
                 Outline(new Rect(3,3,1274,794),new Color(1,.2f,.2f),5);

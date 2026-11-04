@@ -94,6 +94,52 @@ namespace UnderAvatar
                     KeyHint(new Vector2(x+100,y-40),"F","打开/关闭手机");
                 }
                 DrawPhone(match,new Rect(x,y,PhoneWidth,690),open);
+                DrawInteractionHint(ReporterInteractionMessage(match));
+            }
+            finally {GUI.matrix=previous;}
+        }
+        string ReporterInteractionMessage(MatchSession match)
+        {
+            var reporter=match.Reporter;
+            if(!reporter || !reporter.IsHuman || reporter.Hidden || reporter.PhoneOpen || match.Finished || match.DebugOpen || !match.InputCaptured)
+                return null;
+            var held=match.TaskWorld?match.TaskWorld.Held:null;
+            if(held && Physics.Raycast(reporter.View.transform.position,reporter.View.transform.forward,out var heldHit,3f,
+                PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
+            {
+                var heldTarget=heldHit.collider.GetComponentInParent<PlacedItemView>();
+                if(heldTarget && heldTarget.Data.type==ItemType.Door) return heldTarget.IsOpen?"关闭门":"打开门";
+            }
+            if(held) return "放下 "+held.Data.name;
+            var document=reporter.Documents?reporter.Documents.Target:null;
+            if(document) return "阅读 "+document.DisplayName;
+            var prop=match.TaskWorld?match.TaskWorld.AimProp():null;
+            if(prop && prop.Data.portable) return "拿起 "+prop.Data.name;
+            if(Physics.Raycast(reporter.View.transform.position,reporter.View.transform.forward,out var hit,3f,
+                PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
+            {
+                var item=hit.collider.GetComponentInParent<PlacedItemView>();
+                if(item && item.Data.type==ItemType.Door) return item.IsOpen?"关闭门":"打开门";
+                if(item && item.IsHidingPlace) return "躲藏 "+item.DisplayName;
+            }
+            var openDoor=match.World.Items.Where(i=>i.Floor==reporter.Floor && i.Data.type==ItemType.Door && i.IsOpen)
+                .Where(i=>Vector3.Distance(i.transform.position,reporter.transform.position)<2.3f)
+                .OrderBy(i=>Vector3.Distance(i.transform.position,reporter.transform.position))
+                .FirstOrDefault(i=>!Physics.Linecast(reporter.View.transform.position,i.transform.position+Vector3.up,
+                    PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore));
+            return openDoor?"关闭门":null;
+        }
+        public void DrawInteractionHint(string message)
+        {
+            if(string.IsNullOrWhiteSpace(message)) return;
+            EnsureStyles();
+            var previous=GUI.matrix;float scale=Screen.height/800f,width=Screen.width/scale;
+            try
+            {
+                GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
+                float textWidth=Mathf.Min(500,hint.CalcSize(new GUIContent(message)).x+4);
+                const float keyWidth=36,gap=10;
+                KeyHint(new Vector2((width-keyWidth-gap-textWidth)*.5f,600),"E",message,keyWidth,textWidth);
             }
             finally {GUI.matrix=previous;}
         }
