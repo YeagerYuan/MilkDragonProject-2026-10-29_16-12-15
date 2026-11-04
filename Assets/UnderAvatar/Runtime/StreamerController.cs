@@ -41,6 +41,8 @@ namespace UnderAvatar
         public int Fans { get; private set; }
         public float ReturnElapsed { get; private set; }
         int lateDeductions;
+        int returnStartingFans;
+        public const float HuntSeconds=30, ReturnAnnouncementSeconds=3, ViewerDrainSeconds=30;
         public float NextFanLossIn => Mathf.Max(0,Session.Settings.returnGraceSeconds+(lateDeductions+1)*Mathf.Max(.1f,Session.Settings.lateFanLossInterval)-ReturnElapsed);
         public bool OnStairs => stairRoute!=null;
 
@@ -77,6 +79,7 @@ namespace UnderAvatar
             if(Actor.State==StreamerState.Streaming && !Level.Complete) return;
             Actor.State=StreamerState.Returning; Actor.Progress=0;
             ReturnElapsed=0;lateDeductions=0;
+            returnStartingFans=Fans;
             if(IsHuman) { path=null; Session.Notice("搜捕时间结束，请回到电脑前按 E 开始下一场直播。",6); return; }
             if(!SetDestination(Actor.Computer.Front)) Session.Notice("主播无法抵达电脑，请检查门和楼梯连接。",6);
         }
@@ -108,7 +111,7 @@ namespace UnderAvatar
             Level.Tick(dt); Actor.Progress=Level.Progress;
             if(Level.Complete)
             {
-                Actor.State=StreamerState.Roaming; RoamRemaining=Session.Settings.patrolSeconds;
+                Actor.State=StreamerState.Roaming; RoamRemaining=HuntSeconds;
                 round++; path=null;
                 Session.Notice("主播已经通关，恢复搜捕！",3);
             }
@@ -167,13 +170,10 @@ namespace UnderAvatar
         {
             if(!Session.IsAuthority || Session.Finished || Actor.State!=StreamerState.Returning || Session.IsTraining) return;
             ReturnElapsed+=Mathf.Max(0,dt);
-            float interval=Mathf.Max(.1f,Session.Settings.lateFanLossInterval);
-            int due=Mathf.Max(0,Mathf.FloorToInt((ReturnElapsed-Mathf.Max(0,Session.Settings.returnGraceSeconds))/interval));
-            if(due<=lateDeductions) return;
-            int loss=(due-lateDeductions)*Mathf.Max(1,Session.Settings.lateFanLoss);lateDeductions=due;
-            Fans=Mathf.Max(0,Fans-loss);
+            // The end announcement precedes the thirty-second audience drain.
+            float remaining=1-Mathf.Clamp01((ReturnElapsed-ReturnAnnouncementSeconds)/ViewerDrainSeconds);
+            Fans=Mathf.CeilToInt(returnStartingFans*remaining);
             if(Fans==0) Session.Finish("狗仔获胜：主播逾期开播，粉丝已经流失完了");
-            else Session.Notice("开播逾期！粉丝减少 "+loss+"，当前粉丝 "+Fans+"。请尽快回电脑开播。");
         }
 
         void Update()

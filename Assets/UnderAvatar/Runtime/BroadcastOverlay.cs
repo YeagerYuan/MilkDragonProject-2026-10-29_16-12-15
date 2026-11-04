@@ -8,19 +8,23 @@ namespace UnderAvatar
     {
         [SerializeField] GameObject avatarPrefab;
         [SerializeField] string banner="超炫酷游戏主播不到{0}分不下播！";
-        GUIStyle commentStyle,viewerStyle,bannerStyle,hintStyle,badgeStyle;
+        GUIStyle commentStyle,viewerStyle,bannerStyle,hintStyle,badgeStyle,huntTitle,huntSubtitle,huntTask,huntTaskTitle,timerStyle;
         Font bodyFont,titleFont;
         readonly List<Font> ownedFonts=new List<Font>();
-        Texture2D disc,laugh,heart;
+        Texture2D disc,laugh,heart,timerRing;
+        float huntChatStarted=-1;
+        static readonly string[] AwayMessages={"主播你去哪了","我在等你呀主播","再不回来我就走了！！","？？？？？？","主播快回来我想你了","怎么突然没人了","主播人呢？","还在吗？快回来开播","我们还在等你回来","是不是离开电脑了？"};
         GameObject avatarStage;
         Camera avatarCamera;
         RenderTexture avatarTexture;
         int currentRound=-1;
         MinigameLevel currentLevel;
         float started;
-        const float ChatInterval=1.85f,RowHeight=41;
+        const int VisibleChatRows=6;
+        const float ChatInterval=1.85f,RowHeight=38;
+        const float InitialChatElapsed=.8f+ChatInterval*(VisibleChatRows-1)+.38f;
         static readonly string[] Names={"躺平蘑菇","每天都摆烂","夜航小灯","你真行","芝士云朵","橘子汽水","晚风观众","薄荷苏打","路过的猫","星星没睡"};
-        static readonly string[] Messages={"主播你去哪了","你背后是什么？","再不回来我就走","？？？？？","我滴你这把能一口气过","稳住，下一根就过去了","哈哈哈哈又撞了","来了来了！","别急，慢慢来","弹幕护体！","刚才是不是有脚步声","这波操作可以！","主播加油！","今晚一定能通关"};
+        static readonly string[] Messages={"主播你怎么这么菜？","你背后是什么？","你一定可以的！！","？？？？？","我赌你这把能一口气过","稳住，下一个就过去了","哈哈哈哈又撞了","来了来了！","别急，慢慢来","弹幕护体！","刚才是不是有脚步声","这波操作可以！","主播加油！","今晚一定能通关！！"};
         static readonly Color[] NameColors={new Color(.63f,.20f,.78f),new Color(.54f,.57f,.61f),new Color(.24f,.55f,.88f),new Color(.66f,.17f,.78f),new Color(.12f,.73f,.66f)};
         static readonly Dictionary<char,string[]> PixelGlyphs=new Dictionary<char,string[]>
         {
@@ -57,6 +61,12 @@ namespace UnderAvatar
             bannerStyle=new GUIStyle(commentStyle){font=titleFont,fontSize=32,alignment=TextAnchor.MiddleCenter};
             hintStyle=new GUIStyle(commentStyle){fontSize=19,alignment=TextAnchor.MiddleCenter};
             badgeStyle=new GUIStyle(commentStyle){fontSize=18,alignment=TextAnchor.MiddleCenter};
+            huntTitle=new GUIStyle(commentStyle){font=titleFont,fontSize=144,alignment=TextAnchor.MiddleCenter,normal={textColor=new Color(.9f,.025f,0)}};
+            huntSubtitle=new GUIStyle(commentStyle){fontSize=40,alignment=TextAnchor.MiddleCenter};
+            timerStyle=new GUIStyle(huntSubtitle);
+            huntTask=new GUIStyle(commentStyle){fontSize=24};
+            huntTaskTitle=new GUIStyle(huntTask){font=titleFont,fontSize=32,normal={textColor=new Color(.9f,.025f,0)}};
+            timerRing=MakeTexture(128,(x,y)=> {float r=new Vector2(x-.5f,y-.5f).magnitude;return new Color(1,1,1,Mathf.Clamp01((.022f-Mathf.Abs(r-.465f))*128));});
             disc=MakeTexture(64,(x,y)=>new Color(1,1,1,Mathf.Clamp01((.5f-new Vector2(x-.5f,y-.5f).magnitude)*64)));
             laugh=MakeTexture(96,LaughPixel);heart=MakeTexture(96,HeartPixel);
         }
@@ -93,7 +103,53 @@ namespace UnderAvatar
             Fill(new Rect(rect.x+cap,rect.y,Mathf.Max(0,rect.width-rect.height),rect.height),color);
             TintTexture(new Rect(rect.xMax-rect.height,rect.y,rect.height,rect.height),disc,color);
         }
-        public void Draw(MatchSession match) => Draw(match.Streamer.Controller.Level,match.Streamer.Controller.Fans);
+        public void Draw(MatchSession match) {huntChatStarted=-1;Draw(match.Streamer.Controller.Level,match.Streamer.Controller.Fans);}
+        public void DrawHunt(MatchSession match)
+        {
+            var brain=match.Streamer.Controller;
+            DrawHunt(brain.RoamRemaining,brain.ReturnElapsed,match.Streamer.State==StreamerState.Returning,brain.Fans);
+        }
+        public void DrawHunt(float remaining,float returnElapsed,bool returning,int fans)
+        {
+            EnsureStyles();
+            if(huntChatStarted<0) huntChatStarted=Time.unscaledTime-InitialChatElapsed;
+            var previous=GUI.matrix;float scale=Screen.height/800f,width=Screen.width/scale;
+            try
+            {
+                GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
+                TintTexture(new Rect(20,20,68,68),timerRing,Color.white);
+                GUI.Label(new Rect(20,20,68,68),Mathf.CeilToInt(returning?0:Mathf.Max(0,remaining)).ToString(),timerStyle);
+                float chatElapsed=Time.unscaledTime-huntChatStarted;
+                DrawComments(new Rect(width-352,548,336,VisibleChatRows*RowHeight),chatElapsed,0,true);
+                Pill(new Rect(width-352,508,318,36),new Color(.06f,.12f,.17f,.90f));
+                DrawViewers(new Vector2(width-338,515));
+                int viewers=Mathf.RoundToInt(fans*5.9f);
+                if(!returning) viewers=Mathf.Max(0,viewers+Mathf.RoundToInt(Mathf.Sin(chatElapsed*.17f)*65));
+                GUI.Label(new Rect(width-308,508,262,36),"在线观众： "+viewers.ToString("N0"),viewerStyle);
+                bool announcement=returning?returnElapsed<StreamerController.ReturnAnnouncementSeconds:remaining>StreamerController.HuntSeconds-3;
+                string task=returning?"返回电脑开播，防止粉丝流失":"在30秒内抓到狗仔";
+                if(announcement)
+                {
+                    float duration=returning?StreamerController.ReturnAnnouncementSeconds:3;
+                    float elapsed=returning?returnElapsed:StreamerController.HuntSeconds-remaining;
+                    float alpha=Mathf.SmoothStep(0,1,Mathf.Clamp01(elapsed/.5f))*Mathf.SmoothStep(0,1,Mathf.Clamp01((duration-elapsed)/.65f));
+                    var previousColor=GUI.color;
+                    try
+                    {
+                        GUI.color=new Color(previousColor.r,previousColor.g,previousColor.b,previousColor.a*alpha);
+                        GUI.Label(new Rect(0,280,width,160),returning?"抓捕结束":"抓捕开始",huntTitle);
+                        GUI.Label(new Rect(0,438,width,64),task,huntSubtitle);
+                    }
+                    finally {GUI.color=previousColor;}
+                }
+                else
+                {
+                    GUI.Label(new Rect(32,690,450,42),returning?"当前任务":"当前目标",huntTaskTitle);
+                    GUI.Label(new Rect(32,734,650,40),task,huntTask);
+                }
+            }
+            finally {GUI.matrix=previous;}
+        }
         public void Draw(MinigameLevel level,int fans)
         {
             var previous=GUI.matrix;
@@ -108,16 +164,19 @@ namespace UnderAvatar
             float elapsed=Time.unscaledTime-started;
             Fill(new Rect(-2000,-2000,6000,6000),new Color(.204f,.325f,.40f));
             DrawGame(level,new Rect(0,0,width,754));
+            // Keep the footer behind the last chat row so it does not obscure the comment.
+            Fill(new Rect(0,754,width,46),new Color(.18f,.165f,.155f));
+            GUI.Label(new Rect(310,755,width-340,44),string.Format(banner,ChineseNumber(level.TargetScore)),bannerStyle);
             PixelText("SCORE",new Vector2(60,36),4);
             PixelText(level.Score+"/"+level.TargetScore,new Vector2(60,78),4);
-            DrawComments(new Rect(width-352,548,336,204),elapsed,level.LevelNumber);
+            // Match the hunt chat panel and prefill it so all six rows are visible immediately.
+            float chatElapsed=elapsed+InitialChatElapsed;
+            DrawComments(new Rect(width-352,548,336,VisibleChatRows*RowHeight),chatElapsed,level.LevelNumber);
             Pill(new Rect(width-352,508,254,36),new Color(.06f,.12f,.17f,.90f));
             DrawViewers(new Vector2(width-338,515));
             int viewers=Mathf.Max(1,fans*6-500+Mathf.FloorToInt(Mathf.Sin(elapsed*.17f)*75));
             GUI.Label(new Rect(width-308,508,200,36),"在线观众： "+viewers.ToString("N0"),viewerStyle);
             DrawReactions(new Rect(width-90,610,82,144),elapsed);
-            Fill(new Rect(0,754,width,46),new Color(.18f,.165f,.155f));
-            GUI.Label(new Rect(310,755,width-340,44),string.Format(banner,ChineseNumber(level.TargetScore)),bannerStyle);
             EnsureAvatar();if(avatarStage) avatarStage.SetActive(true);
             if(avatarTexture) GUI.DrawTexture(new Rect(-18,454,356,356),avatarTexture,ScaleMode.ScaleToFit,true);
         }
@@ -160,21 +219,22 @@ namespace UnderAvatar
                 position.x+=6*scale;
             }
         }
-        void DrawComments(Rect viewport,float elapsed,int round)
+        void DrawComments(Rect viewport,float elapsed,int round,bool away=false)
         {
             GUI.BeginGroup(viewport);
+            float rowHeight=away?38:RowHeight;
             float clock=Mathf.Max(0,elapsed-.8f);int latest=Mathf.FloorToInt(clock/ChatInterval);
             float enter=Mathf.SmoothStep(0,1,Mathf.Clamp01((clock-latest*ChatInterval)/.38f));
-            for(int index=Mathf.Max(0,latest-5);index<=latest;index++)
+            for(int index=Mathf.Max(0,latest-Mathf.CeilToInt(viewport.height/rowHeight));index<=latest;index++)
             {
-                float y=viewport.height-RowHeight-(latest-index)*RowHeight+(1-enter)*RowHeight;
-                if(y<-RowHeight || y>=viewport.height) continue;
-                var tint=NameColors[index%NameColors.Length];float alpha=index==latest?enter:Mathf.Clamp01((y+RowHeight)/RowHeight);
+                float y=viewport.height-rowHeight-(latest-index)*rowHeight+(1-enter)*rowHeight;
+                if(y<-rowHeight || y>=viewport.height) continue;
+                var tint=NameColors[index%NameColors.Length];float alpha=index==latest?enter:Mathf.Clamp01((y+rowHeight)/rowHeight);
                 var old=GUI.color;GUI.color=new Color(old.r,old.g,old.b,old.a*alpha);
                 Pill(new Rect(0,y,viewport.width,36),new Color(.065f,.12f,.15f,.88f));
                 TintTexture(new Rect(8,y+5,27,27),disc,tint);
                 GUI.Label(new Rect(8,y+4,27,27),(2+(index*7)%19).ToString(),badgeStyle);
-                string name=Names[(index*3+round)%Names.Length],body=Messages[(index*5+round)%Messages.Length];
+                string name=Names[(index*3+round)%Names.Length],body=away?AwayMessages[index%AwayMessages.Length]:Messages[(index*5+round)%Messages.Length];
                 GUI.Label(new Rect(40,y+1,viewport.width-48,35),"<color=#"+ColorUtility.ToHtmlStringRGB(tint)+">"+name+"</color> "+body,commentStyle);
                 GUI.color=old;
             }
@@ -230,7 +290,7 @@ namespace UnderAvatar
             if(avatarCamera) avatarCamera.targetTexture=null;
             if(avatarStage) PrototypeVisuals.Release(avatarStage);
             if(avatarTexture) {avatarTexture.Release();PrototypeVisuals.Release(avatarTexture);}
-            foreach(var texture in new[]{disc,laugh,heart}) if(texture) PrototypeVisuals.Release(texture);
+            foreach(var texture in new[]{disc,laugh,heart,timerRing}) if(texture) PrototypeVisuals.Release(texture);
             foreach(var item in ownedFonts) PrototypeVisuals.Release(item);
         }
     }

@@ -225,6 +225,8 @@ namespace UnderAvatar
                 GUI.Label(new Rect(430,330,500,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"你躲在床下":"你躲在衣柜里",title);
                 GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机，按 E 离开。",notice);
             }
+            if(!match.IsStreamerPlayer)
+            {
             Fill(new Rect(20,16,800,88),new Color(.035f,.055f,.075f,.9f));
             GUI.Label(new Rect(34,23,750,28),"皮套之下  /  "+(match.IsNetwork
                 ? "局域网对战 · "+(match.IsStreamerPlayer?"主播":"狗仔")
@@ -240,6 +242,7 @@ namespace UnderAvatar
                 GUI.Label(new Rect(34,105,770,24),"本机 "+Mathf.RoundToInt(net.LocalFps)+" FPS · 房主 "+
                     Mathf.RoundToInt(net.IsHost?net.LocalFps:net.HostFps)+" FPS · 网络往返 "+
                     (net.RoundTripMs>0?Mathf.RoundToInt(net.RoundTripMs)+" ms":"测量中"),small);
+            }
             }
             if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
             else if(!match.Reporter.Hidden)
@@ -270,7 +273,7 @@ namespace UnderAvatar
             }
             if(Time.time<match.FlashUntil)
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil && !(match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming))
+            if(Time.time<match.MessageUntil && !match.IsStreamerPlayer)
             {
                 bool broadcasting=match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming;
                 float y=broadcasting?648:744,width=broadcasting?960:1240;
@@ -485,20 +488,9 @@ namespace UnderAvatar
                 }
                 return;
             }
-            else
-            {
-                GUI.Label(new Rect(630,390,25,25),"+",notice);
-                Fill(new Rect(360,660,600,60),new Color(.035f,.055f,.075f,.92f));
-                GUI.Label(new Rect(380,670,560,48),actor.State==StreamerState.Returning
-                    ? "返回电脑按 E 开播 · "+Mathf.CeilToInt(brain.NextFanLossIn)+" 秒后扣 "+match.Settings.lateFanLoss+" 粉丝"
-                    : "搜捕剩余 "+Mathf.CeilToInt(brain.RoamRemaining)+" 秒 · E 搜查衣柜 / 床",notice);
-            }
             DrawSoundPulses(match,actor.View,new Rect(20,112,1240,620));
-            Fill(new Rect(842,16,418,88),new Color(.035f,.055f,.075f,.92f));
-            GUI.Label(new Rect(858,27,385,26),match.RequiresLiveEvidence?"狗仔已取证主播 "+match.StreamerPhotos+" / 3 场":"狗仔任务完成 "+match.Quests.Count(q=>q.Complete)+" / "+match.Quests.Count,section);
-            GUI.Label(new Rect(858,57,385,38),actor.State==StreamerState.Streaming
-                ? "直播锁定 · "+brain.Level.Score+" / "+brain.Level.TargetScore+" 分才能下播"
-                : "粉丝 "+brain.Fans.ToString("N0")+" · 粉丝归零即失败",small);
+            if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
+            broadcastOverlay.DrawHunt(match);
             if(Time.time<actor.AlertUntil)
             {
                 Outline(new Rect(3,3,1274,794),new Color(1,.2f,.2f),5);
