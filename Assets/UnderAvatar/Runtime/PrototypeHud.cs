@@ -270,7 +270,7 @@ namespace UnderAvatar
             }
             if(Time.time<match.FlashUntil)
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil)
+            if(Time.time<match.MessageUntil && !(match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming))
             {
                 bool broadcasting=match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming;
                 float y=broadcasting?648:744,width=broadcasting?960:1240;
@@ -327,7 +327,7 @@ namespace UnderAvatar
             GUI.Label(new Rect(858,26,385,28),"正式对局准备",section);
             GUI.Label(new Rect(858,62,385,52),preparation+"\n"+(single?"按 Tab 准备并开始正式 AI 对战":"按 Tab 准备，房主开始正式对局"),small);
             if(Time.time<match.FlashUntil) Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil)
+            if(Time.time<match.MessageUntil && !(match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming))
             {
                 Fill(new Rect(20,744,1240,42),new Color(.035f,.055f,.075f,.94f));GUI.Label(new Rect(36,751,1208,32),match.Message,notice);
             }
@@ -506,90 +506,12 @@ namespace UnderAvatar
             }
         }
 
+        BroadcastOverlay broadcastOverlay;
         void DrawBroadcastScreen(MatchSession match)
         {
-            var brain=match.Streamer.Controller;var level=brain.Level;
-            if(chatMatch!=match || chatRound!=level.LevelNumber)
-            { chatMatch=match;chatRound=level.LevelNumber;chatStarted=Time.unscaledTime; }
-            Fill(new Rect(-2000,-2000,6000,6000),new Color(.014f,.023f,.04f));
-            Color panel=new Color(.04f,.066f,.10f);
-            Fill(new Rect(20,16,610,68),panel);Fill(new Rect(646,16,614,68),panel);
-            Fill(new Rect(20,16,4,68),accent);
-            GUI.Label(new Rect(38,22,260,20),"FLAPPY BIRD  /  直播挑战",small);
-            GUI.Label(new Rect(38,43,340,38),level.Score+" / "+level.TargetScore+"  分",scoreText);
-            GUI.Label(new Rect(380,45,220,28),"达标后解除直播锁定",small);
-            GUI.Label(new Rect(666,24,270,23),"当前直播场次",small);
-            GUI.Label(new Rect(666,46,270,33),"第 "+level.LevelNumber+" 场",title);
-            GUI.Label(new Rect(968,24,270,23),"当前粉丝数量",small);
-            GUI.Label(new Rect(968,46,270,33),brain.Fans.ToString("N0"),title);
-            DrawFlappy(level,new Rect(20,100,960,600));
-            DrawLiveChat(new Rect(996,100,264,600),Time.unscaledTime-chatStarted,level.LevelNumber);
-            Fill(new Rect(20,716,1240,68),panel);
-            GUI.Label(new Rect(38,725,950,27),"空格 / 鼠标左键：拍翅    ·    碰撞后分数清零，按键重试    ·    达到 "+level.TargetScore+" 分后下播搜捕",notice);
-            GUI.Label(new Rect(38,756,1100,22),"直播时无法移动或回头    |    Tab 调试 / 菜单    |    Esc 返回角色选择",small);
-            if(match.IsNetwork) GUI.Label(new Rect(1020,756,220,22),Mathf.RoundToInt(app.Lan.LocalFps)+" FPS · "+Mathf.RoundToInt(app.Lan.RoundTripMs)+" ms",small);
+            if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
+            broadcastOverlay.Draw(match);
         }
-        void DrawLiveChat(Rect rect,float elapsed,int broadcast)
-        {
-            Fill(rect,new Color(.04f,.066f,.10f));Outline(rect,new Color(.13f,.22f,.29f),1);
-            GUI.Label(new Rect(rect.x+16,rect.y+12,rect.width-32,26),"直播间弹幕",section);
-            GUI.Label(new Rect(rect.x+16,rect.y+44,rect.width-32,22),"欢迎来到今晚的直播",small);
-            Fill(new Rect(rect.x+12,rect.y+76,rect.width-24,1),new Color(.14f,.23f,.3f));
-            var viewport=new Rect(rect.x+12,rect.y+90,rect.width-24,rect.height-102);
-            GUI.BeginGroup(viewport);
-            const float rowHeight=70,speed=19;
-            float travel=Mathf.Max(0,elapsed)*speed;int first=Mathf.FloorToInt(travel/rowHeight);float fraction=travel%rowHeight;
-            for(int row=0;row<9;row++)
-            {
-                int index=first+row;float y=row*rowHeight-fraction;
-                int nameIndex=(index*5+broadcast)%ChatNames.Length,textIndex=(index*7+broadcast)%ChatTexts.Length;
-                Color tint=index%3==0?new Color(.46f,.36f,.66f):index%3==1?new Color(.23f,.49f,.63f):new Color(.63f,.37f,.48f);
-                Fill(new Rect(0,y+3,39,18),tint);GUI.Label(new Rect(0,y+2,39,20),"Lv "+(6+index%29),badge);
-                GUI.Label(new Rect(47,y,viewport.width-47,23),ChatNames[nameIndex],chatName);
-                GUI.Label(new Rect(0,y+24,viewport.width,42),ChatTexts[textIndex],chatText);
-            }
-            GUI.EndGroup();
-        }
-
-        void DrawFlappy(MinigameLevel level,Rect rect)
-        {
-            GUI.BeginGroup(rect);
-            Fill(new Rect(0,0,rect.width,rect.height),new Color(.12f,.32f,.42f));
-            for(int i=0;i<5;i++)
-            {
-                float x=(i*183+70)%rect.width;
-                Fill(new Rect(x,70+(i%3)*45,100,18),new Color(.25f,.46f,.54f));
-                Fill(new Rect(x+23,60+(i%3)*45,47,10),new Color(.25f,.46f,.54f));
-            }
-            foreach(var pipe in level.Pipes)
-            {
-                float x=pipe.X*rect.width,w=MinigameLevel.PipeWidth*rect.width;
-                float upper=(1-pipe.GapCenter-level.PipeGap*.5f)*rect.height;
-                float lower=(1-pipe.GapCenter+level.PipeGap*.5f)*rect.height;
-                Color green=new Color(.27f,.76f,.45f);
-                Fill(new Rect(x,0,w,upper),green); Fill(new Rect(x,lower,w,rect.height-lower),green);
-                Fill(new Rect(x-5,upper-16,w+10,16),new Color(.36f,.89f,.54f));
-                Fill(new Rect(x-5,lower,w+10,16),new Color(.36f,.89f,.54f));
-                Fill(new Rect(x+7,0,8,Mathf.Max(0,upper-16)),new Color(.45f,.91f,.58f));
-                Fill(new Rect(x+7,lower+16,8,rect.height-lower),new Color(.45f,.91f,.58f));
-            }
-            float bx=MinigameLevel.BirdX*rect.width,by=(1-level.BirdHeight)*rect.height;
-            float bw=MinigameLevel.BirdRadius*rect.width*2,bh=MinigameLevel.BirdRadius*rect.height*2;
-            Fill(new Rect(bx-bw*.5f,by-bh*.5f,bw,bh),new Color(1,.8f,.25f));
-            Fill(new Rect(bx-bw*.42f,by,bw*.45f,bh*.45f),new Color(1,.58f,.18f));
-            Fill(new Rect(bx+bw*.13f,by-bh*.36f,6,6),Color.white);
-            Fill(new Rect(bx+bw*.25f,by-bh*.28f,3,3),Color.black);
-            Fill(new Rect(bx+bw*.4f,by,10,5),new Color(1,.38f,.16f));
-            if(!level.Running && !level.Complete)
-            {
-                Fill(new Rect(110,rect.height*.42f,rect.width-220,90),new Color(.02f,.04f,.07f,.9f));
-                GUI.Label(new Rect(135,rect.height*.42f+12,rect.width-270,74),
-                    level.Crashed?"碰撞！得分已清零。\n按空格 / 左键重试，主播仍不能离开。":"按空格 / 左键开始并拍翅\n通过 "+level.TargetScore+" 根管道才能下播搜捕。",notice);
-            }
-            GUI.EndGroup();
-            Outline(rect,new Color(.31f,.84f,.78f),2);
-        }
-
         void Line(Vector2 from,Vector2 to,Color color,float width)
         {
             Matrix4x4 previous=GUI.matrix;
