@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -13,6 +15,20 @@ namespace UnderAvatar
         public int LastSubmittedPhoto { get; private set; }
         int photoSequence;
         PlayerCommand queuedPhone=new PlayerCommand();
+        readonly Dictionary<string,DocumentInteractable> documentTargets=new Dictionary<string,DocumentInteractable>();
+        public void RegisterDocumentTargets(GameObject documents)
+        {
+            documentTargets.Clear();
+            if(documents) foreach(var doc in documents.GetComponentsInChildren<DocumentInteractable>())
+            {
+                if(!doc.enabled || doc.PhotoTargetId==null) continue;
+                if(documentTargets.ContainsKey(doc.PhotoTargetId)) throw new InvalidOperationException("文档拍照目标标识重复："+doc.PhotoTargetId);
+                documentTargets.Add(doc.PhotoTargetId,doc);
+            }
+            foreach(var id in InvestigationData.Tasks(World.Data).SelectMany(t=>t.PhotoTargets).Where(InvestigationData.IsDocumentTarget).Distinct())
+                if(!documentTargets.ContainsKey(id)) throw new InvalidOperationException("任务绑定的可阅读文档未启用或不存在："+id+"。请检查文档布置预制体及 Photo Target Id。");
+        }
+        DocumentInteractable FindDocumentTarget(string id) => id!=null && documentTargets.TryGetValue(id,out var doc) && doc && doc.isActiveAndEnabled?doc:null;
         public InvestigationTaskData SelectedTask => InvestigationData.Tasks(World.Data).Find(t=>t.id==SelectedTaskId);
         void InitializeInvestigation()
         {
@@ -21,7 +37,7 @@ namespace UnderAvatar
             TaskWorld=node.AddComponent<TaskWorld>();TaskWorld.Initialize(World.Data,this);
             foreach(var task in InvestigationData.Tasks(World.Data))
                 Quests.Add(new QuestProgress{Id=task.id,Description=task.description,Title=task.title});
-            SelectedTaskId=Quests.FirstOrDefault()?.Id??InvestigationData.LiveTask;
+            SelectedTaskId=Quests.FirstOrDefault()?.Id??(RequiresLiveEvidence?InvestigationData.LiveTask:null);
         }
         public void SetPhoneMenu(bool open)
         {
@@ -30,7 +46,7 @@ namespace UnderAvatar
         public void QueuePhoneAction(string task=null,int upload=0,bool cancel=false,bool close=false)
         {
             if(Finished || IsStreamerPlayer) return;
-            if(task!=null) {SelectedTaskId=task;queuedPhone.taskId=task;}
+            if(task!=null) {SelectTask(task);queuedPhone.taskId=SelectedTaskId;}
             if(upload>0) queuedPhone.uploadPhoto=upload;
             if(cancel) queuedPhone.cancelPhoto=true;
             if(close) queuedPhone.phone=true;
@@ -40,33 +56,59 @@ namespace UnderAvatar
         public void ApplyPhoneCommand(PlayerCommand c)
         {
             if(!IsAuthority || !Reporter.PhoneOpen || Reporter.Hidden || Finished) return;
-            if(c.taskId!=null && (c.taskId==InvestigationData.LiveTask || Quests.Any(q=>q.Id==c.taskId))) SelectedTaskId=c.taskId;
+            if(c.taskId!=null && (RequiresLiveEvidence && c.taskId==InvestigationData.LiveTask || Quests.Any(q=>q.Id==c.taskId))) SelectedTaskId=c.taskId;
             if(c.cancelPhoto) PendingPhoto=null;
             if(c.uploadPhoto>0) UploadPhoto(c.uploadPhoto);
         }
         public void SelectTask(string id)
         {
-            if(id==InvestigationData.LiveTask || Quests.Any(q=>q.Id==id)) SelectedTaskId=id;
+            if(RequiresLiveEvidence && id==InvestigationData.LiveTask || Quests.Any(q=>q.Id==id)) SelectedTaskId=id;
         }
         public Vector3? TargetPoint(string id)
         {
+            if(InvestigationData.IsDocumentTarget(id)) {var doc=FindDocumentTarget(id);return doc?(Vector3?)doc.PhotoPoint:null;}
+            if(id==InvestigationData.StreamerTarget) return Streamer?(Vector3?)Streamer.PhotoPoint:null;
+            if(id==InvestigationData.ComputerTarget) return Streamer && Streamer.Computer?(Vector3?)Streamer.Computer.PhotoPoint:null;
             var prop=TaskWorld?.Props.Find(p=>p.Data.id==id);
             if(prop) return prop.PhotoPoint;
             return World.Find(id)?.PhotoPoint;
         }
         public bool TargetInPhoto(string id)
         {
+            if(InvestigationData.IsDocumentTarget(id))
+            {
+                var doc=FindDocumentTarget(id);
+                if(!doc || DocumentManager.BlocksGameplayInput) return false;
+                if(!IsPhotographable(Reporter.View,doc.PhotoPoint,null,doc.transform)) return false;
+                Vector3 direction=doc.PhotoPoint-Reporter.View.transform.position;
+                foreach(var hit in Physics.RaycastAll(Reporter.View.transform.position,direction.normalized,direction.magnitude-.02f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
+                    if(!hit.collider.transform.IsChildOf(doc.transform)) return false;
+                return true;
+            }
             var point=TargetPoint(id);if(!point.HasValue) return false;
             var prop=TaskWorld?.Props.Find(p=>p.Data.id==id);var placed=World.Find(id);
-            if(!IsPhotographable(Reporter.View,point.Value,prop?prop.Body:null)) return false;
+            if(id==InvestigationData.ComputerTarget) placed=Streamer.Computer;
+            // Computer geometry may surround its own photo point; only other objects obstruct it.
+            if(placed && placed.Data.type==ItemType.StreamerPC)
+            {
+                if(!IsPhotographable(Reporter.View,point.Value,null,placed.transform)) return false;
+            }
+            else if(!IsPhotographable(Reporter.View,point.Value,prop?prop.Body:null)) return false;
             Vector3 ray=point.Value-Reporter.View.transform.position;
             foreach(var hit in Physics.RaycastAll(Reporter.View.transform.position,ray.normalized,ray.magnitude-.02f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
-                if(prop?hit.collider.GetComponentInParent<TaskProp>()!=prop:hit.collider.GetComponentInParent<PlacedItemView>()!=placed) return false;
+                if(prop?hit.collider.GetComponentInParent<TaskProp>()!=prop:!placed || hit.collider.GetComponentInParent<PlacedItemView>()!=placed) return false;
             return true;
+        }
+        public bool TaskInPhoto(InvestigationTaskData task) => task!=null && task.PhotoTargets.All(TargetInPhoto);
+        public Vector3? TaskPhotoPoint(InvestigationTaskData task)
+        {
+            var points=task.PhotoTargets.Select(TargetPoint).ToArray();
+            if(points.Any(p=>!p.HasValue)) return null;
+            return points.Aggregate(Vector3.zero,(sum,p)=>sum+p.Value)/points.Length;
         }
         public void CapturePreview()
         {
-            if(IsStreamerPlayer || !Reporter.PhoneOpen || Reporter.Hidden || TaskWorld?.Held) return;
+            if(DocumentManager.BlocksGameplayInput || IsStreamerPlayer || !Reporter.PhoneOpen || Reporter.Hidden || TaskWorld?.Held) return;
             if(PhotoPreview) Destroy(PhotoPreview);
             var camera=Reporter.View;var before=camera.targetTexture;var active=RenderTexture.active;
             var rt=RenderTexture.GetTemporary(640,360,24);
@@ -80,6 +122,7 @@ namespace UnderAvatar
         void CaptureEvidence()
         {
             if(TaskWorld?.Held) {Notice("请先放下手中的道具，再拍照。");return;}
+            if(SelectedTaskId==InvestigationData.LiveTask && !RequiresLiveEvidence) {Notice("此关卡没有额外直播证据任务。");return;}
             if(SelectedTaskId==InvestigationData.LiveTask && !StreamerPhotoAvailable)
             {Notice("本场主播照片已拍摄，等待下一场直播。");return;}
             var task=SelectedTask;
@@ -94,7 +137,7 @@ namespace UnderAvatar
             }
             else
             {
-                photo.objectCorrect=TargetInPhoto(task.targetId);photo.targetId=photo.objectCorrect?task.targetId:"";
+                photo.objectCorrect=TaskInPhoto(task);photo.targetId=photo.objectCorrect?task.targetId:"";
                 if(task.kind==InvestigationKind.PlaceAndPhotograph)
                 {
                     var prop=TaskWorld.Props.Find(p=>p.Data.id==task.targetId);
@@ -118,7 +161,7 @@ namespace UnderAvatar
             if(photo.live) StreamerPhotos++;
             else {var quest=Quests.Find(q=>q.Id==photo.taskId);if(quest==null || quest.Complete) return;quest.Complete=true;}
             audioBank.Success();Notice("上传成功："+(photo.live?"主播直播证据 "+StreamerPhotos+" / 3":Quests.Find(q=>q.Id==photo.taskId)?.Title));
-            if(Quests.All(q=>q.Complete) && StreamerPhotos>=3) Finish("狗仔获胜：全部证据已上传");
+            if(Quests.All(q=>q.Complete) && (!RequiresLiveEvidence || StreamerPhotos>=3)) Finish("狗仔获胜：全部证据已上传");
         }
         void UpdatePhone()
         {

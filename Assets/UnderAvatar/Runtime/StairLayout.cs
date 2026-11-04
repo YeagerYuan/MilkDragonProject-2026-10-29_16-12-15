@@ -11,6 +11,7 @@ namespace UnderAvatar
         public readonly BuildingData Building;
         public readonly PlacedItemData Item;
         public readonly int Floor;
+        public readonly bool StackedAbove;
         public int FlightCells => Mathf.Max(2,Mathf.CeilToInt(Building.floorHeight*.5f/(Building.gridSize*.65f)));
         public int DepthCells => FlightCells+2;
         public float Run => FlightCells*Building.gridSize;
@@ -20,8 +21,11 @@ namespace UnderAvatar
         public Vector3Int Bottom => Cell(0,0,Floor);
         public Vector3Int Top => Cell(1,0,Floor+1);
 
-        public StairLayout(BuildingData building,int floor,PlacedItemData item)
-        { Building=building; Floor=floor; Item=item; }
+        public StairLayout(BuildingData building,int floor,PlacedItemData item,bool stackedAbove=false)
+        { Building=building; Floor=floor; Item=item; StackedAbove=stackedAbove; }
+
+        public static bool CanStack(StairLayout a,StairLayout b) => a!=null && b!=null &&
+            Mathf.Abs(a.Floor-b.Floor)==1 && a.Item.gridX==b.Item.gridX && a.Item.gridZ==b.Item.gridZ && a.Item.rotationY==b.Item.rotationY;
 
         public Vector3Int Cell(int x,int z,int floor)
         {
@@ -67,8 +71,8 @@ namespace UnderAvatar
         }
         public static void Validate(BuildingData data)
         {
-            var reserved=new Dictionary<Vector3Int,string>();
-            foreach(var stair in All(data))
+            var stairs=All(data);var reserved=new Dictionary<Vector3Int,StairLayout>();
+            foreach(var stair in stairs)
             {
                 for(int f=stair.Floor;f<=stair.Floor+1 && f<data.floors.Count;f++)
                     foreach(var cell in stair.Footprint(f))
@@ -76,11 +80,12 @@ namespace UnderAvatar
                         if(!data.ContainsCell(cell.x,cell.z))
                             throw new ArgumentException("第 "+(stair.Floor+1)+" 层楼梯超出边界；当前需要 2 × "+stair.DepthCells+" 格。");
                         var occupied=data.At(f,cell.x,cell.z);
-                        if(occupied!=null && occupied.id!=stair.Item.id)
+                        var occupiedStair=occupied?.type==ItemType.Stairs?stairs.FirstOrDefault(s=>s.Item.id==occupied.id):null;
+                        if(occupied!=null && occupied.id!=stair.Item.id && !CanStack(stair,occupiedStair))
                             throw new ArgumentException("楼梯与第 "+(f+1)+" 层 ("+cell.x+", "+cell.z+") 的 "+occupied.type+" 重叠，请移动物品或楼梯。");
-                        if(reserved.TryGetValue(cell,out string other) && other!=stair.Item.id)
+                        if(reserved.TryGetValue(cell,out var other) && other.Item.id!=stair.Item.id && !CanStack(stair,other))
                             throw new ArgumentException("两座楼梯的占地或上层洞口重叠。");
-                        reserved[cell]=stair.Item.id;
+                        reserved[cell]=stair;
                     }
             }
         }
@@ -118,7 +123,8 @@ namespace UnderAvatar
             Box("OpeningLeftGuard",new Vector3(-g*.5f+.035f,Height+.45f,openingCenter),new Vector3(.07f,.9f,openingLength),rail);
             Box("OpeningRightGuard",new Vector3(g*1.5f-.035f,Height+.45f,openingCenter),new Vector3(.07f,.9f,openingLength),rail);
             Box("OpeningBackGuard",new Vector3(g*.5f,Height+.45f,(FlightCells+1.5f)*g-.035f),new Vector3(g*2,.9f,.07f),rail);
-            Box("OpeningGuard",new Vector3(0,Height+.45f,g*.5f-.035f),new Vector3(g,.9f,.07f),rail);
+            if(!StackedAbove)
+                Box("OpeningGuard",new Vector3(0,Height+.45f,g*.5f-.035f),new Vector3(g,.9f,.07f),rail);
         }
     }
 }

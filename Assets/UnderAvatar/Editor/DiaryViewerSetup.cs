@@ -5,7 +5,7 @@ using UnityEngine;
 
 public static class DiaryViewerSetup
 {
-    [MenuItem("Tools/UnderAvatar/Set Up Page Curl Diary")]
+    [MenuItem("Tools/Under Avatar/Set Up Page Curl Diary")]
     public static void SetUp()
     {
         if (Application.isPlaying) return;

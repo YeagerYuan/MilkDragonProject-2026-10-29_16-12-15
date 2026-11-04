@@ -22,7 +22,18 @@ namespace UnderAvatar
         public string definitionId="";
         public string displayName="";
         public Vector3 customSize=new Vector3(1.5f,1.5f,1.5f);
+        public bool customSizeOverride;
         public bool IsHidingPlace => type==ItemType.Bed || type==ItemType.Furniture && hideable;
+    }
+
+    [Serializable]
+    public sealed class FreePlacedObjectData
+    {
+        public string id=Guid.NewGuid().ToString("N");
+        public string name="装饰物",definitionId="";
+        // Bottom center in building coordinates; does not occupy a grid cell.
+        public Vector3 position,rotation,size=Vector3.one;
+        public bool solid=true;
     }
 
     [Serializable]
@@ -37,9 +48,11 @@ namespace UnderAvatar
     {
         public int version = 1;
         public bool useTaskEditor;
+        public bool requireLiveEvidence=true;
         public List<InvestigationTaskData> tasks=new List<InvestigationTaskData>();
         public List<TaskPropData> taskProps=new List<TaskPropData>();
         public List<TaskClueData> taskClues=new List<TaskClueData>();
+        public List<FreePlacedObjectData> decorations=new List<FreePlacedObjectData>();
         public string name = "主播的宅邸";
         public float floorHeight = 4f;
         public float gridSize = 2f;
@@ -99,13 +112,25 @@ namespace UnderAvatar
                     if (!cells.Add(new Vector2Int(item.gridX, item.gridZ)))
                         throw new ArgumentException("同一网格不能重复放置物品。");
                     if(item.type==ItemType.Custom && (!ValidSize(item.customSize.x) || !ValidSize(item.customSize.y) || !ValidSize(item.customSize.z) ||
-                        item.customSize.x>gridSize || item.customSize.z>gridSize || item.customSize.y>floorHeight))
-                        throw new ArgumentException("自定义物体尺寸必须为正数，且不能超出所在网格和层高。");
+                        item.customSize.y>floorHeight))
+                        throw new ArgumentException("自定义物体尺寸必须至少为 0.1 米，且高度不能超出层高。");
                     if (item.type == ItemType.QuestItem &&
                         (string.IsNullOrWhiteSpace(item.questId) || string.IsNullOrWhiteSpace(item.questDescription) || !quests.Add(item.questId)))
                         throw new ArgumentException("任务 ID 必须唯一，且任务说明不能为空。");
                 }
             }
+            if(decorations==null) decorations=new List<FreePlacedObjectData>();
+            if(decorations.Count>2000) throw new ArgumentException("自由摆放物体最多 2000 个。");
+            foreach(var item in decorations)
+            {
+                if(item==null || string.IsNullOrWhiteSpace(item.id) || !ids.Add(item.id) || string.IsNullOrWhiteSpace(item.definitionId) ||
+                    !InvestigationData.Finite(item.position.x) || !InvestigationData.Finite(item.position.y) || !InvestigationData.Finite(item.position.z) ||
+                    Mathf.Abs(item.position.x)>(halfWidth+.5f)*gridSize || Mathf.Abs(item.position.z)>(halfDepth+.5f)*gridSize || item.position.y<0 || item.position.y>=floors.Count*floorHeight ||
+                    !InvestigationData.Finite(item.rotation.x) || !InvestigationData.Finite(item.rotation.y) || !InvestigationData.Finite(item.rotation.z) ||
+                    !ValidSize(item.size.x) || !ValidSize(item.size.y) || !ValidSize(item.size.z) || item.size.x>100 || item.size.y>100 || item.size.z>100)
+                    throw new ArgumentException("自由摆放物体的 ID、模型、位置、旋转或尺寸无效；底部位置须在建筑范围内，尺寸为 0.1–100 米。");
+            }
+            if(taskProps!=null && taskProps.Any(p=>p!=null && ids.Contains(p.id))) throw new ArgumentException("任务道具与建筑物体的 ID 不能重复。");
             InvestigationData.Validate(this);
         }
 
@@ -116,12 +141,13 @@ namespace UnderAvatar
             if (floors.Count == 1) throw new InvalidOperationException("至少保留一层楼。");
             if (index < 0 || index >= floors.Count) throw new ArgumentOutOfRangeException(nameof(index));
             Func<Vector3,bool> onFloor=p=>Mathf.FloorToInt(Mathf.Max(0,p.y)/floorHeight)==index;
-            if(taskProps.Any(p=>onFloor(p.position)) || taskClues.Any(c=>onFloor(c.position)) || tasks.Any(t=>t.kind==InvestigationKind.PlaceAndPhotograph && onFloor(t.regionPosition)))
-                throw new InvalidOperationException("该楼层有任务道具、线索或区域，请先移走或删除它们。");
+            if(decorations.Any(p=>onFloor(p.position)) || taskProps.Any(p=>onFloor(p.position)) || taskClues.Any(c=>onFloor(c.position)) || tasks.Any(t=>t.kind==InvestigationKind.PlaceAndPhotograph && onFloor(t.regionPosition)))
+                throw new InvalidOperationException("该楼层有自由摆放物体、任务道具、线索或区域，请先移走或删除它们。");
             Func<Vector3,Vector3> shift=p=>p.y>=(index+1)*floorHeight?p-Vector3.up*floorHeight:p;
             foreach(var p in taskProps) p.position=shift(p.position);
             foreach(var c in taskClues) c.position=shift(c.position);
             foreach(var task in tasks) task.regionPosition=shift(task.regionPosition);
+            foreach(var item in decorations) item.position=shift(item.position);
             floors.RemoveAt(index);
             for (int i = 0; i < floors.Count; i++) floors[i].floorIndex = i;
         }

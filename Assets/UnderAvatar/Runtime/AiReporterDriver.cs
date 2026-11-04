@@ -105,9 +105,12 @@ namespace UnderAvatar
             }
             if(photoTarget.HasValue && !HasPath)
             {
+                var task=InvestigationData.Tasks(session.World.Data).Find(t=>t.id==photoTask);
+                if(task!=null) photoTarget=session.TaskPhotoPoint(task);
+                if(!photoTarget.HasValue) return;
                 reporter.SetLookAt(photoTarget.Value); reporter.SetPhone(true);
                 Physics.SyncTransforms();
-                if(session.HasValidTarget)
+                if(task!=null?session.TaskInPhoto(task):session.StreamerPhotoAvailable && session.StreamerInFrame(reporter.View))
                 {
                     session.SelectTask(photoTask);session.TakePhoto();if(session.PendingPhoto!=null) session.UploadPhoto(session.PendingPhoto.id);photoTarget=null;
                     if(!session.Finished && streamerRoom.Contains(navigation.Cell(transform.position))) PlanRetreat();
@@ -129,7 +132,7 @@ namespace UnderAvatar
             }
             foreach(var task in InvestigationData.Tasks(session.World.Data).Where(t=>session.Quests.Any(q=>q.Id==t.id && !q.Complete)))
             {
-                var point=session.TargetPoint(task.targetId);
+                var point=session.TaskPhotoPoint(task);
                 if(point.HasValue && PlanPhoto(point.Value,Mathf.FloorToInt(point.Value.y/session.World.Data.floorHeight)))
                 {photoTask=task.id;Status="收集任务证据";sneaking=false;return;}
             }

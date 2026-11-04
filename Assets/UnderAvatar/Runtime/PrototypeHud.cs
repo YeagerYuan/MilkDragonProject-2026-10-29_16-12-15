@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UnderAvatar
@@ -320,9 +321,12 @@ namespace UnderAvatar
                 { if(GUILayout.Button(label,GUILayout.MinHeight(36))) match.QueuePhoneAction(quest.Id); }
                 else GUILayout.Label(label,small);
             }
-            string live=(match.SelectedTaskId==InvestigationData.LiveTask?"▶ ":"□ ")+"主播直播证据  "+match.StreamerPhotos+" / 3";
-            if(match.PhoneMenuOpen) {if(GUILayout.Button(live,GUILayout.MinHeight(36))) match.QueuePhoneAction(InvestigationData.LiveTask);}
-            else GUILayout.Label(live,small);
+            if(match.RequiresLiveEvidence)
+            {
+                string live=(match.SelectedTaskId==InvestigationData.LiveTask?"▶ ":"□ ")+"主播直播证据  "+match.StreamerPhotos+" / 3";
+                if(match.PhoneMenuOpen) {if(GUILayout.Button(live,GUILayout.MinHeight(36))) match.QueuePhoneAction(InvestigationData.LiveTask);}
+                else GUILayout.Label(live,small);
+            }
             GUILayout.EndScrollView();
             GUILayout.Label(match.SelectedTaskId==InvestigationData.LiveTask?"拍摄正在直播的主播，每场最多一张。":match.SelectedTask?.description??"请选择任务",notice,GUILayout.Height(100));
             if(match.PendingPhoto!=null)
@@ -444,7 +448,7 @@ namespace UnderAvatar
             }
             DrawSoundPulses(match,actor.View,new Rect(20,112,1240,620));
             Fill(new Rect(842,16,418,88),new Color(.035f,.055f,.075f,.92f));
-            GUI.Label(new Rect(858,27,385,26),"狗仔已取证主播 "+match.StreamerPhotos+" / 3 场",section);
+            GUI.Label(new Rect(858,27,385,26),match.RequiresLiveEvidence?"狗仔已取证主播 "+match.StreamerPhotos+" / 3 场":"狗仔任务完成 "+match.Quests.Count(q=>q.Complete)+" / "+match.Quests.Count,section);
             GUI.Label(new Rect(858,57,385,38),actor.State==StreamerState.Streaming
                 ? "直播锁定 · "+brain.Level.Score+" / "+brain.Level.TargetScore+" 分才能下播"
                 : "粉丝 "+brain.Fans.ToString("N0")+" · 粉丝归零即失败",small);

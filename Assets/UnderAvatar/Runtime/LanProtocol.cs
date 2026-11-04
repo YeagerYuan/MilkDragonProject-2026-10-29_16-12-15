@@ -78,7 +78,7 @@ namespace UnderAvatar
     }
     [Serializable] public sealed class LanMessage
     {
-        public const int Version=8;
+        public const int Version=12;
         public int protocol=Version;
         public string type,text,map;
         public string trainingMap;

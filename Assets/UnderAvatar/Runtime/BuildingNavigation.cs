@@ -17,6 +17,8 @@ namespace UnderAvatar
                 for(int f=stair.Floor;f<=stair.Floor+1 && f<data.floors.Count;f++)
                     foreach(var cell in stair.Footprint(f))
                         if(cell!=stair.Bottom && cell!=stair.Top) stairInterior.Add(cell);
+            // Stacked stair pairs can share the middle-floor footprint; keep every stair endpoint walkable.
+            foreach(var stair in stairs) {stairInterior.Remove(stair.Bottom);stairInterior.Remove(stair.Top);}
         }
         public Vector3Int Cell(Vector3 position) => new Vector3Int(Mathf.RoundToInt(position.x/data.gridSize),
             Mathf.Clamp(Mathf.FloorToInt((position.y+.15f)/data.floorHeight),0,data.floors.Count-1),Mathf.RoundToInt(position.z/data.gridSize));

@@ -21,7 +21,7 @@ namespace UnderAvatar
         float searchCloseAt;
 
         public void Initialize(PlacedItemData data, int floor, float gridSize, float floorHeight,
-            PrototypeVisuals palette, bool ghost = false)
+            PrototypeVisuals palette, bool ghost = false, bool stackedAbove = false)
         {
             Data = data;
             Floor = floor;
@@ -29,6 +29,9 @@ namespace UnderAvatar
             transform.localRotation = Quaternion.Euler(0, data.rotationY, 0);
             Color color = PrototypeVisuals.ItemColors[(int)data.type];
             if (ghost) color.a = .4f;
+            var definition=LevelObjectCatalog.Default?.Resolve(data);
+            Vector3 customSize=data.type==ItemType.Custom && definition!=null && !data.customSizeOverride
+                ?definition.customSize:data.customSize;
             float h = floorHeight;
             GameObject Box(string name, Vector3 p, Vector3 s, Color c, string layer = "UA_Props", bool solid = true) =>
                 name=="Wall" || name=="FrameLeft" || name=="FrameRight" || name=="Lintel"
@@ -79,7 +82,7 @@ namespace UnderAvatar
                     Box("Seat",new Vector3(0,.45f,-.95f),new Vector3(.65f,.15f,.65f),color,"UA_Props",false);
                     break;
                 case ItemType.Stairs:
-                    new StairLayout(new BuildingData{gridSize=gridSize,floorHeight=floorHeight},floor,data).Build(transform,palette,ghost);
+                    new StairLayout(new BuildingData{gridSize=gridSize,floorHeight=floorHeight},floor,data,stackedAbove).Build(transform,palette,ghost);
                     break;
                 case ItemType.Bed:
                     Box("BedBase",new Vector3(0,.35f,0),new Vector3(1.75f,.65f,1.85f),color*.6f);
@@ -88,14 +91,27 @@ namespace UnderAvatar
                     palette.Box(searchLeaf,"Mattress",new Vector3(0,.08f,-.85f),new Vector3(1.75f,.22f,1.8f),new Color(.62f,.66f,.73f),"UA_Props",false,ghost);
                     break;
                 case ItemType.Custom:
-                    Box("CustomObject",Vector3.up*data.customSize.y*.5f,data.customSize,color);
+                    Box("CustomObject",Vector3.up*customSize.y*.5f,customSize,color);
                     break;
             }
             searchOpenEuler=Data.type==ItemType.Bed?new Vector3(-55,0,0):new Vector3(0,100,0);
-            ApplyPrefab(LevelObjectCatalog.Default?.Resolve(data),ghost);
+            if(!ghost && definition!=null && definition.overrideColliderSize && data.type==ItemType.Furniture)
+                ApplyFurnitureColliderSize(definition.colliderSize);
+            ApplyPrefab(definition,ghost);
             visuals = GetComponentsInChildren<Renderer>();
             originalMaterials = new Material[visuals.Length][];
             for(int i=0;i<visuals.Length;i++) originalMaterials[i] = visuals[i].sharedMaterials;
+        }
+
+        void ApplyFurnitureColliderSize(Vector3 size)
+        {
+            foreach(var collider in GetComponentsInChildren<Collider>(true))
+                if(collider) collider.enabled=false;
+            var box=GetComponent<BoxCollider>();
+            if(!box) box=gameObject.AddComponent<BoxCollider>();
+            box.center=new Vector3(0,Mathf.Max(.01f,size.y)*.5f,0);
+            box.size=new Vector3(Mathf.Max(.02f,size.x),Mathf.Max(.02f,size.y),Mathf.Max(.02f,size.z));
+            gameObject.layer=PrototypeLayers.Get("UA_Props");
         }
 
         void Update()

@@ -151,15 +151,15 @@ MonoBehaviour:
   buildingAsset: {fileID: 11400000, guid: 400c878b237673e4ea12f60f52381ede, type: 2}
   testRole: 1
   audioProfile: {fileID: 11400000, guid: 7f9741c608f13fb4687604f66d6c8349, type: 2}
-  characterVisuals: {fileID: 0}
-  trainingHall: {fileID: 0}
+  characterVisuals: {fileID: 11400000, guid: 322e3f3921039664b9cb4dc3cc1467b6, type: 2}
+  trainingHall: {fileID: 11400000, guid: 094fee7b5f8950247b2c51735492602c, type: 2}
   settings:
     reporterSpeed: 2.2
     streamerSpeed: 4.2
     maxPhotoDistance: 8
     maxScore: 3
     patrolSeconds: 30
-    flappyTargetScore: 12
+    flappyTargetScore: 1
     broadcastTargets: []
     flappyRules:
       gravity: 3.1
@@ -188,6 +188,9 @@ MonoBehaviour:
       intensity: 9
       followSeconds: 0.065
       cookieStrength: 0.45
+  enableDocuments: 1
+  documentReaderPrefab: {fileID: 0}
+  documentPropsPrefab: {fileID: 0}
 --- !u!4 &1852418220
 Transform:
   m_ObjectHideFlags: 0

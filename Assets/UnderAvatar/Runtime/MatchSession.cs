@@ -68,8 +68,9 @@ namespace UnderAvatar
         public List<SoundPulse> Pulses { get; } = new List<SoundPulse>();
         public int Score { get; private set; }
         public int StreamerPhotos { get; private set; }
+        public bool RequiresLiveEvidence => World.Data.requireLiveEvidence;
         int photographedRound=-1;
-        public bool StreamerPhotoAvailable => Streamer.State==StreamerState.Streaming && StreamerPhotos<3 &&
+        public bool StreamerPhotoAvailable => RequiresLiveEvidence && Streamer.State==StreamerState.Streaming && StreamerPhotos<3 &&
             photographedRound!=Streamer.Controller.BroadcastNumber;
         public string Result { get; private set; }
         public bool Finished => Result!=null;
@@ -123,7 +124,7 @@ namespace UnderAvatar
                 Notice("教学大厅：自由交互，没有小游戏、计时或胜负。Tab 打开准备菜单。",8);return;
             }
             Notice(IsStreamerPlayer?"空格 / 左键拍翅。Flappy Bird 达到 "+Settings.TargetForBroadcast(1)+" 分后可下播搜捕狗仔。":
-                "完成物证任务和 3 张直播证据；每场直播只能取证主播一次。F 手机，Tab 调试。",6);
+                RequiresLiveEvidence?"完成物证任务和 3 张直播证据；每场直播只能取证主播一次。F 手机，Tab 调试。":"完成手机中配置的拍摄任务。F 手机，Tab 调试。",6);
         }
 
         public void Notice(string text,float seconds=3) { Message=text; MessageUntil=Time.time+seconds;messageId++; App.Report(text); }
@@ -157,7 +158,7 @@ namespace UnderAvatar
             if(IsNetwork && IsAuthority) pendingNoises.Add(new NoiseSnapshot{id=++noiseId,position=position,kind=kind,audibleOnly=true});
         }
 
-        public bool IsPhotographable(Camera camera,Vector3 point,Collider targetCollider=null)
+        public bool IsPhotographable(Camera camera,Vector3 point,Collider targetCollider=null,Transform targetRoot=null)
         {
             if(Vector3.Distance(camera.transform.position,point)>=Settings.maxPhotoDistance) return false;
             Vector3 screen=camera.WorldToViewportPoint(point);
@@ -165,7 +166,7 @@ namespace UnderAvatar
             Vector3 ray=point-camera.transform.position;
             foreach(var hit in Physics.RaycastAll(camera.transform.position,ray.normalized,ray.magnitude-.025f,
                 PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore))
-                if(hit.collider!=targetCollider) return false;
+                if(hit.collider!=targetCollider && (!targetRoot || !hit.collider.transform.IsChildOf(targetRoot))) return false;
             return true;
         }
 
@@ -175,7 +176,7 @@ namespace UnderAvatar
             foreach(var task in InvestigationData.Tasks(World.Data))
             {
                 var quest=Quests.Find(q=>q.Id==task.id && !q.Complete);
-                if(quest!=null && TargetInPhoto(task.targetId))
+                if(quest!=null && TaskInPhoto(task))
                 {
                     var prop=TaskWorld?.Props.Find(p=>p.Data.id==task.targetId);
                     if(task.kind==InvestigationKind.Photograph || prop && TaskWorld.HeldId!=prop.Data.id && task.Contains(prop.transform.position)) valid.Add(quest);
@@ -191,7 +192,7 @@ namespace UnderAvatar
 
         public void TakePhoto()
         {
-            if(!IsAuthority || Finished || Reporter.Hidden || !Reporter.PhoneOpen || TaskWorld?.Held || Time.time<nextShutterTime) return;
+            if(DocumentManager.BlocksGameplayInput || !IsAuthority || Finished || Reporter.Hidden || !Reporter.PhoneOpen || TaskWorld?.Held || Time.time<nextShutterTime) return;
             nextShutterTime=Time.time+.25f;
             EmitNoise(Reporter.transform.position,NoiseKind.Shutter);
             FlashUntil=Time.time+.3f;

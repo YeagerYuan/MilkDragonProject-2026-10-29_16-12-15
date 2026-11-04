@@ -14,6 +14,98 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.BuildingAsset
   building:
     version: 1
+    useTaskEditor: 1
+    requireLiveEvidence: 0
+    tasks:
+    - id: item_medicine
+      title: "\u62CD\u6444\u4E3B\u64AD\u72D7\u72D7"
+      description: "\u6211\u5F88\u4E45\u90FD\u6CA1\u770B\u5230\u4E3B\u64AD\u7684\u72D7\u72D7\u4E86\uFF0C\u4F60\u80FD\u62CD\u5F20\u5B83\u73A9\u800D\u7684\u7167\u7247\u5417\uFF1F"
+      targetId: document:dog_photo
+      kind: 0
+      additionalTargetIds: []
+      clueIds: []
+      regionPosition: {x: 0, y: 0.4, z: 0}
+      regionSize: {x: 2, y: 0.8, z: 2}
+      regionYaw: 0
+    - id: item_contract
+      title: "\u62CD\u6444\u4E3B\u64AD\u7231\u5403\u7684\u98DF\u7269"
+      description: "\u542C\u8BF4\u4E3B\u64AD\u5BF9\u5403\u7684\u5F88\u6311\u5254\u3002\u6211\u60F3\u77E5\u9053\u4ED6\u5E73\u65F6\u5230\u5E95\u5403\u4EC0\u4E48\uFF0C\u5C24\u5176\u662F\u4ED6\u6700\u559C\u6B22\u7684\u98DF\u7269\u3002"
+      targetId: 338ec9aaa548424fa0a8a9db0d6d8714
+      kind: 0
+      additionalTargetIds: []
+      clueIds: []
+      regionPosition: {x: 0, y: 0.4, z: 0}
+      regionSize: {x: 2, y: 0.8, z: 2}
+      regionYaw: 0
+    - id: c23a34a817284331be1d9cd55895b4e3
+      title: "\u62CD\u6444\u4E3B\u64AD\u7684\u8863\u670D"
+      description: "\u4E3B\u64AD\u4ECE\u6765\u6CA1\u6709\u516C\u5F00\u8FC7\u81EA\u5DF1\u7684\u771F\u5B9E\u8EAB\u6750\uFF0C\u6211\u60F3\u77E5\u9053\u4ED6\u5E73\u65F6\u7A7F\u4EC0\u4E48\u5C3A\u5BF8\u7684\u8863\u670D\u3002"
+      targetId: 7326e77228ac4334a69e786e0295e3a5
+      kind: 0
+      additionalTargetIds: []
+      clueIds: []
+      regionPosition: {x: -7.5942326, y: 0.44, z: -4.4611034}
+      regionSize: {x: 2, y: 0.8, z: 2}
+      regionYaw: 0
+    - id: 26fe5755df664b7ab37b3be12d54893e
+      title: "\u62CD\u4E3B\u64AD\u4FA7\u8138"
+      description: "\u6211\u8981\u4E00\u5F20\u4E3B\u64AD\u6253\u6E38\u620F\u4FA7\u8138\u7684\u5E05\u7167\uFF01\u4F60\u5C31\u5077\u5077\u62CD\u4E00\u5F20\uFF0C\u522B\u6253\u6270\u5230\u4ED6\u54E6\u3002"
+      targetId: __streamer
+      kind: 0
+      additionalTargetIds:
+      - __computer
+      clueIds: []
+      regionPosition: {x: -7.5942326, y: 0.44, z: -4.4611034}
+      regionSize: {x: 2, y: 0.8, z: 2}
+      regionYaw: 0
+    - id: e216ccbe74fe48acb5f0e3fcf7c826f4
+      title: "\u62CD\u6444\u4E3B\u64AD\u6B63\u8138"
+      description: "\u4E0D\u591F\u4E0D\u591F\uFF0C\u6211\u8981\u77E5\u9053\u4E3B\u64AD\u771F\u5B9E\u7684\u957F\u76F8\uFF01\u6211\u4E0D\u60F3\u53EA\u770B\u865A\u62DF\u5F62\u8C61\uFF01"
+      targetId: __streamer
+      kind: 0
+      additionalTargetIds: []
+      clueIds: []
+      regionPosition: {x: -7.5942326, y: 0.44, z: -4.4611034}
+      regionSize: {x: 2, y: 0.8, z: 2}
+      regionYaw: 0
+    taskProps:
+    - id: 338ec9aaa548424fa0a8a9db0d6d8714
+      name: "\u8840\u6C7D\u6C34\u7F50"
+      definitionId: task_338ec9aaa548424fa0a8a9db0d6d8714
+      position: {x: 3.5232146, y: 0.81562626, z: -3.862857}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 0.53, y: 0.41, z: 0.35}
+      portable: 0
+    - id: 7326e77228ac4334a69e786e0295e3a5
+      name: "\u667E\u8863\u67B6"
+      definitionId: task_7326e77228ac4334a69e786e0295e3a5
+      position: {x: 5.893402, y: 3.99, z: -0.9203957}
+      rotation: {x: 0, y: 270, z: 0}
+      size: {x: 3, y: 3, z: 3}
+      portable: 0
+    taskClues: []
+    decorations:
+    - id: fea2c58e89d049738bb194ba29d8bdb6
+      name: Meat
+      definitionId: d447a11d29894416898d1fe5fbfa0be2
+      position: {x: 4.5301304, y: 1.3340628, z: -8.340879}
+      rotation: {x: 90, y: 302.5181, z: 0}
+      size: {x: 1, y: 1, z: 1}
+      solid: 1
+    - id: b68c8fd6c7ce44b3a5d468c11158896d
+      name: Meat
+      definitionId: d447a11d29894416898d1fe5fbfa0be2
+      position: {x: 12.5, y: 1.3580728, z: -8.1}
+      rotation: {x: 270, y: 110.59998, z: 0}
+      size: {x: 1, y: 1, z: 1}
+      solid: 1
+    - id: b3deb580870a4157a851c4e63d625660
+      name: WelcomeTapestry
+      definitionId: d5f7f98aaf6b4205909984312782a3d2
+      position: {x: 9.06, y: 0.94, z: 3.05}
+      rotation: {x: 0, y: 0, z: 0}
+      size: {x: 2.28, y: 2.47, z: 1}
+      solid: 1
     name: "\u4E3B\u64AD\u7684\u5B85\u90B8"
     floorHeight: 4
     gridSize: 2
@@ -30,6 +122,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 024b692b69b64b95b425e5be3cf0e55c
         type: 0
         gridX: -7
@@ -38,6 +134,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 2e69d094e1804374926da5d62c4f8ced
         type: 0
         gridX: -6
@@ -46,6 +146,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: a73a36b864f246c1807527b0adc60690
         type: 0
         gridX: -6
@@ -54,6 +158,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 8fbf3a4b540645369a9be37f43ea6473
         type: 0
         gridX: -5
@@ -62,6 +170,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 04fb2289562841eb989e28073818b86b
         type: 0
         gridX: -5
@@ -70,6 +182,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 44fb9cd2c7254264975900a050cf50e4
         type: 0
         gridX: -4
@@ -78,6 +194,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: a754f7a6edd44f0d978ec12bfa5a9287
         type: 0
         gridX: -4
@@ -86,6 +206,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: e0255fbf7bc647708b58d8cb9d339bde
         type: 0
         gridX: -3
@@ -94,6 +218,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ffe0ea28bd9a4083b3bdd5c1f83bb981
         type: 0
         gridX: -3
@@ -102,6 +230,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: cefb8604ef2844c693767044cd22aec5
         type: 0
         gridX: -2
@@ -110,6 +242,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 3861d40679ec460ab285f1cb4219a5ba
         type: 0
         gridX: -2
@@ -118,6 +254,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 72d05d6bcaad42e18660a9d7f850be6f
         type: 0
         gridX: -1
@@ -126,6 +266,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 62224b61015d4ea494bedb29128bec1e
         type: 0
         gridX: -1
@@ -134,6 +278,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: cdff8ece82904176ba1aeca6269a8262
         type: 0
         gridX: 0
@@ -142,6 +290,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 5a98790821f14a3b87407a63356730e5
         type: 0
         gridX: 0
@@ -150,6 +302,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 4c597367064540b6a05ca0a916c78d0c
         type: 0
         gridX: 1
@@ -158,6 +314,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 8ee355b514d4425fa0c1d0d0c0958def
         type: 0
         gridX: 1
@@ -166,6 +326,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 790efe288e584dca96a9d771dfe4030b
         type: 0
         gridX: 2
@@ -174,6 +338,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 22c44d934ae64506a947e8e105645f3b
         type: 0
         gridX: 2
@@ -182,6 +350,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: c0e95e6b1a594c1c93a4fb188218a867
         type: 0
         gridX: 3
@@ -190,6 +362,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 5c7e36bbd6ed42ae86ff1bf2e84f9905
         type: 0
         gridX: 3
@@ -198,6 +374,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 6f6311b2c26c462ba1f5e71f2cc3f317
         type: 0
         gridX: 4
@@ -206,6 +386,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ae509f03ea4c4f02bf1349ddb3ac306b
         type: 0
         gridX: 4
@@ -214,6 +398,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 35948f1ebd7248ed928ee866a980d296
         type: 0
         gridX: 5
@@ -222,6 +410,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 65e2ae87c2b54b80b359b05679d21bcd
         type: 0
         gridX: 5
@@ -230,6 +422,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: bc752da661cd4bd48791ab84a062223a
         type: 0
         gridX: 6
@@ -238,6 +434,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 27683f15c0ab430b865005dfdc1f4b10
         type: 0
         gridX: 7
@@ -246,6 +446,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 709c5eb15aba43f989345e840f50975b
         type: 0
         gridX: -7
@@ -254,6 +458,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 469bb8ac35be4bcd95faf6d98788e6df
         type: 0
         gridX: 7
@@ -262,6 +470,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: a1e8beea34f34329adde0b266187ae27
         type: 0
         gridX: 0
@@ -270,6 +482,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: d62b0e528c1d4091bc0220f7b602b7c2
         type: 0
         gridX: -7
@@ -278,6 +494,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 4a23d971f9b541b4ad54c0d7618dc54f
         type: 0
         gridX: 7
@@ -286,6 +506,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 2d179da5a01949b58855f86ceb59739c
         type: 0
         gridX: 0
@@ -294,6 +518,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 530cb70d92654e97aed370ae30a3ab9c
         type: 0
         gridX: -7
@@ -302,6 +530,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 0f8dda45c8ea499ab789b43539371de2
         type: 0
         gridX: 7
@@ -310,6 +542,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ae8ebe53df57492f8b343a43fb516860
         type: 1
         gridX: 0
@@ -318,6 +554,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: c81ee885212e4314aa527d6a2bb795f4
         type: 0
         gridX: -7
@@ -326,6 +566,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 59a4db707b9047fc84b53c73d0897528
         type: 0
         gridX: 7
@@ -334,6 +578,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 8368505948c743c297bd5248b8b9a5cd
         type: 0
         gridX: 0
@@ -342,6 +590,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 16b46daed6ed45d1830a948db7a08318
         type: 0
         gridX: -7
@@ -350,6 +602,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 856ee721c09749c78286b5ad1bea54f5
         type: 0
         gridX: 7
@@ -358,6 +614,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 849f125918dc4adda5cdd1638394a349
         type: 0
         gridX: 0
@@ -366,6 +626,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ea0458a83d7147bd8f739c117cbc6478
         type: 0
         gridX: -7
@@ -374,6 +638,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 430a407121674c3585bd88d3742fdf3b
         type: 0
         gridX: 7
@@ -382,6 +650,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: e54869769f9241e3aa5a4680607cd3b8
         type: 0
         gridX: 0
@@ -390,6 +662,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 0fe51e23f0184db5843650cd73b63252
         type: 0
         gridX: -7
@@ -398,6 +674,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: d353d808b27647e6903432a1b55f05e4
         type: 0
         gridX: 7
@@ -406,6 +686,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 0d9b22c9fa2e4e7f823dd2a938e012dc
         type: 1
         gridX: 0
@@ -414,6 +698,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ec749bc647f14c84a75387193e1acd18
         type: 0
         gridX: -7
@@ -422,6 +710,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 476898071b6f44fe894093e82c434bee
         type: 0
         gridX: 7
@@ -430,6 +722,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: c509ca5430f24602ba87ee6867a27a41
         type: 0
         gridX: 0
@@ -438,6 +734,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 9a22fa34364b4e02af4769fdbe6915e1
         type: 0
         gridX: -7
@@ -446,6 +746,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: d8c190f0adbd4de7b6f28f8b3089d81f
         type: 0
         gridX: 7
@@ -454,6 +758,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 77ee549d45ab4df0bdee56f72e8429b8
         type: 0
         gridX: 0
@@ -462,14 +770,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
-      - id: 57758807d4f44cc8801e8ab85a24c07f
-        type: 5
-        gridX: -5
-        gridZ: -1
-        rotationY: 0
-        questId: 
-        questDescription: 
-        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: f9ab342d7eb844258e193dec90c50239
         type: 5
         gridX: 5
@@ -478,46 +782,34 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
-      - id: 6e108483267948aca64f0b9f7ebfe863
-        type: 2
-        gridX: -3
-        gridZ: 3
-        rotationY: 0
-        questId: 
-        questDescription: 
-        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: c5b85177212d45c9a0ba813a4a0b84a0
         type: 2
-        gridX: 2
-        gridZ: 3
+        gridX: 1
+        gridZ: 4
         rotationY: 0
         questId: 
         questDescription: 
         hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 4e5818eea81f46e394f908fbfdbbb0c4
         type: 2
         gridX: -3
-        gridZ: 0
+        gridZ: -2
         rotationY: 0
         questId: 
         questDescription: 
         hideable: 0
-      - id: 2fb359063f234450bc1e61857d1236af
-        type: 2
-        gridX: 4
-        gridZ: 0
-        rotationY: 90
-        questId: 
-        questDescription: 
-        hideable: 0
-      - id: 8554c9ae98814bc794392fe4a8c0e1f5
-        type: 3
-        gridX: -5
-        gridZ: -3
-        rotationY: 0
-        questId: item_medicine
-        questDescription: "\u62CD\u6444\u4E00\u697C\u53A8\u623F\u7684\u53EF\u7591\u836F\u5242"
-        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: e6f77727889e45c8aa8ce6db6fbd9557
         type: 0
         gridX: 6
@@ -526,6 +818,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 5a7363a1ce884503b69019438a673a34
         type: 0
         gridX: 7
@@ -534,6 +830,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 1cfb539376f04e53b797d487af05bf49
         type: 0
         gridX: 1
@@ -542,6 +842,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 66d99e38256346c9b305f69b6909117e
         type: 0
         gridX: 2
@@ -550,6 +854,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 532bcd9138a74c53923776893995b9b1
         type: 0
         gridX: 4
@@ -558,6 +866,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: b50e03cfd73648528ebd775d0d24f390
         type: 0
         gridX: 5
@@ -566,6 +878,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: aba3719c412e4deda8882ec11314d5cb
         type: 0
         gridX: 6
@@ -574,6 +890,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 9500e95ebf584fb79b685e6f03262c56
         type: 1
         gridX: 3
@@ -582,6 +902,322 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 8c0e6391da204b1ba117f1ba696a3ad4
+        type: 5
+        gridX: -5
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e2c0b5a4701440d19bf03436c6af7d92
+        type: 7
+        gridX: -4
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 3a61d4b1ecc849718c45ff16d2ca7d66
+        displayName: "\u978B\u67DC"
+        customSize: {x: 2, y: 1.7, z: 1.5}
+        customSizeOverride: 0
+      - id: ba64970e4daa48e682ad0fc08ad5ff0a
+        type: 7
+        gridX: 3
+        gridZ: 4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 97f70a7c898d42ed8fe49fd760e6e141
+        displayName: "\u978B\u67DC"
+        customSize: {x: 2, y: 1.7, z: 1.5}
+        customSizeOverride: 0
+      - id: 83798eade8e449649cd5682b929414fb
+        type: 7
+        gridX: 4
+        gridZ: 4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 97f70a7c898d42ed8fe49fd760e6e141
+        displayName: "\u978B\u67DC"
+        customSize: {x: 2, y: 1.7, z: 1.5}
+        customSizeOverride: 0
+      - id: 3a3f2885c7c84a49999e23e4a4d39295
+        type: 7
+        gridX: 5
+        gridZ: 4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 97f70a7c898d42ed8fe49fd760e6e141
+        displayName: "\u978B\u67DC"
+        customSize: {x: 2, y: 1.7, z: 1.5}
+        customSizeOverride: 0
+      - id: d7c2b5fa774543a6bcdcec8ecb5f36c8
+        type: 7
+        gridX: 6
+        gridZ: 4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 97f70a7c898d42ed8fe49fd760e6e141
+        displayName: "\u978B\u67DC"
+        customSize: {x: 2, y: 1.7, z: 1.5}
+        customSizeOverride: 0
+      - id: fef37d10a1a044c79951328fbb2633a1
+        type: 7
+        gridX: 1
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 6910b2ef1bb9460ab54417f8108db48e
+        displayName: "\u51B0\u7BB1"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: d83bd3d6928544c29038e385437a94a8
+        type: 2
+        gridX: 2
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: ed2c3e6b74ad4529b5b4ba76b725e6f4
+        type: 2
+        gridX: 3
+        gridZ: -2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e89d0d3c6dc143e9b4e377b66b5eac68
+        type: 7
+        gridX: 1
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: d6bdd0ea8aed4b9d88eb5a6ba5178e59
+        displayName: "\u70E4\u7BB1"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: deac6428e8be4c95a261647fd2b25f8c
+        type: 7
+        gridX: 2
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 1.5, y: 3, z: 1.5}
+        customSizeOverride: 0
+      - id: 3ce6665983da435fb8a1bec0399dc56d
+        type: 7
+        gridX: 4
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 2, y: 4, z: 1.5}
+        customSizeOverride: 0
+      - id: 3d44207890b9446b9557fb71fb3511ca
+        type: 7
+        gridX: 5
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 2, y: 4, z: 1.5}
+        customSizeOverride: 0
+      - id: 0efe7d9a948144fbbbd29e10e78287d4
+        type: 7
+        gridX: 6
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 2, y: 4, z: 1.5}
+        customSizeOverride: 0
+      - id: 140f291f4d80497e9ec31bb368762bd6
+        type: 7
+        gridX: 2
+        gridZ: 0
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 2.1, y: 4, z: 1.5}
+        customSizeOverride: 0
+      - id: e854531303f34d70a65db413efd9068a
+        type: 2
+        gridX: 4
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 1482b057c1974540962a35fba26d2da6
+        type: 2
+        gridX: -3
+        gridZ: -1
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 06369368447f430abb6eb3784f4843a2
+        displayName: "\u6C99\u53D1"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 87ae8fc9463e4c75b709c7202d3edd29
+        type: 7
+        gridX: -6
+        gridZ: -4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: de36b621e2a9437d9c9bb91c611e21ef
+        type: 7
+        gridX: -6
+        gridZ: -3
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 4234aa6fba3b46dab86643edce1e4e14
+        type: 7
+        gridX: -6
+        gridZ: -2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 08e06ab3e41841aab53a2048f95960ad
+        type: 7
+        gridX: -6
+        gridZ: -1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 34505ed14d664888b182feb027f896b9
+        type: 7
+        gridX: -1
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: 91f049949c634aacb1b76574e8fbd0af
+        type: 7
+        gridX: -2
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: 425bf9e4119f47988d9d339ac2db3d49
+        type: 2
+        gridX: -1
+        gridZ: 0
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: f9db0a93a0a0472abad661234fde207e
+        type: 7
+        gridX: -3
+        gridZ: -4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 560447d872b44f898b732a12eb39c3f0
+        displayName: "\u7535\u89C6\u67DC"
+        customSize: {x: 1, y: 2, z: 2}
+        customSizeOverride: 0
+      - id: d282de5ffc424b66a448ce25ece52690
+        type: 7
+        gridX: 3
+        gridZ: -4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: e49575a5f0714f8e91a1da748b13c1be
+        displayName: "\u6C34\u6C60"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
     - floorIndex: 1
       items:
       - id: 1191156d0f1740609e10b4bb30fa78a0
@@ -592,6 +1228,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: de98286a4d0b4b6e9fe0e675f0d3c854
         type: 0
         gridX: -7
@@ -600,6 +1240,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: a1016631a2654d09b60fcc6f1cad3c54
         type: 0
         gridX: -6
@@ -608,6 +1252,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 71443d7401714d1d854574a3fcce82f4
         type: 0
         gridX: -6
@@ -616,6 +1264,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 1029bcb8f6174ca1ae64494c424db726
         type: 0
         gridX: -5
@@ -624,6 +1276,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 9d1e8130ec864e40aacce81d322d5793
         type: 0
         gridX: -5
@@ -632,6 +1288,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: caddc4ecc9a747ef9916b1605b4adfca
         type: 0
         gridX: -4
@@ -640,6 +1300,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 84623ab0bf1545a085a823cc42633fc8
         type: 0
         gridX: -4
@@ -648,6 +1312,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 6fa167430f2842269b4b3dd817b29511
         type: 0
         gridX: -3
@@ -656,6 +1324,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 8f98394155d54cac912aaca10aa60648
         type: 0
         gridX: -3
@@ -664,6 +1336,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: df60b8ee7726471cbefb0b4e278f4b1c
         type: 0
         gridX: -2
@@ -672,6 +1348,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 287e915d828a4159b60ea8f4c6328aa7
         type: 0
         gridX: -2
@@ -680,6 +1360,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: a9651a6e849f4bf7adcee046aebe2923
         type: 0
         gridX: -1
@@ -688,6 +1372,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 6482f13d04434bd4bfa4af9b67cf6148
         type: 0
         gridX: -1
@@ -696,6 +1384,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 65942b7be2d443a491c7bf5173151e73
         type: 0
         gridX: 0
@@ -704,6 +1396,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 1686248d18a14725958d8d50a91d94e0
         type: 0
         gridX: 0
@@ -712,6 +1408,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 12e68cc4d72246098fd7e5fd77c6d95b
         type: 0
         gridX: 1
@@ -720,6 +1420,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ec600c2af30b4120bd55958267e276d0
         type: 0
         gridX: 1
@@ -728,6 +1432,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 9a5fac3e7d9e40bbbeb80e7c6ae092ee
         type: 0
         gridX: 2
@@ -736,6 +1444,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 98ed83d29a3f4ab39a88ed02910c0edc
         type: 0
         gridX: 2
@@ -744,6 +1456,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 4f4ab744f2b8437fa7cf92e4925d1c0e
         type: 0
         gridX: 3
@@ -752,6 +1468,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 08d46e9026c54371bc1f96ca8ae9c1d9
         type: 0
         gridX: 3
@@ -760,6 +1480,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: f1153a734a8849c2a1bc4bbf8aa82a12
         type: 0
         gridX: 4
@@ -768,6 +1492,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: e06e3e5ffd55427e8eee7617cd217b23
         type: 0
         gridX: 4
@@ -776,6 +1504,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 2a84036ea203465ba33a8959ad0517b5
         type: 0
         gridX: 5
@@ -784,6 +1516,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: bd5c43d377844c828bd5a7cea48b5c95
         type: 0
         gridX: 5
@@ -792,6 +1528,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 25b4e9c6407e48b18f76ce5d5bcbf6c6
         type: 0
         gridX: 6
@@ -800,6 +1540,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 3d507c5c5d514e68a5a48c625c95fce7
         type: 0
         gridX: 6
@@ -808,6 +1552,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 2814515b476c40dfaf00b42b96f60b1a
         type: 0
         gridX: 7
@@ -816,6 +1564,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 313bb7ed67024528854ecb418b25d9fe
         type: 0
         gridX: 7
@@ -824,6 +1576,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 01a28ba911aa4f1eb395dec7a2beb888
         type: 0
         gridX: -7
@@ -832,6 +1588,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 618eaaccd7e34a92a66240b4f9e1c6cf
         type: 0
         gridX: 7
@@ -840,6 +1600,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: eaba5ab7fc114d15a252510daffae772
         type: 0
         gridX: 0
@@ -848,6 +1612,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 81cc0d820b8e432b82698838f73319d8
         type: 0
         gridX: -7
@@ -856,6 +1624,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: da638fb34b9f48e6b117c8c605043435
         type: 0
         gridX: 7
@@ -864,6 +1636,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: d5d92cf2944a417dbc135d760e8d1989
         type: 0
         gridX: 0
@@ -872,6 +1648,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 65ef1f68502341fa85ff4115cbf0275d
         type: 0
         gridX: -7
@@ -880,6 +1660,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: e770dc5f0c8849c09463af221a696514
         type: 0
         gridX: 7
@@ -888,6 +1672,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 1ef94762711e425b9fbe6acbcd9de63b
         type: 1
         gridX: 0
@@ -896,6 +1684,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 7ebd06ea128841f88505d9871da5aa74
         type: 0
         gridX: -7
@@ -904,6 +1696,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: a0e3fc50a3594896b7cbb73bcff90742
         type: 0
         gridX: 7
@@ -912,6 +1708,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 5b48aa41907942d08f56d681a35bce41
         type: 0
         gridX: 0
@@ -920,6 +1720,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 340e2cc1db0b47cabb59ab7793c51a35
         type: 0
         gridX: -7
@@ -928,6 +1732,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: fc16ecd93f5944f8b9f502c6bd68428c
         type: 0
         gridX: 7
@@ -936,6 +1744,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: c47fd4e08ebe4ce091613be3c31b7bc6
         type: 0
         gridX: 0
@@ -944,6 +1756,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 1ae59df92ee9474dbef27f6ca2281b0b
         type: 0
         gridX: -7
@@ -952,6 +1768,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 05bcd631adc2408486ef3eb962205876
         type: 0
         gridX: 7
@@ -960,6 +1780,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 026c1fa64642446c971ec18c51b9b1dc
         type: 0
         gridX: 0
@@ -968,6 +1792,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 9560577a8f064ce7bdc5ec66994f40d6
         type: 0
         gridX: -7
@@ -976,6 +1804,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: c73d9a2d268a4b48a3b3a85d1476563f
         type: 0
         gridX: 7
@@ -984,6 +1816,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: b72e0118638e4525b51e2f20ccef6b45
         type: 1
         gridX: 0
@@ -992,6 +1828,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 8dcd768ee12e4148a33eb9a6a13ddf85
         type: 0
         gridX: -7
@@ -1000,6 +1840,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 90dc9988ee94435cbaaed850b82be6fc
         type: 0
         gridX: 7
@@ -1008,6 +1852,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: ce0e33cf707d436eb1b47bd333666756
         type: 0
         gridX: 0
@@ -1016,6 +1864,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 1da710d5337e48e398d3de7a9916ab2b
         type: 0
         gridX: -7
@@ -1024,6 +1876,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 068a8248640246cf9aa50904bfa20caa
         type: 0
         gridX: 7
@@ -1032,6 +1888,10 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
       - id: 8ccf7bd713b74cf192281c0a81d15c33
         type: 0
         gridX: 0
@@ -1040,63 +1900,1439 @@ MonoBehaviour:
         questId: 
         questDescription: 
         hideable: 0
-      - id: 2a3891f4c9f546ef9f9d957be7f5e8e0
-        type: 2
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 4b7dfd1c824f4310835775302a0ecf5d
+        type: 5
         gridX: -3
-        gridZ: 3
-        rotationY: 0
+        gridZ: -4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 815c10e1e9364f7cbe8c7ac34475101b
+        type: 7
+        gridX: -1
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 7da5416b6c244461b8a63301c15ac938
+        displayName: "\u5395\u6240"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: c6647f49594242e8babac03d49f1fa46
+        type: 2
+        gridX: -5
+        gridZ: -2
+        rotationY: 180
         questId: 
         questDescription: 
         hideable: 1
-      - id: 07b9b3ff39284d03ae02999da6fd8359
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: a1075db1f63f44e4a788862e93427980
+        type: 7
+        gridX: -1
+        gridZ: 0
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: e49575a5f0714f8e91a1da748b13c1be
+        displayName: "\u6C34\u6C60"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: f0b8acc992624448a9c40287e6ba521e
+        type: 7
+        gridX: -6
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 5f06a81b4aa7470dab8684587cc14963
+        type: 7
+        gridX: 1
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 7595c29af79242a29976c06ed1131b08
+        displayName: "\u6D17\u8863\u673A"
+        customSize: {x: 2, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: d41e8b5f826d484cac8ccd6f02623b07
+        type: 7
+        gridX: 1
+        gridZ: -3
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 7595c29af79242a29976c06ed1131b08
+        displayName: "\u6D17\u8863\u673A"
+        customSize: {x: 1.5, y: 1.75, z: 1.6}
+        customSizeOverride: 0
+      - id: 475c96e72ec04ad6a316fb9025c99ca7
         type: 2
+        gridX: 1
+        gridZ: 0
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 9a76cf76a1544feeb649ada1167c536a
+        type: 7
         gridX: 2
-        gridZ: 3
-        rotationY: 0
-        questId: 
-        questDescription: 
-        hideable: 1
-      - id: a6c6b95fee284c60ac82b2f664f1f573
-        type: 2
-        gridX: -3
-        gridZ: 0
+        gridZ: 4
         rotationY: 0
         questId: 
         questDescription: 
         hideable: 0
-      - id: 9b38d4ba281943999b1d69c91af8116a
-        type: 2
-        gridX: 4
-        gridZ: 0
-        rotationY: 90
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: 354ea4b9256c4e3f9a12927497168ba5
+        type: 7
+        gridX: 3
+        gridZ: 4
+        rotationY: 0
         questId: 
         questDescription: 
         hideable: 0
-      - id: 98e4d2a2d2b6474a99e48ec37f880cff
-        type: 4
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: 53643eee7e834cec8e6e837ddeaef1fd
+        type: 7
         gridX: 4
         gridZ: 4
         rotationY: 0
         questId: 
         questDescription: 
         hideable: 0
-      - id: 2bc9bc3aa7c84615a91f4c25bbec94f5
-        type: 3
-        gridX: -4
-        gridZ: -3
-        rotationY: 0
-        questId: item_diary
-        questDescription: "\u62CD\u6444\u4E8C\u697C\u5367\u5BA4\u7684\u602A\u7269\u65E5\u8BB0"
-        hideable: 0
-      - id: d07b2dfb87d2410b9ab28c7bbb0cb03c
-        type: 3
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: e21645c8c6be4e7ea81b37f7e9410d12
+        type: 7
         gridX: 5
-        gridZ: 1
+        gridZ: 4
         rotationY: 0
-        questId: item_contract
-        questDescription: "\u62CD\u6444\u4E8C\u697C\u4E66\u623F\u7684\u79D8\u5BC6\u5408\u540C"
+        questId: 
+        questDescription: 
         hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: db3aa1944d584643bb73e586eaf885cd
+        type: 7
+        gridX: 6
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: 1fec037e11a84c30bfebf2a9339270dc
+        type: 2
+        gridX: -2
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: a07fcbbc547247feab8dd4ed5fbe4580
+        displayName: "\u6D74\u7F38"
+        customSize: {x: 2, y: 2, z: 1}
+        customSizeOverride: 0
+      - id: 7018a116e4984b698329e683f03f1396
+        type: 2
+        gridX: 4
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 6d23cd5bf62e43ff91465bf9a7206520
+        type: 2
+        gridX: 3
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e39ecc3f1864450686eb9ae5ac4d0db9
+        type: 2
+        gridX: 6
+        gridZ: 1
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: c12e17d2aeb943ed8850bff05aa06217
+        type: 7
+        gridX: 1
+        gridZ: 4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u50A8\u85CF"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: ca27e0e1d87248f082ec8ef27e322626
+        type: 7
+        gridX: -1
+        gridZ: 2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 41083e7689854921a5f50ca2dc92ce85
+        displayName: "\u957F\u65B9\u5F62\u5730\u6BEF"
+        customSize: {x: 1, y: 0.1, z: 2}
+        customSizeOverride: 0
+      - id: 5be92d0ee2c040dc96dfb339d5d38ef6
+        type: 7
+        gridX: -1
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 41083e7689854921a5f50ca2dc92ce85
+        displayName: "\u957F\u65B9\u5F62\u5730\u6BEF"
+        customSize: {x: 1, y: 0.1, z: 2}
+        customSizeOverride: 0
+      - id: 87c6dc5e76ba494d9eccafd3e5fd4f9c
+        type: 7
+        gridX: 0
+        gridZ: -6
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 99284fd4542944a998c28e0a713e8ee9
+        displayName: "\u94C1\u67DC"
+        customSize: {x: 2, y: 3.5, z: 1}
+        customSizeOverride: 0
+      - id: b84e103f81fe40c181fc39f4ce2aee67
+        type: 2
+        gridX: -1
+        gridZ: -3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: b0c237b0ff074e11bb16590e6e6781cf
+        type: 7
+        gridX: -1
+        gridZ: 1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 2.1, y: 4, z: 1.5}
+        customSizeOverride: 0
+      - id: 616e8080cde14d6f8198610b428d9f34
+        type: 7
+        gridX: -1
+        gridZ: -1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 07d89a1ecf8147a2867fa4cfd0a5abed
+        displayName: "\u6A71\u67DC"
+        customSize: {x: 2.1, y: 4, z: 1.5}
+        customSizeOverride: 0
+      - id: ae15d070c6fb48e6ba31b3d75f073825
+        type: 2
+        gridX: -3
+        gridZ: 1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: b91875f3e2b6401f935c438db1c7a75e
+        type: 2
+        gridX: -3
+        gridZ: 2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
     - floorIndex: 2
-      items: []
+      items:
+      - id: 38191b2fc78c4537ba78e8543790ed8c
+        type: 0
+        gridX: 0
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 7744bf8cb3344a4eb4503ccd9ab8c71a
+        type: 0
+        gridX: -1
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 70d2fd34c2e3423dbac5f6c2a940aae5
+        type: 0
+        gridX: -2
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3c06dd72636d495a80e40b4d937b781c
+        type: 0
+        gridX: -3
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e7fb60c590df4dab80019b4ad6ddd9d1
+        type: 0
+        gridX: -4
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 1fbf254e05144490bef37ff44d62cd60
+        type: 0
+        gridX: -5
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: f4ba07f5a12c427d8181e4e0b3a81e4e
+        type: 0
+        gridX: -6
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 841ec0ae66884facabe63fccc0631e7f
+        type: 0
+        gridX: -7
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 8f2014d827b44cd685df02c1f9abd627
+        type: 0
+        gridX: -7
+        gridZ: -4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 544c7e02c71c4e0aacabe669ef2c36d5
+        type: 0
+        gridX: -7
+        gridZ: -3
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 78f959c7dc6d4f56b7c046661d578661
+        type: 0
+        gridX: -7
+        gridZ: -1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 6ef850e3526046478e25b7d2ce913d1e
+        type: 0
+        gridX: -7
+        gridZ: -2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 1c7879e6529f47f9a3102ed1e188aff0
+        type: 0
+        gridX: -7
+        gridZ: 0
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 408c1a50b882469ea16070a8462d0b31
+        type: 0
+        gridX: -7
+        gridZ: 1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 5b3f1c6991d34d84b8c7b8a9ba75a5d3
+        type: 0
+        gridX: -7
+        gridZ: 3
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 2bfa78c9d0d44b3d876df0395631a5ae
+        type: 0
+        gridX: -7
+        gridZ: 2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: b908860a8d7c4e43b453f512e0153558
+        type: 0
+        gridX: -7
+        gridZ: 4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3873144abf284319902ae08222034e08
+        type: 0
+        gridX: -7
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 6cbabf6cdc684b58a6897933c77ba623
+        type: 0
+        gridX: -6
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 0dbbfa6d764e4a988200acf5f59f3597
+        type: 0
+        gridX: -4
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: b8f134fe0bc74a94a7505926eb1857e2
+        type: 0
+        gridX: -5
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: b5d5c9619a8f4856b14f364e3375705e
+        type: 0
+        gridX: -3
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: f34fffab1363447abfafe09108f7e4a9
+        type: 0
+        gridX: -2
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 6b7d109c49e242c5aba846a9d5083959
+        type: 0
+        gridX: -1
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 5c2ea392f2e1431c886f92438c2ac8c9
+        type: 0
+        gridX: 0
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: be38298abf06419db1978f8c0603ab07
+        type: 0
+        gridX: 0
+        gridZ: 4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: d3c84a45cf224a1394d88e03e75c3b13
+        type: 0
+        gridX: 0
+        gridZ: 2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: c21836b6a11e434a84aaf603bdbcb3d1
+        type: 0
+        gridX: 0
+        gridZ: 1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 77a8c3fc7bdd40238785ab0d06e2d596
+        type: 0
+        gridX: 0
+        gridZ: 0
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 51d5fe5c379446388f2c4befdaa4c2ef
+        type: 0
+        gridX: 0
+        gridZ: -1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 582a847da2c64e91970669bc7f8f4143
+        type: 0
+        gridX: 0
+        gridZ: -2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: c218b772d52d445fb846c78a319ab919
+        type: 0
+        gridX: 0
+        gridZ: -3
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: fd4d6bcd28074227ad5304f5f5b3691e
+        type: 0
+        gridX: 0
+        gridZ: -4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 0304996126484a7c8f0dd1581b4eb756
+        type: 4
+        gridX: 1
+        gridZ: -3
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3a508287486c405dbb87f15dc30e6da0
+        type: 6
+        gridX: 5
+        gridZ: 2
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3cacd4e6f41c4c7aaa162594937e91b3
+        type: 2
+        gridX: 4
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 242465beaac341c480e5acf17441496d
+        type: 2
+        gridX: 5
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 91aab57ab3564814bdd544f229e2e5c6
+        type: 2
+        gridX: 6
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: de086037ac2a49d684ea58866ccc01de
+        type: 2
+        gridX: 3
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 142e2f23a6114f9d9c96782758233275
+        type: 2
+        gridX: -4
+        gridZ: 6
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: bf6b437321cd4641ac6bed31bea04435
+        type: 2
+        gridX: 2
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3eaecac7cc31429bb281aee74ab7ab11
+        type: 2
+        gridX: 1
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 7344ad8db49a491eb3ef7b99f5060e46
+        type: 7
+        gridX: 4
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 3a61d4b1ecc849718c45ff16d2ca7d66
+        displayName: "\u5730\u6BEF"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 83237c4a44e74e009742ab5445474b54
+        type: 7
+        gridX: 6
+        gridZ: -2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: c01cb99d8f2a45899a589f8f297b36ea
+        displayName: "\u61D2\u4EBA\u6C99\u53D1"
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 280676c56c664a9d9e676cb85329a3ed
+        type: 0
+        gridX: 1
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 5acd74e8a83d4af1bf30ed3576b88483
+        type: 0
+        gridX: 2
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: d314402714be43279dccb8ace0b6af81
+        type: 0
+        gridX: 3
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 62e4cf79cd47459aafa771b647d948c4
+        type: 0
+        gridX: 4
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e1902fcb95fb44769d11ea0e8351f856
+        type: 0
+        gridX: 5
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 8a237b7ca8294440b3b84ccb03bedcfb
+        type: 0
+        gridX: 7
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: cc9ea8a48b464f44985fbbaea9f2be75
+        type: 0
+        gridX: 6
+        gridZ: -5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: c53b5c8e2a5642b089d673524f7d4019
+        type: 0
+        gridX: 7
+        gridZ: -4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: f682ac93564c4aa4ae4ccf7c9777deb1
+        type: 0
+        gridX: 7
+        gridZ: -1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: ccc198f093314ce48610e04412b48af9
+        type: 0
+        gridX: 7
+        gridZ: -2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 242c0c5d2ffc4caba2889bd27a556e9a
+        type: 0
+        gridX: 7
+        gridZ: -3
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3337644a06ac4a079c9f5ea179adbf39
+        type: 0
+        gridX: 7
+        gridZ: 2
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 1c030605d7aa4aeab8a5bbbdfc37cc76
+        type: 0
+        gridX: 7
+        gridZ: 1
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 189b8d627506401ba9ee0ed3726a32b1
+        type: 0
+        gridX: 7
+        gridZ: 0
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: a709fe39c3d745c39a4394172bc1978a
+        type: 0
+        gridX: 1
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e58d5df42a1e43ab91dfe6ada9fc25ae
+        type: 0
+        gridX: 2
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 2946bec462e04d2397c06a8dde1642a1
+        type: 0
+        gridX: 3
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: fe480696a0174caa82bfc817cf6b99a8
+        type: 0
+        gridX: 5
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 5c4fe946e9074719bc82bce51969fda6
+        type: 0
+        gridX: 4
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 3cd510c9172a4ba2bd688a29d2dbd25b
+        type: 0
+        gridX: 6
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 56c48a4202644b3582f52b245d0655e9
+        type: 0
+        gridX: 7
+        gridZ: 5
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: d74660d316af491684e494a7448ec90f
+        type: 0
+        gridX: 7
+        gridZ: 4
+        rotationY: 270
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: d071ec1082de43388e50eb5361294b30
+        type: 0
+        gridX: 7
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: 66dd670b2f3544f1b16ecd86152f1eb9
+        type: 1
+        gridX: 0
+        gridZ: 3
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: bcf67bfd44bf4043bc275f6ce8de023a
+        type: 7
+        gridX: 6
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 4b29dd6e4f68408da5930bc5a638fb08
+        type: 7
+        gridX: 5
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 99202db096c147e39b0bbb16e6b7534e
+        type: 7
+        gridX: 4
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: a702f58462ea46daa716f7f3425b6011
+        type: 7
+        gridX: 3
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 30d43c27c2574453a9450bfa348c4256
+        type: 7
+        gridX: 1
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: fecaaeddc56543b18ca52a205f224f29
+        type: 7
+        gridX: 2
+        gridZ: -4
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 1ab015f716d046e699843c76bebb415e
+        type: 7
+        gridX: -6
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 28f6ad47c5cd40728480e0ad01256363
+        type: 7
+        gridX: -4
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 31f0463842fc42ba9aecafdba2178490
+        type: 7
+        gridX: -3
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 9ba232de5b53401382637ba78cfcd830
+        type: 7
+        gridX: -2
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 75570e94bc184470a43740c46ea23187
+        type: 7
+        gridX: -1
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 6c86c618110f494abe74cd2ef3a07604
+        type: 7
+        gridX: -6
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 7a3c65ffa7054486b08fc807f2d46df7
+        type: 7
+        gridX: -5
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 36bec51a6ec044699bdee6c88e37f1fe
+        type: 7
+        gridX: -3
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: a0289a686e2e4877b4e41b3cd5cf5270
+        type: 7
+        gridX: -2
+        gridZ: 2
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 589eceb9cd4e4cf69a91a5b3ff57ded0
+        type: 7
+        gridX: -5
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: e402734f6546425b8770f46d0af10c93
+        type: 7
+        gridX: -3
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 85279b8e492e474f97201403af808c1c
+        type: 7
+        gridX: -2
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 6852e500271942d18f2d5473a66323d9
+        type: 7
+        gridX: -6
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 28983859efd84f8781f15edba1c4a6fc
+        type: 7
+        gridX: -5
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 3d663329049345fbaa36eaa01ed626a7
+        type: 7
+        gridX: -4
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 0c4f8a5ef8eb4c17a3fd443a26e7d0bc
+        type: 7
+        gridX: -3
+        gridZ: -2
+        rotationY: 180
+        questId: 
+        questDescription: 
+        hideable: 0
+        definitionId: bbbbd0792429449a9632506cc449fe45
+        displayName: "\u4E66\u67DC"
+        customSize: {x: 2, y: 4, z: 1}
+        customSizeOverride: 0
+      - id: 08e1f506cb624241a13b81309eca7504
+        type: 2
+        gridX: -5
+        gridZ: 4
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: bc8899079cc64e63ac9d53fc691c0ee5
+        type: 2
+        gridX: -4
+        gridZ: 0
+        rotationY: 0
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
+      - id: e106834ec5914b10a5cc4bdfd9515087
+        type: 2
+        gridX: -1
+        gridZ: -4
+        rotationY: 90
+        questId: 
+        questDescription: 
+        hideable: 1
+        definitionId: 
+        displayName: 
+        customSize: {x: 1.5, y: 1.5, z: 1.5}
+        customSizeOverride: 0
     - floorIndex: 3
       items: []
