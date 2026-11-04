@@ -240,7 +240,7 @@ MonoBehaviour:
     wardrobe: 0
     prefab: {fileID: 1124241095514953310, guid: d058a03960edc3b4ba880648410c355c,
       type: 3}
-    customSize: {x: 2, y: 1.7, z: 1.5}
+    customSize: {x: 2, y: 1.25, z: 1.5}
     overrideColliderSize: 0
     colliderSize: {x: 1.5, y: 1.5, z: 1.5}
     fitToPrototype: 1
