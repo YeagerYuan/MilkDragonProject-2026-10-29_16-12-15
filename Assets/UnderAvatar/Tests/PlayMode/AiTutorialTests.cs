@@ -65,7 +65,7 @@ namespace UnderAvatar.Tests
             Assert.That(match.Role,Is.EqualTo(role));Assert.That(match.World.Data.name,Is.EqualTo("AI 正式测试地图"));
             Assert.That(match.GetComponent<TrainingHall>(),Is.Null);Assert.That(match.GetComponent<TutorialSigns>(),Is.Null);
             Assert.That(app.SingleReady,Is.False);Assert.That(match.DebugOpen,Is.False);
-            Assert.That(match.Reporter.Hidden,Is.False);Assert.That(match.Reporter.PhoneOpen,Is.False);
+            Assert.That(match.Reporter.Hidden,Is.False);Assert.That(match.Reporter.PhoneOpen,Is.EqualTo(role==TestRole.Reporter));
             Assert.That(match.World.Items.Where(i=>i.Data.type==ItemType.Door).All(i=>!i.IsOpen),Is.True);
             Assert.That(match.Quests.All(q=>!q.Complete),Is.True);Assert.That(match.Quests,Is.Not.Empty);
             Assert.That(match.Score,Is.EqualTo(app.Settings.maxScore));Assert.That(match.StreamerPhotos,Is.Zero);

@@ -225,7 +225,7 @@ namespace UnderAvatar
                 GUI.Label(new Rect(430,330,500,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"你躲在床下":"你躲在衣柜里",title);
                 GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机，按 E 离开。",notice);
             }
-            if(!match.IsStreamerPlayer)
+            if(!match.IsStreamerPlayer && match.DebugOpen)
             {
             Fill(new Rect(20,16,800,88),new Color(.035f,.055f,.075f,.9f));
             GUI.Label(new Rect(34,23,750,28),"皮套之下  /  "+(match.IsNetwork
@@ -247,10 +247,8 @@ namespace UnderAvatar
             if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
             else if(!match.Reporter.Hidden)
             {
-                if(match.Reporter.PhoneOpen) DrawPhone(match);
-                else
+                if(!match.Reporter.PhoneOpen)
                 {
-                    GUI.Label(new Rect(630,390,20,20),"+");
                     var held=match.TaskWorld?match.TaskWorld.Held:null;
                     var movable=match.TaskWorld && !held?match.TaskWorld.AimProp():null;
                     if(held) GUI.Label(new Rect(440,470,520,36),"手持："+held.Data.name+" · E 放下 · 绿框可放 / 红框受阻",notice);
@@ -262,8 +260,10 @@ namespace UnderAvatar
                         GUI.Label(new Rect(452,432,376,30),"鼠标左键阅读："+target.DisplayName,notice);
                     }
                 }
+                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
+                paparazziOverlay.Draw(match);
             }
-            if(showObserver && !match.IsStreamerPlayer && !match.IsNetwork) DrawStreamerObserver(match);
+            if(showObserver && match.DebugOpen && !match.IsStreamerPlayer && !match.IsNetwork) DrawStreamerObserver(match);
             if(match.DebugOpen && !match.Finished)
             { if(match.IsNetwork) DrawNetworkMenu();else DrawDebug(match); }
             if(match.IsNetwork && app.Lan.Phase==LanPhase.Loading)
@@ -273,7 +273,7 @@ namespace UnderAvatar
             }
             if(Time.time<match.FlashUntil)
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil && !match.IsStreamerPlayer)
+            if(Time.time<match.MessageUntil && !match.IsStreamerPlayer && match.DebugOpen)
             {
                 bool broadcasting=match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming;
                 float y=broadcasting?648:744,width=broadcasting?960:1240;
@@ -356,6 +356,7 @@ namespace UnderAvatar
             if(GUI.Button(new Rect(385,506,510,42),single?"返回角色选择":"离开房间")) app.ReturnToMenu();
         }
 
+        PaparazziOverlay paparazziOverlay;
         void DrawPhone(MatchSession match)
         {
             Fill(new Rect(946,94,318,638),new Color(.025f,.04f,.055f,.98f));

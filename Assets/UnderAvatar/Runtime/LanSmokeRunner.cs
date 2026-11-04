@@ -194,6 +194,7 @@ namespace UnderAvatar
             if(args.Contains("--ua-task-smoke") && !carryComplete)
             {
                 if(match.Role!=TestRole.Reporter) return command;
+                if(match.Reporter.PhoneOpen && !match.TaskWorld.Held) {command.phone=true;return command;}
                 if(!carryInput && match.TaskWorld.AimProp()!=null && !match.TaskWorld.Held)
                 {command.interact=true;carryInput=true;}
                 if(report.taskCarryPicked && !dropInput && match.TaskWorld.Held && match.TaskWorld.TryPlacement(out var bottom,out var yaw) && Vector3.Distance(bottom,new Vector3(-2,.015f,-5))<.2f)
@@ -205,7 +206,7 @@ namespace UnderAvatar
                 if(elapsed<1.1f) command.x=1;
                 else if(elapsed<2.1f) {command.crouch=true;command.sneak=true;command.x=-.5f;}
                 if(elapsed>3.5f && !interactSent) {command.interact=true;interactSent=true;}
-                if(elapsed>5.2f && !phoneSent) {command.phone=true;phoneSent=true;}
+                if(elapsed>5.2f && !phoneSent) {command.phone=!match.Reporter.PhoneOpen;phoneSent=true;}
                 if(elapsed>5.7f && !shotSent) {command.taskId=InvestigationData.LiveTask;command.action=true;shotSent=true;}
                 if(match.PendingPhoto!=null) command.uploadPhoto=match.PendingPhoto.id;
             }

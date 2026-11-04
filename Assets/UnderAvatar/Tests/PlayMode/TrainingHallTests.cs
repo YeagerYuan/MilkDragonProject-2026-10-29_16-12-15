@@ -58,7 +58,7 @@ namespace UnderAvatar.Tests
             var source=BuildingData.CreateDefault();string before=source.ToJson();
             app.StartNetworkSession(source,new MatchSettings(),TestRole.Streamer,true);
             var game=app.Session;yield return null;
-            Assert.That(game.IsTraining,Is.False);Assert.That(game.Reporter.Hidden,Is.False);Assert.That(game.Reporter.PhoneOpen,Is.False);
+            Assert.That(game.IsTraining,Is.False);Assert.That(game.Reporter.Hidden,Is.False);Assert.That(game.Reporter.PhoneOpen,Is.True);
             Assert.That(game.Streamer.State,Is.EqualTo(StreamerState.Streaming));Assert.That(game.Streamer.Controller.Level.Score,Is.Zero);
             Assert.That(game.Streamer.Controller.Level.TargetScore,Is.EqualTo(15));Assert.That(game.Score,Is.EqualTo(3));Assert.That(game.StreamerPhotos,Is.Zero);
             Assert.That(game.World.Items.Where(i=>i.Data.type==ItemType.Door).All(i=>!i.IsOpen),Is.True);
