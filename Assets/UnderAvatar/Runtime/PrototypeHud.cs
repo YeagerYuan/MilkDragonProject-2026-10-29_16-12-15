@@ -13,6 +13,12 @@ namespace UnderAvatar
         GUIStyle title,subtitle,section,small,notice;
         readonly List<Texture2D> textures=new List<Texture2D>();
         Font font;
+        Font menuFont,menuTitleFont;
+        readonly List<Font> generatedFonts=new List<Font>();
+        Texture2D menuBackground,menuUnderline;
+        GUIStyle menuTitle,menuSubtitle,menuChoice;
+        enum LauncherPage { Home, SinglePlayer, CreateRoom, JoinRoom }
+        LauncherPage launcherPage;
         Vector2 questScroll;
         bool showObserver=true;
         Vector2 debugScroll;
@@ -35,12 +41,17 @@ namespace UnderAvatar
             var texture=new Texture2D(1,1); texture.SetPixel(0,0,color); texture.Apply();
             textures.Add(texture); return texture;
         }
+        Font LoadUiFont(string path,string[] fallback,int size)
+        {
+            var asset=Resources.Load<Font>(path);if(asset) return asset;
+            var dynamicFont=Font.CreateDynamicFontFromOSFont(fallback,size);generatedFonts.Add(dynamicFont);return dynamicFont;
+        }
 
         void EnsureStyles()
         {
             if(skin) return;
             skin=Instantiate(GUI.skin);
-            font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","Microsoft YaHei UI","SimHei","Arial"},18);
+            font=LoadUiFont("MainMenu/Fonts/Hangeuljaemin",new[]{"Microsoft YaHei","Arial"},18);
             skin.font=font;
             skin.label.fontSize=16;
             skin.label.normal.textColor=new Color(.85f,.90f,.94f);
@@ -72,6 +83,26 @@ namespace UnderAvatar
             chatText=new GUIStyle(skin.label){fontSize=14,wordWrap=true,normal={textColor=new Color(.78f,.84f,.90f)}};
             badge=new GUIStyle(skin.label){fontSize=10,alignment=TextAnchor.MiddleCenter,normal={textColor=Color.white}};
             scoreText=new GUIStyle(title){fontSize=30};
+            menuBackground=Resources.Load<Texture2D>("MainMenu/Background");
+            menuFont=font;
+            menuTitleFont=LoadUiFont("MainMenu/Fonts/AQingRanTi",new[]{"STXingkai","KaiTi","Microsoft YaHei"},144);
+            menuTitle=new GUIStyle(skin.label){font=menuTitleFont,fontSize=144,fontStyle=FontStyle.Normal,alignment=TextAnchor.MiddleCenter,wordWrap=false,padding=new RectOffset(),normal={textColor=new Color(.88f,.025f,0)}};
+            menuSubtitle=new GUIStyle(menuTitle){font=menuFont,fontSize=40,normal={textColor=new Color(.97f,.94f,.92f)}};
+            foreach(var style in new[]{menuTitle,menuSubtitle})
+            {
+                style.hover=style.normal;
+                style.active=style.normal;
+                style.focused=style.normal;
+            }
+            menuChoice=new GUIStyle(GUIStyle.none){font=menuFont,fontSize=32,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(),normal={textColor=Color.white},hover={textColor=Color.white},active={textColor=Color.white},focused={textColor=Color.white}};
+            menuUnderline=new Texture2D(256,32,TextureFormat.RGBA32,false){name="Menu curved underline",filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};
+            var pixels=new Color[256*32];
+            for(int x=0;x<256;x++)
+            {
+                float edge=Mathf.Min(x,255-x),curve=edge<28?Mathf.Sqrt(Mathf.Max(0,28*28-(28-edge)*(28-edge))):28;
+                for(int y=0;y<32;y++) pixels[y*256+x]=new Color(1,1,1,Mathf.Clamp01(1-Mathf.Abs((31-y)-curve))*.8f);
+            }
+            menuUnderline.SetPixels(pixels);menuUnderline.Apply();textures.Add(menuUnderline);
         }
 
         void Fill(Rect rect,Color color)
@@ -104,12 +135,27 @@ namespace UnderAvatar
         }
         void DrawLauncher()
         {
-            Fill(new Rect(-2000,-2000,6000,6000),new Color(.025f,.045f,.065f));
-            Fill(new Rect(160,70,960,665),new Color(.045f,.075f,.10f));
-            GUILayout.BeginArea(new Rect(195,95,890,615));
-            GUILayout.Label("皮套之下  /  测试与双人对战",title);
-            GUILayout.Space(12);
+            var screen=new Rect(-Offset.x/Scale,-Offset.y/Scale,Screen.width/Scale,Screen.height/Scale);
+            if(menuBackground) GUI.DrawTexture(screen,menuBackground,ScaleMode.ScaleAndCrop);
+            else Fill(screen,new Color(.025f,.03f,.035f));
             var lan=app.Lan;
+            if(!lan.Active && launcherPage!=LauncherPage.Home && Event.current.type==EventType.KeyDown && Event.current.keyCode==KeyCode.Escape)
+            {launcherPage=LauncherPage.Home;Event.current.Use();}
+            if(!lan.Active && launcherPage==LauncherPage.Home)
+            {
+                const string heading="皮套之下";
+                for(int i=0;i<heading.Length;i++) GUI.Label(new Rect(320+i*160,135,160,168),heading[i].ToString(),menuTitle);
+                GUI.Label(new Rect(340,307,600,65),"追逐的尽头，是另一场追逐",menuSubtitle);
+                if(MenuChoice(new Rect(528,404,224,54),"人机对战")) launcherPage=LauncherPage.SinglePlayer;
+                if(MenuChoice(new Rect(528,470,224,54),"创建房间")) launcherPage=LauncherPage.CreateRoom;
+                if(MenuChoice(new Rect(528,536,224,54),"加入房间")) launcherPage=LauncherPage.JoinRoom;
+                if(!string.IsNullOrEmpty(app.StartupError)) GUI.Label(new Rect(280,685,720,65),app.StartupError,notice);
+                return;
+            }
+            Fill(new Rect(160,70,960,665),new Color(.025f,.03f,.035f,.94f));
+            GUILayout.BeginArea(new Rect(195,95,890,615));
+            GUILayout.Label("皮套之下  /  "+(lan.Active?"局域网房间":launcherPage==LauncherPage.SinglePlayer?"人机对战":launcherPage==LauncherPage.CreateRoom?"创建房间":"加入房间"),title);
+            GUILayout.Space(12);
             if(lan.Active)
             {
                 GUILayout.Label(lan.IsHost?"局域网房间 · 房主":"局域网房间 · 加入者",section);
@@ -128,42 +174,49 @@ namespace UnderAvatar
                     GUI.enabled=true;
                 }
                 GUILayout.Space(18);
-                if(Button("离开房间 / 取消连接")) app.ReturnToMenu();
+                if(Button("离开房间 / 返回主页")) {app.ReturnToMenu();launcherPage=LauncherPage.Home;}
             }
             else
             {
-                GUILayout.Label("AI 对战 · 选择角色后先进入教学大厅",section);
-                GUILayout.BeginHorizontal();
-                if(Button("我是狗仔 · 对手是 AI 主播",true)) app.StartSingle(TestRole.Reporter);
-                if(Button("我是主播 · 对手是 AI 狗仔",true)) app.StartSingle(TestRole.Streamer);
-                GUILayout.EndHorizontal();
-                GUILayout.Space(18);
-                GUILayout.Label("局域网双人对战",section);
-                GUILayout.Label("两台电脑使用相同版本。一人创建房间，另一人输入房主 IP 加入。",notice);
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("房主角色",GUILayout.Width(100));
-                hostRole=GUILayout.SelectionGrid(hostRole,new[]{"狗仔","主播"},2,GUILayout.Height(38));
-                GUILayout.EndHorizontal();
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("端口",GUILayout.Width(100));portText=GUILayout.TextField(portText,5,GUILayout.Height(34));
-                GUILayout.EndHorizontal();
-                bool portValid=int.TryParse(portText,out int port)&&port>=1024&&port<=65535;
-                GUI.enabled=portValid;
-                if(Button("创建房间",true)) lan.CreateRoom((TestRole)hostRole,port);
-                GUI.enabled=true;
-                GUILayout.Space(8);
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("房主 IPv4",GUILayout.Width(100));joinAddress=GUILayout.TextField(joinAddress,64,GUILayout.Height(34));
-                GUILayout.EndHorizontal();
-                GUI.enabled=portValid&&!string.IsNullOrWhiteSpace(joinAddress);
-                if(Button("加入房间",true)) lan.JoinRoom(joinAddress,port);
-                GUI.enabled=true;
-                GUILayout.Label(portValid?"双方准备后先进入明亮教学大厅；大厅内再次准备，再开始正式对局。":"端口应为 1024–65535。",small);
+                if(launcherPage==LauncherPage.SinglePlayer)
+                {
+                    GUILayout.Label("选择角色，进入教学大厅",section);
+                    if(Button("我是狗仔 · 对手是 AI 主播",true)) {launcherPage=LauncherPage.Home;app.StartSingle(TestRole.Reporter);}
+                    if(Button("我是主播 · 对手是 AI 狗仔",true)) {launcherPage=LauncherPage.Home;app.StartSingle(TestRole.Streamer);}
+                }
+                else
+                {
+                    GUILayout.Label("两台电脑使用相同版本。一人创建房间，另一人输入房主 IP 加入。",notice);
+                    if(launcherPage==LauncherPage.CreateRoom)
+                    {
+                        GUILayout.BeginHorizontal();GUILayout.Label("房主角色",GUILayout.Width(100));
+                        hostRole=GUILayout.SelectionGrid(hostRole,new[]{"狗仔","主播"},2,GUILayout.Height(38));GUILayout.EndHorizontal();
+                    }
+                    GUILayout.BeginHorizontal();GUILayout.Label("端口",GUILayout.Width(100));portText=GUILayout.TextField(portText,5,GUILayout.Height(34));GUILayout.EndHorizontal();
+                    bool portValid=int.TryParse(portText,out int port)&&port>=1024&&port<=65535;
+                    if(launcherPage==LauncherPage.JoinRoom)
+                    {
+                        GUILayout.BeginHorizontal();GUILayout.Label("房主 IPv4",GUILayout.Width(100));joinAddress=GUILayout.TextField(joinAddress,64,GUILayout.Height(34));GUILayout.EndHorizontal();
+                    }
+                    GUI.enabled=portValid && (launcherPage!=LauncherPage.JoinRoom || !string.IsNullOrWhiteSpace(joinAddress));
+                    if(Button(launcherPage==LauncherPage.CreateRoom?"创建房间":"加入房间",true))
+                    {if(launcherPage==LauncherPage.CreateRoom) lan.CreateRoom((TestRole)hostRole,port);else lan.JoinRoom(joinAddress,port);}
+                    GUI.enabled=true;
+                    GUILayout.Label(portValid?"双方准备后进入教学大厅；在大厅再次准备，开始正式对局。":"端口应为 1024–65535。",small);
+                }
                 GUILayout.Space(10);
-                GUILayout.Label(app.StartupError??app.Status??"单人模式中，另一角色由 AI 控制。",notice,GUILayout.Height(58));
-                if(Button("退出测试")) app.QuitTest();
+                GUILayout.Label(app.StartupError??app.Status??(launcherPage==LauncherPage.SinglePlayer?"单人模式中，另一角色由 AI 控制。":"创建或加入房间后，可与另一位玩家一起进入教学大厅。"),notice,GUILayout.Height(58));
+                if(Button("返回主页")) launcherPage=LauncherPage.Home;
+                if(Button("退出游戏")) app.QuitTest();
             }
             GUILayout.EndArea();
+        }
+        bool MenuChoice(Rect rect,string label)
+        {
+            var before=GUI.color;GUI.color=rect.Contains(Event.current.mousePosition)?new Color(.88f,.025f,0):new Color(.97f,.94f,.92f);
+            bool pressed=GUI.Button(rect,label,menuChoice);
+            GUI.DrawTexture(new Rect(rect.x+6,rect.yMax-17,rect.width-12,23),menuUnderline);GUI.color=before;
+            return pressed;
         }
 
         void DrawPreview()
@@ -176,8 +229,18 @@ namespace UnderAvatar
             {
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(.005f,.008f,.012f,.98f));
                 GUI.Label(new Rect(430,330,500,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"你躲在床下":"你躲在衣柜里",title);
-                GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机，按 E 离开。",notice);
+                GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机。",notice);
+                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
+                paparazziOverlay.DrawInteractionHint("离开藏身点");
             }
+            bool reporterHuntAnnouncement=false;
+            if(!match.IsStreamerPlayer)
+            {
+                if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
+                reporterHuntAnnouncement=broadcastOverlay.DrawReporterHunt(match);
+            }
+            if(!match.IsStreamerPlayer && match.DebugOpen)
+            {
             Fill(new Rect(20,16,800,88),new Color(.035f,.055f,.075f,.9f));
             GUI.Label(new Rect(34,23,750,28),"皮套之下  /  "+(match.IsNetwork
                 ? "局域网对战 · "+(match.IsStreamerPlayer?"主播":"狗仔")
@@ -194,26 +257,14 @@ namespace UnderAvatar
                     Mathf.RoundToInt(net.IsHost?net.LocalFps:net.HostFps)+" FPS · 网络往返 "+
                     (net.RoundTripMs>0?Mathf.RoundToInt(net.RoundTripMs)+" ms":"测量中"),small);
             }
-            if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
-            else if(!match.Reporter.Hidden)
-            {
-                if(match.Reporter.PhoneOpen) DrawPhone(match);
-                else
-                {
-                    GUI.Label(new Rect(630,390,20,20),"+");
-                    var held=match.TaskWorld?match.TaskWorld.Held:null;
-                    var movable=match.TaskWorld && !held?match.TaskWorld.AimProp():null;
-                    if(held) GUI.Label(new Rect(440,470,520,36),"手持："+held.Data.name+" · E 放下 · 绿框可放 / 红框受阻",notice);
-                    else if(movable && movable.Data.portable) GUI.Label(new Rect(440,470,450,36),"E 拿起："+movable.Data.name,notice);
-                    var target=match.Reporter.Documents?match.Reporter.Documents.Target:null;
-                    if(target)
-                    {
-                        Fill(new Rect(440,428,400,36),new Color(.035f,.055f,.075f,.94f));
-                        GUI.Label(new Rect(452,432,376,30),"鼠标左键阅读："+target.DisplayName,notice);
-                    }
-                }
             }
-            if(showObserver && !match.IsStreamerPlayer && !match.IsNetwork) DrawStreamerObserver(match);
+            if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
+            else if(!match.Reporter.Hidden && !reporterHuntAnnouncement)
+            {
+                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
+                paparazziOverlay.Draw(match);
+            }
+            if(showObserver && match.DebugOpen && !match.IsStreamerPlayer && !match.IsNetwork) DrawStreamerObserver(match);
             if(match.DebugOpen && !match.Finished)
             { if(match.IsNetwork) DrawNetworkMenu();else DrawDebug(match); }
             if(match.IsNetwork && app.Lan.Phase==LanPhase.Loading)
@@ -223,7 +274,7 @@ namespace UnderAvatar
             }
             if(Time.time<match.FlashUntil)
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil)
+            if(Time.time<match.MessageUntil && !match.IsStreamerPlayer && match.DebugOpen)
             {
                 bool broadcasting=match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming;
                 float y=broadcasting?648:744,width=broadcasting?960:1240;
@@ -280,7 +331,7 @@ namespace UnderAvatar
             GUI.Label(new Rect(858,26,385,28),"正式对局准备",section);
             GUI.Label(new Rect(858,62,385,52),preparation+"\n"+(single?"按 Tab 准备并开始正式 AI 对战":"按 Tab 准备，房主开始正式对局"),small);
             if(Time.time<match.FlashUntil) Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil)
+            if(Time.time<match.MessageUntil && !(match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming))
             {
                 Fill(new Rect(20,744,1240,42),new Color(.035f,.055f,.075f,.94f));GUI.Label(new Rect(36,751,1208,32),match.Message,notice);
             }
@@ -306,6 +357,7 @@ namespace UnderAvatar
             if(GUI.Button(new Rect(385,506,510,42),single?"返回角色选择":"离开房间")) app.ReturnToMenu();
         }
 
+        PaparazziOverlay paparazziOverlay;
         void DrawPhone(MatchSession match)
         {
             Fill(new Rect(946,94,318,638),new Color(.025f,.04f,.055f,.98f));
@@ -438,20 +490,17 @@ namespace UnderAvatar
                 }
                 return;
             }
-            else
-            {
-                GUI.Label(new Rect(630,390,25,25),"+",notice);
-                Fill(new Rect(360,660,600,60),new Color(.035f,.055f,.075f,.92f));
-                GUI.Label(new Rect(380,670,560,48),actor.State==StreamerState.Returning
-                    ? "返回电脑按 E 开播 · "+Mathf.CeilToInt(brain.NextFanLossIn)+" 秒后扣 "+match.Settings.lateFanLoss+" 粉丝"
-                    : "搜捕剩余 "+Mathf.CeilToInt(brain.RoamRemaining)+" 秒 · E 搜查衣柜 / 床",notice);
-            }
             DrawSoundPulses(match,actor.View,new Rect(20,112,1240,620));
-            Fill(new Rect(842,16,418,88),new Color(.035f,.055f,.075f,.92f));
-            GUI.Label(new Rect(858,27,385,26),match.RequiresLiveEvidence?"狗仔已取证主播 "+match.StreamerPhotos+" / 3 场":"狗仔任务完成 "+match.Quests.Count(q=>q.Complete)+" / "+match.Quests.Count,section);
-            GUI.Label(new Rect(858,57,385,38),actor.State==StreamerState.Streaming
-                ? "直播锁定 · "+brain.Level.Score+" / "+brain.Level.TargetScore+" 分才能下播"
-                : "粉丝 "+brain.Fans.ToString("N0")+" · 粉丝归零即失败",small);
+            if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
+            broadcastOverlay.DrawHunt(match);
+            bool huntAnnouncement=!match.IsTraining && (actor.State==StreamerState.Returning
+                ? brain.ReturnElapsed<StreamerController.ReturnAnnouncementSeconds
+                : brain.RoamRemaining>StreamerController.HuntSeconds-3);
+            if(!match.DebugOpen && match.InputCaptured && !huntAnnouncement)
+            {
+                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
+                paparazziOverlay.DrawInteractionHint(brain.InteractionPrompt);
+            }
             if(Time.time<actor.AlertUntil)
             {
                 Outline(new Rect(3,3,1274,794),new Color(1,.2f,.2f),5);
@@ -459,90 +508,12 @@ namespace UnderAvatar
             }
         }
 
+        BroadcastOverlay broadcastOverlay;
         void DrawBroadcastScreen(MatchSession match)
         {
-            var brain=match.Streamer.Controller;var level=brain.Level;
-            if(chatMatch!=match || chatRound!=level.LevelNumber)
-            { chatMatch=match;chatRound=level.LevelNumber;chatStarted=Time.unscaledTime; }
-            Fill(new Rect(-2000,-2000,6000,6000),new Color(.014f,.023f,.04f));
-            Color panel=new Color(.04f,.066f,.10f);
-            Fill(new Rect(20,16,610,68),panel);Fill(new Rect(646,16,614,68),panel);
-            Fill(new Rect(20,16,4,68),accent);
-            GUI.Label(new Rect(38,22,260,20),"FLAPPY BIRD  /  直播挑战",small);
-            GUI.Label(new Rect(38,43,340,38),level.Score+" / "+level.TargetScore+"  分",scoreText);
-            GUI.Label(new Rect(380,45,220,28),"达标后解除直播锁定",small);
-            GUI.Label(new Rect(666,24,270,23),"当前直播场次",small);
-            GUI.Label(new Rect(666,46,270,33),"第 "+level.LevelNumber+" 场",title);
-            GUI.Label(new Rect(968,24,270,23),"当前粉丝数量",small);
-            GUI.Label(new Rect(968,46,270,33),brain.Fans.ToString("N0"),title);
-            DrawFlappy(level,new Rect(20,100,960,600));
-            DrawLiveChat(new Rect(996,100,264,600),Time.unscaledTime-chatStarted,level.LevelNumber);
-            Fill(new Rect(20,716,1240,68),panel);
-            GUI.Label(new Rect(38,725,950,27),"空格 / 鼠标左键：拍翅    ·    碰撞后分数清零，按键重试    ·    达到 "+level.TargetScore+" 分后下播搜捕",notice);
-            GUI.Label(new Rect(38,756,1100,22),"直播时无法移动或回头    |    Tab 调试 / 菜单    |    Esc 返回角色选择",small);
-            if(match.IsNetwork) GUI.Label(new Rect(1020,756,220,22),Mathf.RoundToInt(app.Lan.LocalFps)+" FPS · "+Mathf.RoundToInt(app.Lan.RoundTripMs)+" ms",small);
+            if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
+            broadcastOverlay.Draw(match);
         }
-        void DrawLiveChat(Rect rect,float elapsed,int broadcast)
-        {
-            Fill(rect,new Color(.04f,.066f,.10f));Outline(rect,new Color(.13f,.22f,.29f),1);
-            GUI.Label(new Rect(rect.x+16,rect.y+12,rect.width-32,26),"直播间弹幕",section);
-            GUI.Label(new Rect(rect.x+16,rect.y+44,rect.width-32,22),"欢迎来到今晚的直播",small);
-            Fill(new Rect(rect.x+12,rect.y+76,rect.width-24,1),new Color(.14f,.23f,.3f));
-            var viewport=new Rect(rect.x+12,rect.y+90,rect.width-24,rect.height-102);
-            GUI.BeginGroup(viewport);
-            const float rowHeight=70,speed=19;
-            float travel=Mathf.Max(0,elapsed)*speed;int first=Mathf.FloorToInt(travel/rowHeight);float fraction=travel%rowHeight;
-            for(int row=0;row<9;row++)
-            {
-                int index=first+row;float y=row*rowHeight-fraction;
-                int nameIndex=(index*5+broadcast)%ChatNames.Length,textIndex=(index*7+broadcast)%ChatTexts.Length;
-                Color tint=index%3==0?new Color(.46f,.36f,.66f):index%3==1?new Color(.23f,.49f,.63f):new Color(.63f,.37f,.48f);
-                Fill(new Rect(0,y+3,39,18),tint);GUI.Label(new Rect(0,y+2,39,20),"Lv "+(6+index%29),badge);
-                GUI.Label(new Rect(47,y,viewport.width-47,23),ChatNames[nameIndex],chatName);
-                GUI.Label(new Rect(0,y+24,viewport.width,42),ChatTexts[textIndex],chatText);
-            }
-            GUI.EndGroup();
-        }
-
-        void DrawFlappy(MinigameLevel level,Rect rect)
-        {
-            GUI.BeginGroup(rect);
-            Fill(new Rect(0,0,rect.width,rect.height),new Color(.12f,.32f,.42f));
-            for(int i=0;i<5;i++)
-            {
-                float x=(i*183+70)%rect.width;
-                Fill(new Rect(x,70+(i%3)*45,100,18),new Color(.25f,.46f,.54f));
-                Fill(new Rect(x+23,60+(i%3)*45,47,10),new Color(.25f,.46f,.54f));
-            }
-            foreach(var pipe in level.Pipes)
-            {
-                float x=pipe.X*rect.width,w=MinigameLevel.PipeWidth*rect.width;
-                float upper=(1-pipe.GapCenter-level.PipeGap*.5f)*rect.height;
-                float lower=(1-pipe.GapCenter+level.PipeGap*.5f)*rect.height;
-                Color green=new Color(.27f,.76f,.45f);
-                Fill(new Rect(x,0,w,upper),green); Fill(new Rect(x,lower,w,rect.height-lower),green);
-                Fill(new Rect(x-5,upper-16,w+10,16),new Color(.36f,.89f,.54f));
-                Fill(new Rect(x-5,lower,w+10,16),new Color(.36f,.89f,.54f));
-                Fill(new Rect(x+7,0,8,Mathf.Max(0,upper-16)),new Color(.45f,.91f,.58f));
-                Fill(new Rect(x+7,lower+16,8,rect.height-lower),new Color(.45f,.91f,.58f));
-            }
-            float bx=MinigameLevel.BirdX*rect.width,by=(1-level.BirdHeight)*rect.height;
-            float bw=MinigameLevel.BirdRadius*rect.width*2,bh=MinigameLevel.BirdRadius*rect.height*2;
-            Fill(new Rect(bx-bw*.5f,by-bh*.5f,bw,bh),new Color(1,.8f,.25f));
-            Fill(new Rect(bx-bw*.42f,by,bw*.45f,bh*.45f),new Color(1,.58f,.18f));
-            Fill(new Rect(bx+bw*.13f,by-bh*.36f,6,6),Color.white);
-            Fill(new Rect(bx+bw*.25f,by-bh*.28f,3,3),Color.black);
-            Fill(new Rect(bx+bw*.4f,by,10,5),new Color(1,.38f,.16f));
-            if(!level.Running && !level.Complete)
-            {
-                Fill(new Rect(110,rect.height*.42f,rect.width-220,90),new Color(.02f,.04f,.07f,.9f));
-                GUI.Label(new Rect(135,rect.height*.42f+12,rect.width-270,74),
-                    level.Crashed?"碰撞！得分已清零。\n按空格 / 左键重试，主播仍不能离开。":"按空格 / 左键开始并拍翅\n通过 "+level.TargetScore+" 根管道才能下播搜捕。",notice);
-            }
-            GUI.EndGroup();
-            Outline(rect,new Color(.31f,.84f,.78f),2);
-        }
-
         void Line(Vector2 from,Vector2 to,Color color,float width)
         {
             Matrix4x4 previous=GUI.matrix;
@@ -586,7 +557,8 @@ namespace UnderAvatar
         void OnDestroy()
         {
             foreach(var texture in textures) PrototypeVisuals.Release(texture);
-            PrototypeVisuals.Release(skin); PrototypeVisuals.Release(font);
+            PrototypeVisuals.Release(skin);
+            foreach(var generatedFont in generatedFonts) PrototypeVisuals.Release(generatedFont);
         }
     }
 }

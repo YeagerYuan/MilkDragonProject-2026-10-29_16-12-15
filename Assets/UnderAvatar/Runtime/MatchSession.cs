@@ -123,6 +123,7 @@ namespace UnderAvatar
                 gameObject.AddComponent<TrainingHall>().Initialize(this);
                 Notice("教学大厅：自由交互，没有小游戏、计时或胜负。Tab 打开准备菜单。",8);return;
             }
+            if(IsNetwork || !IsStreamerPlayer) Reporter.SetPhone(true);
             Notice(IsStreamerPlayer?"空格 / 左键拍翅。Flappy Bird 达到 "+Settings.TargetForBroadcast(1)+" 分后可下播搜捕狗仔。":
                 RequiresLiveEvidence?"完成物证任务和 3 张直播证据；每场直播只能取证主播一次。F 手机，Tab 调试。":"完成手机中配置的拍摄任务。F 手机，Tab 调试。",6);
         }
@@ -162,7 +163,9 @@ namespace UnderAvatar
         {
             if(Vector3.Distance(camera.transform.position,point)>=Settings.maxPhotoDistance) return false;
             Vector3 screen=camera.WorldToViewportPoint(point);
-            if(screen.z<=0 || screen.x<.22f || screen.x>.64f || screen.y<.23f || screen.y>.77f) return false;
+            if(screen.z<=0 || (IsTraining
+                ?screen.x<.22f || screen.x>.64f || screen.y<.23f || screen.y>.77f
+                :screen.x<.025f || screen.x>.975f || screen.y<.165f || screen.y>.95f)) return false;
             Vector3 ray=point-camera.transform.position;
             foreach(var hit in Physics.RaycastAll(camera.transform.position,ray.normalized,ray.magnitude-.025f,
                 PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore))
@@ -247,6 +250,7 @@ namespace UnderAvatar
             bool newPhoto=snapshot.pendingPhoto!=null && snapshot.pendingPhoto.id!=(PendingPhoto?.id??0);
             PendingPhoto=snapshot.pendingPhoto;SelectedTaskId=snapshot.selectedTask;LastSubmittedPhoto=snapshot.lastSubmittedPhoto;
             if(newPhoto && !IsStreamerPlayer) SetPhoneMenu(true);
+            if(!Reporter.PhoneOpen && !IsStreamerPlayer) SetPhoneMenu(false);
             Score=snapshot.score;StreamerPhotos=snapshot.photos;photographedRound=snapshot.photographedRound;
             foreach(var quest in Quests) quest.Complete=Array.IndexOf(snapshot.completedQuests,quest.Id)>=0;
             Streamer.ApplyAlert(snapshot.alertRemaining);FlashUntil=Time.time+snapshot.flashRemaining;
@@ -268,14 +272,19 @@ namespace UnderAvatar
             Pulses.RemoveAll(p=>Time.time-p.Created>2.8f);
             InputCaptured=false;
             if(DocumentManager.BlocksGameplayInput) return;
+            if(!IsTraining && !IsStreamerPlayer && !Reporter.Hidden && !Finished && !DebugOpen && Keyboard.current?.qKey.wasPressedThisFrame==true)
+            {
+                if(CameraMode) QueuePhoneAction(close:true);else EnterPhotoMode();
+                return;
+            }
             if(PhoneMenuOpen && Reporter.PhoneOpen)
             {
                 var phoneKeys=Keyboard.current;
-                if(phoneKeys?.escapeKey.wasPressedThisFrame==true || phoneKeys?.fKey.wasPressedThisFrame==true) QueuePhoneAction(close:true);
-                if(phoneKeys?.qKey.wasPressedThisFrame==true) SetPhoneMenu(false);
+                if(PendingPhoto==null && (phoneKeys?.escapeKey.wasPressedThisFrame==true || phoneKeys?.fKey.wasPressedThisFrame==true)) QueuePhoneAction(close:true);
+                if(IsTraining && phoneKeys?.qKey.wasPressedThisFrame==true) SetPhoneMenu(false);
                 return;
             }
-            if(Reporter.PhoneOpen && !IsStreamerPlayer && Keyboard.current?.qKey.wasPressedThisFrame==true) {SetPhoneMenu(true);return;}
+            if(IsTraining && Reporter.PhoneOpen && !IsStreamerPlayer && Keyboard.current?.qKey.wasPressedThisFrame==true) {SetPhoneMenu(true);return;}
             var keys=Keyboard.current;
             if(keys==null) return;
             if(keys.escapeKey.wasPressedThisFrame)

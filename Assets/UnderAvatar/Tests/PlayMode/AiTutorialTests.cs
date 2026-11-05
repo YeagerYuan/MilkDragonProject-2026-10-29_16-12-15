@@ -65,7 +65,7 @@ namespace UnderAvatar.Tests
             Assert.That(match.Role,Is.EqualTo(role));Assert.That(match.World.Data.name,Is.EqualTo("AI 正式测试地图"));
             Assert.That(match.GetComponent<TrainingHall>(),Is.Null);Assert.That(match.GetComponent<TutorialSigns>(),Is.Null);
             Assert.That(app.SingleReady,Is.False);Assert.That(match.DebugOpen,Is.False);
-            Assert.That(match.Reporter.Hidden,Is.False);Assert.That(match.Reporter.PhoneOpen,Is.False);
+            Assert.That(match.Reporter.Hidden,Is.False);Assert.That(match.Reporter.PhoneOpen,Is.EqualTo(role==TestRole.Reporter));
             Assert.That(match.World.Items.Where(i=>i.Data.type==ItemType.Door).All(i=>!i.IsOpen),Is.True);
             Assert.That(match.Quests.All(q=>!q.Complete),Is.True);Assert.That(match.Quests,Is.Not.Empty);
             Assert.That(match.Score,Is.EqualTo(app.Settings.maxScore));Assert.That(match.StreamerPhotos,Is.Zero);
@@ -94,6 +94,28 @@ namespace UnderAvatar.Tests
             app.StartSingle(TestRole.Reporter);yield return null;
             Assert.That(app.Session.IsTraining,Is.True);Assert.That(app.Session.Role,Is.EqualTo(TestRole.Reporter));
             Assert.That(app.CanStartSingleMatch,Is.False);
+        }
+
+        [UnityTest] public IEnumerator HuntDeadlineDrainsAudienceAndResumingStopsLoss()
+        {
+            Start(TestRole.Streamer);app.SetSingleReady(true);app.StartSingleMatch();
+            var match=app.Session;var brain=match.Streamer.Controller;
+            var completed=brain.Level.Capture();completed.score=completed.target;completed.running=false;
+            brain.Level.Apply(completed);brain.AdvanceMinigame(0);
+            Assert.That(match.Streamer.State,Is.EqualTo(StreamerState.Roaming));
+            Assert.That(brain.RoamRemaining,Is.EqualTo(30));
+            int fans=brain.Fans;
+            brain.AdvanceReturnDeadline(15);Assert.That(brain.Fans,Is.EqualTo(fans),"Hunting must not drain viewers.");
+            brain.BeginReturn();brain.AdvanceReturnDeadline(3);
+            Assert.That(brain.Fans,Is.EqualTo(fans),"The announcement precedes the drain.");
+            brain.AdvanceReturnDeadline(15);Assert.That(brain.Fans,Is.EqualTo(Mathf.CeilToInt(fans*.5f)));
+            int retained=brain.Fans;brain.BeginStreaming();brain.AdvanceReturnDeadline(30);
+            Assert.That(brain.Fans,Is.EqualTo(retained));Assert.That(match.Finished,Is.False);
+            completed=brain.Level.Capture();completed.score=completed.target;completed.running=false;
+            brain.Level.Apply(completed);brain.AdvanceMinigame(0);brain.BeginReturn();
+            brain.AdvanceReturnDeadline(32.9f);Assert.That(brain.Fans,Is.GreaterThan(0));
+            brain.AdvanceReturnDeadline(.11f);Assert.That(brain.Fans,Is.Zero);Assert.That(match.Finished,Is.True);
+            yield return null;
         }
 
         [UnityTest] public IEnumerator SingleReadyCannotStartANetworkHall()

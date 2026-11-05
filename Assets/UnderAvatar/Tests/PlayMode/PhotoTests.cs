@@ -32,6 +32,26 @@ namespace UnderAvatar.Tests
         }
 
         [UnityTest]
+        public IEnumerator PhoneStartsOnFirstTaskAndUiUploadAdvancesSelection()
+        {
+            Assert.That(match.Reporter.PhoneOpen,Is.True);Assert.That(match.PhoneMenuOpen,Is.True);
+            Assert.That(match.SelectedTaskId,Is.EqualTo(match.Quests.First().Id));
+            var item=app.World.Items.First(i=>i.Data.type==ItemType.QuestItem && i.Floor==0);
+            Aim(item);match.SelectTask(item.Data.questId);match.TakePhoto();
+            int before=match.Quests.Count(q=>q.Complete),score=match.Score;
+            int index=match.Quests.FindIndex(q=>q.Id==item.Data.questId);
+            var next=match.Quests.Skip(index+1).Concat(match.Quests.Take(index+1)).First(q=>!q.Complete && q.Id!=item.Data.questId);
+            match.ApplyPhoneCommand(new PlayerCommand{uploadPhoto=match.PendingPhoto.id});
+            Assert.That(match.Quests.Count(q=>q.Complete),Is.EqualTo(before+1));
+            Assert.That(match.SelectedTaskId,Is.EqualTo(next.Id));Assert.That(match.Score,Is.EqualTo(score));
+            Assert.That(match.Reporter.PhoneOpen,Is.False);Assert.That(match.PhoneMenuOpen,Is.False);
+            match.EnterPhotoMode();var command=match.ConsumePhoneCommands();
+            Assert.That(command.phone,Is.True);match.Reporter.SetPhone(true);
+            Assert.That(match.CameraMode,Is.True);Assert.That(match.PhoneMenuOpen,Is.False);
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator AValidEvidenceUploadCompletesQuestAndDuplicateDoesNotCostAnotherPoint()
         {
             var item=app.World.Items.First(i=>i.Data.type==ItemType.QuestItem && i.Floor==0);
@@ -59,7 +79,8 @@ namespace UnderAvatar.Tests
             Assert.That(match.IsPhotographable(camera,item.PhotoPoint),Is.False);
             Object.Destroy(wall); yield return null;
             Assert.That(match.IsPhotographable(camera,camera.transform.position-camera.transform.forward*2),Is.False);
-            Assert.That(match.IsPhotographable(camera,camera.ViewportToWorldPoint(new Vector3(.95f,.5f,2))),Is.False);
+            Assert.That(match.IsPhotographable(camera,camera.ViewportToWorldPoint(new Vector3(.99f,.5f,2))),Is.False);
+            Assert.That(match.IsPhotographable(camera,camera.ViewportToWorldPoint(new Vector3(.5f,.1f,2))),Is.False);
             Assert.That(match.IsPhotographable(camera,camera.transform.position+camera.transform.forward*match.Settings.maxPhotoDistance),Is.False);
         }
 

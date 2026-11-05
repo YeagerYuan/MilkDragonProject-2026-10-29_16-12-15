@@ -14,6 +14,8 @@ namespace UnderAvatar
         public Texture2D PhotoPreview { get; private set; }
         public int LastSubmittedPhoto { get; private set; }
         int photoSequence;
+        bool cameraOnNextPhoneOpen;
+        public bool CameraMode => Reporter && Reporter.PhoneOpen && !PhoneMenuOpen && PendingPhoto==null;
         PlayerCommand queuedPhone=new PlayerCommand();
         readonly Dictionary<string,DocumentInteractable> documentTargets=new Dictionary<string,DocumentInteractable>();
         public void RegisterDocumentTargets(GameObject documents)
@@ -41,7 +43,14 @@ namespace UnderAvatar
         }
         public void SetPhoneMenu(bool open)
         {
+            if(open && cameraOnNextPhoneOpen) {open=false;cameraOnNextPhoneOpen=false;}
             if(!IsStreamerPlayer) {PhoneMenuOpen=open && Reporter.PhoneOpen;Reporter.SetCursor(PhoneMenuOpen || Finished);}
+        }
+        public void EnterPhotoMode()
+        {
+            if(Finished || IsStreamerPlayer || Reporter.Hidden || PendingPhoto!=null || TaskWorld?.Held) return;
+            if(Reporter.PhoneOpen) SetPhoneMenu(false);
+            else {cameraOnNextPhoneOpen=true;QueuePhoneAction(close:true);}
         }
         public void QueuePhoneAction(string task=null,int upload=0,bool cancel=false,bool close=false)
         {
@@ -57,8 +66,8 @@ namespace UnderAvatar
         {
             if(!IsAuthority || !Reporter.PhoneOpen || Reporter.Hidden || Finished) return;
             if(c.taskId!=null && (RequiresLiveEvidence && c.taskId==InvestigationData.LiveTask || Quests.Any(q=>q.Id==c.taskId))) SelectedTaskId=c.taskId;
-            if(c.cancelPhoto) PendingPhoto=null;
-            if(c.uploadPhoto>0) UploadPhoto(c.uploadPhoto);
+            if(c.cancelPhoto) {PendingPhoto=null;Reporter.SetPhone(false);}
+            if(c.uploadPhoto>0) {UploadPhoto(c.uploadPhoto);Reporter.SetPhone(false);}
         }
         public void SelectTask(string id)
         {
@@ -111,11 +120,12 @@ namespace UnderAvatar
             if(DocumentManager.BlocksGameplayInput || IsStreamerPlayer || !Reporter.PhoneOpen || Reporter.Hidden || TaskWorld?.Held) return;
             if(PhotoPreview) Destroy(PhotoPreview);
             var camera=Reporter.View;var before=camera.targetTexture;var active=RenderTexture.active;
-            var rt=RenderTexture.GetTemporary(640,360,24);
+            var rt=RenderTexture.GetTemporary(640,Mathf.Max(128,Mathf.RoundToInt(640/camera.aspect)),24);
             try
             {
                 camera.targetTexture=rt;camera.Render();RenderTexture.active=rt;
-                PhotoPreview=new Texture2D(640,360,TextureFormat.RGB24,false);PhotoPreview.ReadPixels(new Rect(0,0,640,360),0,0);PhotoPreview.Apply();
+                var crop=IsTraining?new Rect(0,0,rt.width,rt.height):new Rect(Mathf.RoundToInt(rt.width*.025f),Mathf.RoundToInt(rt.height*.165f),Mathf.FloorToInt(rt.width*.95f),Mathf.FloorToInt(rt.height*.785f));
+                PhotoPreview=new Texture2D((int)crop.width,(int)crop.height,TextureFormat.RGB24,false);PhotoPreview.ReadPixels(crop,0,0);PhotoPreview.Apply();
             }
             finally {camera.targetTexture=before;RenderTexture.active=active;RenderTexture.ReleaseTemporary(rt);}
         }
@@ -161,13 +171,19 @@ namespace UnderAvatar
             if(photo.live) StreamerPhotos++;
             else {var quest=Quests.Find(q=>q.Id==photo.taskId);if(quest==null || quest.Complete) return;quest.Complete=true;}
             audioBank.Success();Notice("上传成功："+(photo.live?"主播直播证据 "+StreamerPhotos+" / 3":Quests.Find(q=>q.Id==photo.taskId)?.Title));
+            if(!photo.live || StreamerPhotos>=3)
+            {
+                int index=Quests.FindIndex(q=>q.Id==photo.taskId);
+                var next=Quests.Skip(index+1).Concat(Quests.Take(index+1)).FirstOrDefault(q=>!q.Complete);
+                SelectedTaskId=next?.Id??(RequiresLiveEvidence && StreamerPhotos<3?InvestigationData.LiveTask:SelectedTaskId);
+            }
             if(Quests.All(q=>q.Complete) && (!RequiresLiveEvidence || StreamerPhotos>=3)) Finish("狗仔获胜：全部证据已上传");
         }
         void UpdatePhone()
         {
             if(!IsNetwork)
             {
-                var command=ConsumePhoneCommands();if(command.phone) Reporter.SetPhone(false);ApplyPhoneCommand(command);
+                var command=ConsumePhoneCommands();if(command.phone) Reporter.SetPhone(!Reporter.PhoneOpen);ApplyPhoneCommand(command);
             }
         }
         void OnDestroy() {if(PhotoPreview) Destroy(PhotoPreview);}
