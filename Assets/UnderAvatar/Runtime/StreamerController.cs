@@ -43,6 +43,7 @@ namespace UnderAvatar
         int lateDeductions;
         int returnStartingFans;
         public const float HuntSeconds=30, ReturnAnnouncementSeconds=3, ViewerDrainSeconds=30;
+        public const string EmptySearchNoticePrefix="未发现任何人";
         public float NextFanLossIn => Mathf.Max(0,Session.Settings.returnGraceSeconds+(lateDeductions+1)*Mathf.Max(.1f,Session.Settings.lateFanLossInterval)-ReturnElapsed);
         public bool OnStairs => stairRoute!=null;
         public string InteractionPrompt
@@ -179,10 +180,10 @@ namespace UnderAvatar
             {
                 float penalty=Mathf.Max(0,place.Data.type==ItemType.Bed?Session.Settings.wrongBedPenalty:Session.Settings.wrongWardrobePenalty);
                 RoamRemaining=Mathf.Max(0,RoamRemaining-penalty);
-                Session.Notice("搜错了"+place.DisplayName+"，搜捕时间减少 "+penalty+" 秒。");
                 if(RoamRemaining<=0) BeginReturn();
+                Session.Notice(EmptySearchNoticePrefix+"，搜捕时间 -"+penalty.ToString("0.#")+" 秒。",3);
             }
-            else Session.Notice("这里是空的，本轮已扣过搜捕时间。");
+            else Session.Notice(EmptySearchNoticePrefix+"，本轮已扣过时间，不重复扣除。",3);
             return false;
         }
 

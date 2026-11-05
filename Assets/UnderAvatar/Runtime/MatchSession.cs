@@ -24,7 +24,7 @@ namespace UnderAvatar
         }
         public bool allowEmergencyTurn;
         [Min(0)] public float wrongWardrobePenalty=5;
-        [Min(0)] public float wrongBedPenalty=12;
+        [Min(0)] public float wrongBedPenalty=5;
         [Min(1)] public int initialFans=5000;
         [Min(1)] public int lateFanLoss=1000;
         [Min(0)] public float returnGraceSeconds=10;

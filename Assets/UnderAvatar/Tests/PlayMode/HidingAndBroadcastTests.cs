@@ -33,7 +33,10 @@ namespace UnderAvatar.Tests
             var wardrobe=match.World.Items.First(i=>i.Floor==0 && i.Data.type==ItemType.Furniture && i.IsHidingPlace);
             Approach(wardrobe);float before=brain.RoamRemaining;
             Assert.That(brain.SearchHidingPlace(wardrobe),Is.False);Assert.That(brain.RoamRemaining,Is.EqualTo(before-5));
+            Assert.That(match.Message,Is.EqualTo("未发现任何人，搜捕时间 -5 秒。"));
+            Assert.That(match.MessageUntil,Is.GreaterThan(Time.time));
             wardrobe.SetSearchOpen(false);brain.SearchHidingPlace(wardrobe);Assert.That(brain.RoamRemaining,Is.EqualTo(before-5));
+            Assert.That(match.Message,Does.Contain("不重复扣除"));
             wardrobe.SetSearchOpen(false);match.Reporter.Teleport(wardrobe.Front);match.Reporter.Hide(wardrobe);
             Assert.That(match.Reporter.HidingPlaceId,Is.EqualTo(wardrobe.Data.id));Assert.That(match.Pulses.Last().Kind,Is.EqualTo(NoiseKind.Door));
             var body=match.Streamer.GetComponent<CharacterController>();body.enabled=false;match.Streamer.transform.position=wardrobe.transform.position;body.enabled=true;
@@ -46,7 +49,8 @@ namespace UnderAvatar.Tests
         {
             Start();yield return null;var brain=match.Streamer.Controller;
             var bed=match.World.Find("test_bed");Approach(bed);float before=brain.RoamRemaining;
-            brain.SearchHidingPlace(bed);Assert.That(brain.RoamRemaining,Is.EqualTo(before-12));bed.SetSearchOpen(false);
+            brain.SearchHidingPlace(bed);Assert.That(brain.RoamRemaining,Is.EqualTo(before-5));
+            Assert.That(match.Message,Is.EqualTo("未发现任何人，搜捕时间 -5 秒。"));bed.SetSearchOpen(false);
             match.Reporter.Teleport(bed.Front);match.Reporter.Hide(bed);
             Assert.That(match.Reporter.Hidden,Is.True);Assert.That(match.Pulses.Last().Kind,Is.EqualTo(NoiseKind.HideBed));
             Assert.That(brain.TryCapture(),Is.False);
@@ -60,6 +64,7 @@ namespace UnderAvatar.Tests
             app.RuntimeSettings.wrongBedPenalty=100;
             var bed=match.World.Find("test_bed");Approach(bed);brain.SearchHidingPlace(bed);
             Assert.That(match.Streamer.State,Is.EqualTo(StreamerState.Returning));Assert.That(brain.RoamRemaining,Is.Zero);
+            Assert.That(match.Message,Is.EqualTo("未发现任何人，搜捕时间 -100 秒。"),"The return transition must not replace the search feedback.");
             brain.AdvanceReturnDeadline(19.9f);Assert.That(brain.Fans,Is.EqualTo(5000));
             brain.BeginReturn();brain.AdvanceReturnDeadline(.2f);Assert.That(brain.Fans,Is.EqualTo(4000));
             brain.AdvanceReturnDeadline(40);Assert.That(brain.Fans,Is.Zero);Assert.That(match.Result,Does.StartWith("狗仔获胜"));

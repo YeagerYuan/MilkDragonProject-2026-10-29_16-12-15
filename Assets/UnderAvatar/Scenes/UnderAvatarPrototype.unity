@@ -169,7 +169,7 @@ MonoBehaviour:
       gapSize: 0.283
     allowEmergencyTurn: 0
     wrongWardrobePenalty: 5
-    wrongBedPenalty: 12
+    wrongBedPenalty: 5
     initialFans: 5000
     lateFanLoss: 1000
     returnGraceSeconds: 10
