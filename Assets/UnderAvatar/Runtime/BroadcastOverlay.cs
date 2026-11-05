@@ -118,6 +118,20 @@ namespace UnderAvatar
         {
             var brain=match.Streamer.Controller;
             DrawHunt(brain.RoamRemaining,brain.ReturnElapsed,match.Streamer.State==StreamerState.Returning,brain.Fans);
+            if(match.IsStreamerPlayer && !match.Finished && Time.time<match.MessageUntil &&
+                match.Message?.StartsWith(StreamerController.EmptySearchNoticePrefix)==true)
+            {
+                var previous=GUI.matrix;var previousColor=GUI.color;
+                float scale=Screen.height/800f,width=Screen.width/scale;
+                try
+                {
+                    GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
+                    float alpha=Mathf.SmoothStep(0,1,Mathf.Clamp01((match.MessageUntil-Time.time)/.5f));
+                    GUI.color=new Color(previousColor.r,previousColor.g,previousColor.b,previousColor.a*alpha);
+                    GUI.Label(new Rect(32,630,Mathf.Max(260,width-450),54),match.Message,huntTask);
+                }
+                finally {GUI.matrix=previous;GUI.color=previousColor;}
+            }
         }
         // Both roles use the authoritative hunt clock, including replicated LAN snapshots.
         public static bool HuntAnnouncementVisible(float remaining,float returnElapsed,bool returning)

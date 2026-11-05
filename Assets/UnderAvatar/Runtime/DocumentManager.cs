@@ -21,6 +21,8 @@ public class DocumentManager : MonoBehaviour
     public UnderAvatar.MatchSession Owner { get; private set; }
     private string textContent;
     private Font textFont;
+    private bool ownsTextFont;
+    private GUIStyle textStyle,closeStyle;
     private Vector2 textScroll;
     private Rect TextBounds => new Rect(Screen.width*.2f,Screen.height*.1f,Screen.width*.6f,Screen.height*.8f);
     private Book activeBook;
@@ -225,21 +227,28 @@ public class DocumentManager : MonoBehaviour
     private void OnGUI()
     {
         if(!IsOpen || textContent==null) return;
-        if(!textFont) textFont=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Arial"},22);
-        var style=new GUIStyle(GUI.skin.label){font=textFont,fontSize=22,wordWrap=true,padding=new RectOffset(24,24,20,20)};
+        if(textStyle==null)
+        {
+            textFont=Resources.Load<Font>("MainMenu/Fonts/Hangeuljaemin");
+            if(!textFont) {textFont=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei","SimHei","Arial"},22);ownsTextFont=true;}
+            textStyle=new GUIStyle(GUI.skin.label){font=textFont,fontSize=22,wordWrap=true,padding=new RectOffset(24,24,20,20),normal={textColor=new Color(.97f,.94f,.92f)}};
+            textStyle.hover=textStyle.normal;textStyle.active=textStyle.normal;textStyle.focused=textStyle.normal;
+            closeStyle=new GUIStyle(GUIStyle.none){font=textFont,fontSize=24,alignment=TextAnchor.MiddleCenter,
+                normal={textColor=new Color(.97f,.94f,.92f)},hover={textColor=new Color(.88f,.025f,0)},active={textColor=new Color(.88f,.025f,0)},focused={textColor=new Color(.88f,.025f,0)}};
+        }
         var rect=TextBounds;var previousColor=GUI.color;
         GUI.color=new Color(0,0,0,.65f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);
-        GUI.color=new Color(.04f,.055f,.065f,.98f);GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=previousColor;
+        GUI.color=new Color(.045f,.04f,.04f,.98f);GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=previousColor;
         GUILayout.BeginArea(new Rect(rect.x+12,rect.y+12,rect.width-24,rect.height-24));
-        textScroll=GUILayout.BeginScrollView(textScroll);GUILayout.Label(textContent,style);GUILayout.EndScrollView();
-        if(GUILayout.Button("关闭（Esc）",GUILayout.Height(36))) CloseDocument();GUILayout.EndArea();
+        textScroll=GUILayout.BeginScrollView(textScroll);GUILayout.Label(textContent,textStyle);GUILayout.EndScrollView();
+        if(GUILayout.Button("关闭（Esc）",closeStyle,GUILayout.Height(44))) CloseDocument();GUILayout.EndArea();
     }
     private void OnDisable() => ReleaseDocument();
     private void OnDestroy()
     {
         if (Instance != this) return;
         ReleaseDocument();
-        if(textFont) Destroy(textFont);
+        if(ownsTextFont && textFont) Destroy(textFont);
         if (generatedBlank != null) Destroy(generatedBlank);
         if (generatedTexture != null) Destroy(generatedTexture);
         Instance = null;

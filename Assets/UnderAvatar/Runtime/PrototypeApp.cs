@@ -42,6 +42,7 @@ namespace UnderAvatar
         {
             Application.targetFrameRate=90;
             Application.runInBackground=true;
+            ClearEditorBuildingPreviews();
             Lan=gameObject.AddComponent<LanGame>();Lan.Initialize(this);
             var menu=new GameObject("MenuCamera");menu.transform.SetParent(transform,false);
             menuCamera=menu.AddComponent<Camera>();menuCamera.clearFlags=CameraClearFlags.SolidColor;
@@ -56,6 +57,18 @@ namespace UnderAvatar
                 var reader=documentReaderPrefab?documentReaderPrefab:Resources.Load<GameObject>("DocumentReader");
                 if(reader) Instantiate(reader,transform,false);
             }
+        }
+
+        void ClearEditorBuildingPreviews()
+        {
+            // A generated house-editor preview can survive an interrupted Play Mode transition.
+            // It is separate from the runtime BuildingWorld and would otherwise render beside the hall.
+            // foreach(var marker in FindObjectsByType<BuildingPreviewMarker>(FindObjectsInactive.Include,FindObjectsSortMode.None))
+            // {
+            //     if(!marker || marker.gameObject.scene!=gameObject.scene) continue;
+            //     marker.gameObject.SetActive(false);
+            //     Destroy(marker.gameObject);
+            // }
         }
 
         void Start() { if(!Session) { Cursor.lockState=CursorLockMode.None;Cursor.visible=true; } }
@@ -105,7 +118,7 @@ namespace UnderAvatar
                 menuCamera.enabled=false;World.gameObject.SetActive(true);
                 World.Rebuild(data);
                 World.SetMode(false,0);
-                Vector3 spawn=World.FindFreePosition(0);
+                Vector3 spawn = training ? World.FindFreePosition(0) : new Vector3(6 * data.gridSize, 0, 3 * data.gridSize);
                 matchRoot=new GameObject("MatchSession");
                 matchRoot.transform.SetParent(transform,false);
                 Session=matchRoot.AddComponent<MatchSession>();
