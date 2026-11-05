@@ -236,9 +236,9 @@ namespace UnderAvatar
                     match.Streamer.Controller.ReturnElapsed,match.Streamer.State==StreamerState.Returning);
             if(!match.IsStreamerPlayer && match.Reporter.Hidden && !reporterHuntAnnouncement)
             {
-                Fill(new Rect(-2000,-2000,6000,6000),new Color(.005f,.008f,.012f,.98f));
-                GUI.Label(new Rect(430,330,500,50),"你躲在"+(match.Reporter.HidingPlace?.DisplayName??"藏身处"),title);
-                GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机。",notice);
+                // Fill(new Rect(20,656,490,112),new Color(.005f,.008f,.012f,.65f));
+                // GUI.Label(new Rect(34,668,460,42),"你躲在"+(match.Reporter.HidingPlace?.DisplayName??"藏身处"),title);
+                // GUI.Label(new Rect(34,718,460,36),"保持安静。无法使用手机。",notice);
                 if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
                 paparazziOverlay.DrawInteractionHint("离开藏身点");
             }

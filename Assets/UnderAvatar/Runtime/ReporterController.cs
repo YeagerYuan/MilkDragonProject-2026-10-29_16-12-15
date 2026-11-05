@@ -1,6 +1,8 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace UnderAvatar
 {
@@ -28,6 +30,13 @@ namespace UnderAvatar
         ActorSnapshot replica;
         float lastLocalMovement=float.NegativeInfinity;
         public bool MovedLocallyRecently => Time.unscaledTime-lastLocalMovement<.08f;
+        [SerializeField,Tooltip("躲藏时从藏身家具上方观察周围；关闭可恢复第一人称视角。")]
+        bool overheadHidingView=true;
+        [SerializeField,Range(0,3)] float hidingCameraBack=1.2f;
+        bool hidingCameraActive;
+        Vector3 savedEyePosition;
+        Light hidingViewLight;
+        public bool OverheadHidingViewActive => hidingCameraActive;
 
         public void Initialize(MatchSession match)
         {
@@ -46,6 +55,70 @@ namespace UnderAvatar
             posture=new CharacterPosture(body,head.transform,null,1.65f);
             SetCursor(false);
             Documents=gameObject.AddComponent<ReporterInteraction>();
+            RenderPipelineManager.beginCameraRendering+=BeginHidingCameraRendering;
+            RenderPipelineManager.endCameraRendering+=EndHidingCameraRendering;
+        }
+
+        void LateUpdate()
+        {
+            if(!session || !View) return;
+            var place=HidingPlace;
+            bool show=overheadHidingView && Hidden && IsHuman && View.enabled && place;
+            if(!show) {RestoreHidingCamera();return;}
+            if(!hidingCameraActive)
+            {
+                savedEyePosition=View.transform.localPosition;
+                hidingCameraActive=true;
+            }
+            float floorY=place.Floor*session.World.Data.floorHeight;
+            // Stay below the next floor/ceiling, rather than looking through the building roof.
+            var above=place.transform.position;
+            above.y=floorY+session.World.Data.floorHeight-.5f;
+            var offset=-place.transform.forward*hidingCameraBack;
+            if(offset.sqrMagnitude>.001f && Physics.SphereCast(above,.12f,offset.normalized,out var hit,
+                offset.magnitude,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
+                offset=offset.normalized*Mathf.Max(0,hit.distance-.15f);
+            Vector3 eye=above+offset;
+            Vector3 target=place.transform.position+Vector3.up*.65f;
+            View.transform.SetPositionAndRotation(eye,Quaternion.LookRotation(target-eye,place.transform.forward));
+        }
+        void RestoreHidingCamera()
+        {
+            if(!hidingCameraActive || !View) return;
+            hidingCameraActive=false;
+            View.transform.localPosition=savedEyePosition;
+            View.transform.localRotation=Quaternion.Euler(pitch,0,0);
+            if(hidingViewLight) hidingViewLight.enabled=false;
+        }
+        void BeginHidingCameraRendering(ScriptableRenderContext context,Camera camera)
+        {
+            if(!hidingCameraActive || !Hidden || camera!=View) return;
+            if(!hidingViewLight)
+            {
+                var lamp=new GameObject("Hiding view light (local camera only)");
+                lamp.transform.SetParent(View.transform,false);
+                hidingViewLight=lamp.AddComponent<Light>();hidingViewLight.enabled=false;
+                hidingViewLight.type=LightType.Spot;hidingViewLight.shadows=LightShadows.Soft;
+                hidingViewLight.shadowBias=.03f;hidingViewLight.shadowNormalBias=.02f;
+                hidingViewLight.cullingMask=~LayerMask.GetMask("UA_Sound","UA_Reporter");
+                hidingViewLight.GetUniversalAdditionalLightData().usePipelineSettings=false;
+            }
+            var settings=session.Settings.reporterVision;
+            hidingViewLight.range=Mathf.Clamp(settings.range,1,40);
+            hidingViewLight.intensity=Mathf.Clamp(settings.intensity,.1f,50);
+            hidingViewLight.spotAngle=100;hidingViewLight.innerSpotAngle=50;
+            // This light is off for every other camera, so hiding does not reveal your location.
+            hidingViewLight.enabled=true;
+        }
+        void EndHidingCameraRendering(ScriptableRenderContext context,Camera camera)
+        {
+            if(camera==View && hidingViewLight) hidingViewLight.enabled=false;
+        }
+        void OnDisable() {RestoreHidingCamera();}
+        void OnDestroy()
+        {
+            RenderPipelineManager.beginCameraRendering-=BeginHidingCameraRendering;
+            RenderPipelineManager.endCameraRendering-=EndHidingCameraRendering;
         }
 
         public void SetPhone(bool open)
@@ -165,7 +238,7 @@ namespace UnderAvatar
             {
                 if(Physics.CheckCapsule(hidingExit+Vector3.up*.4f,hidingExit+Vector3.up*1.5f,.3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
                 { if(IsHuman) session.Notice("藏身点出口被阻挡，暂时无法离开。"); return; }
-                Hidden=false;HidingPlaceId=null; Appearance.SetVisible(true); Teleport(hidingExit); if(IsHuman) session.Notice("已离开藏身点。"); return;
+                Hidden=false;HidingPlaceId=null;RestoreHidingCamera(); Appearance.SetVisible(true); Teleport(hidingExit); if(IsHuman) session.Notice("已离开藏身点。"); return;
             }
             if(Documents && Documents.TryRead()) return;
             if(session.TaskWorld?.Held && Physics.Raycast(View.transform.position,View.transform.forward,out var doorHit,3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
