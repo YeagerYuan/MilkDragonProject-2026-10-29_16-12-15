@@ -99,6 +99,8 @@ namespace UnderAvatar
             audioBank.Initialize(this,app.AudioProfile);
             var player=new GameObject("Reporter"); player.transform.SetParent(transform,false); player.transform.position=spawn;
             Reporter=player.AddComponent<ReporterController>(); Reporter.Initialize(this);
+            // At the right-side (6, 3) spawn, start facing into the room along -X.
+            if(!training) Reporter.SetLookAt(Reporter.View.transform.position+Vector3.left);
             var monster=new GameObject("Streamer"); monster.transform.SetParent(transform,false); monster.transform.position=pc.Front;
             Streamer=monster.AddComponent<StreamerActor>(); Streamer.Initialize(this,pc);
             if(IsStreamerPlayer)
