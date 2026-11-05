@@ -189,7 +189,8 @@ MonoBehaviour:
       followSeconds: 0.065
       cookieStrength: 0.45
   enableDocuments: 1
-  documentReaderPrefab: {fileID: 0}
+  documentReaderPrefab: {fileID: 1621046168815396855, guid: a5f90035814c2c942be020a60b99abc0,
+    type: 3}
   documentPropsPrefab: {fileID: 0}
 --- !u!4 &1852418220
 Transform:

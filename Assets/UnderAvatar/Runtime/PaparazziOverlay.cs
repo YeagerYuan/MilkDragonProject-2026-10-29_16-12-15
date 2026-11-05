@@ -38,6 +38,13 @@ namespace UnderAvatar
             hint=new GUIStyle(body){fontSize=20,wordWrap=false};
             action=new GUIStyle(hint){fontSize=32,alignment=TextAnchor.MiddleCenter};
             check=new GUIStyle(body){fontSize=20,alignment=TextAnchor.MiddleCenter};
+            // Informational labels have no mouse states. Clickable rows/buttons tint explicitly.
+            foreach(var style in new[]{body,header,descriptionStyle,rowTitle,taskTitle,taskText,hint,action,check})
+            {
+                style.hover=style.normal;
+                style.active=style.normal;
+                style.focused=style.normal;
+            }
             disc=new Texture2D(64,64,TextureFormat.RGBA32,false){filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};
             var pixels=new Color[4096];
             for(int y=0;y<64;y++) for(int x=0;x<64;x++) pixels[y*64+x]=new Color(1,1,1,Mathf.Clamp01((.5f-new Vector2((x+.5f)/64-.5f,(y+.5f)/64-.5f).magnitude)*64));
@@ -112,7 +119,7 @@ namespace UnderAvatar
             }
             if(held) return "放下 "+held.Data.name;
             var document=reporter.Documents?reporter.Documents.Target:null;
-            if(document) return "阅读 "+document.DisplayName;
+            if(document) return "阅读";
             var prop=match.TaskWorld?match.TaskWorld.AimProp():null;
             if(prop && prop.Data.portable) return "拿起 "+prop.Data.name;
             if(Physics.Raycast(reporter.View.transform.position,reporter.View.transform.forward,out var hit,3f,

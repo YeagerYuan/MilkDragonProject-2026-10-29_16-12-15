@@ -11,7 +11,7 @@ namespace UnderAvatar
         GUIStyle commentStyle,viewerStyle,bannerStyle,hintStyle,badgeStyle,huntTitle,huntSubtitle,huntTask,huntTaskTitle,timerStyle;
         Font bodyFont,titleFont;
         readonly List<Font> ownedFonts=new List<Font>();
-        Texture2D disc,laugh,heart,timerRing;
+        Texture2D disc,laugh,heart,timerRing,huntVignette;
         float huntChatStarted=-1;
         static readonly string[] AwayMessages={"主播你去哪了","我在等你呀主播","再不回来我就走了！！","？？？？？？","主播快回来我想你了","怎么突然没人了","主播人呢？","还在吗？快回来开播","我们还在等你回来","是不是离开电脑了？"};
         GameObject avatarStage;
@@ -66,6 +66,13 @@ namespace UnderAvatar
             timerStyle=new GUIStyle(huntSubtitle);
             huntTask=new GUIStyle(commentStyle){fontSize=24};
             huntTaskTitle=new GUIStyle(huntTask){font=titleFont,fontSize=32,normal={textColor=new Color(.9f,.025f,0)}};
+            // Hunt announcements, objectives and livestream labels are informational.
+            foreach(var style in new[]{commentStyle,viewerStyle,bannerStyle,hintStyle,badgeStyle,huntTitle,huntSubtitle,timerStyle,huntTask,huntTaskTitle})
+            {
+                style.hover=style.normal;
+                style.active=style.normal;
+                style.focused=style.normal;
+            }
             timerRing=MakeTexture(128,(x,y)=> {float r=new Vector2(x-.5f,y-.5f).magnitude;return new Color(1,1,1,Mathf.Clamp01((.022f-Mathf.Abs(r-.465f))*128));});
             disc=MakeTexture(64,(x,y)=>new Color(1,1,1,Mathf.Clamp01((.5f-new Vector2(x-.5f,y-.5f).magnitude)*64)));
             laugh=MakeTexture(96,LaughPixel);heart=MakeTexture(96,HeartPixel);
@@ -99,15 +106,68 @@ namespace UnderAvatar
         void Pill(Rect rect,Color color)
         {
             float cap=rect.height*.5f;
-            TintTexture(new Rect(rect.x,rect.y,rect.height,rect.height),disc,color);
+            // Draw only the outside half of each cap so translucent pixels never overlap.
+            var previous=GUI.color;GUI.color=color;
+            GUI.DrawTextureWithTexCoords(new Rect(rect.x,rect.y,cap,rect.height),disc,new Rect(0,0,.5f,1));
+            GUI.DrawTextureWithTexCoords(new Rect(rect.xMax-cap,rect.y,cap,rect.height),disc,new Rect(.5f,0,.5f,1));
+            GUI.color=previous;
             Fill(new Rect(rect.x+cap,rect.y,Mathf.Max(0,rect.width-rect.height),rect.height),color);
-            TintTexture(new Rect(rect.xMax-rect.height,rect.y,rect.height,rect.height),disc,color);
         }
         public void Draw(MatchSession match) {huntChatStarted=-1;Draw(match.Streamer.Controller.Level,match.Streamer.Controller.Fans);}
         public void DrawHunt(MatchSession match)
         {
             var brain=match.Streamer.Controller;
             DrawHunt(brain.RoamRemaining,brain.ReturnElapsed,match.Streamer.State==StreamerState.Returning,brain.Fans);
+        }
+        // Both roles use the authoritative hunt clock, including replicated LAN snapshots.
+        public static bool HuntAnnouncementVisible(float remaining,float returnElapsed,bool returning)
+            => returning?returnElapsed<StreamerController.ReturnAnnouncementSeconds:remaining>StreamerController.HuntSeconds-3;
+
+        void DrawHuntTimer(float remaining,bool returning)
+        {
+            TintTexture(new Rect(20,20,68,68),timerRing,Color.white);
+            GUI.Label(new Rect(20,20,68,68),Mathf.CeilToInt(returning?0:Mathf.Max(0,remaining)).ToString(),timerStyle);
+        }
+        void DrawHuntAnnouncement(float width,float remaining,float returnElapsed,bool returning,bool reporter)
+        {
+            float duration=returning?StreamerController.ReturnAnnouncementSeconds:3;
+            float elapsed=returning?returnElapsed:StreamerController.HuntSeconds-remaining;
+            float alpha=Mathf.SmoothStep(0,1,Mathf.Clamp01(elapsed/.5f))*Mathf.SmoothStep(0,1,Mathf.Clamp01((duration-elapsed)/.65f));
+            var previousColor=GUI.color;
+            try
+            {
+                GUI.color=new Color(previousColor.r,previousColor.g,previousColor.b,previousColor.a*alpha);
+                GUI.Label(new Rect(0,280,width,160),reporter?(returning?"搜捕结束":"搜捕开始"):(returning?"抓捕结束":"抓捕开始"),huntTitle);
+                string subtitle=reporter?(returning?"恭喜你，没有被主播抓住":"在30秒内躲避主播的追捕"):(returning?"返回电脑开播，防止粉丝流失":"在30秒内抓到狗仔");
+                GUI.Label(new Rect(0,438,width,64),subtitle,huntSubtitle);
+            }
+            finally {GUI.color=previousColor;}
+        }
+        public bool DrawReporterHunt(MatchSession match)
+        {
+            if(match.IsTraining || match.Finished || match.Streamer.State==StreamerState.Streaming) return false;
+            bool returning=match.Streamer.State==StreamerState.Returning;
+            var brain=match.Streamer.Controller;
+            bool announcement=HuntAnnouncementVisible(brain.RoamRemaining,brain.ReturnElapsed,returning);
+            EnsureStyles();
+            var previous=GUI.matrix;float scale=Screen.height/800f,width=Screen.width/scale;
+            try
+            {
+                GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
+                if(!returning)
+                {
+                    if(!huntVignette) huntVignette=MakeTexture(256,(x,y)=>
+                    {
+                        float edge=Mathf.Max(Mathf.Abs(x-.5f)*2,Mathf.Abs(y-.5f)*2);
+                        return new Color(.38f,0,0, Mathf.SmoothStep(0,.25f,Mathf.InverseLerp(.55f,1,edge)));
+                    });
+                    TintTexture(new Rect(0,0,width,800),huntVignette,Color.white);
+                }
+                DrawHuntTimer(brain.RoamRemaining,returning);
+                if(announcement) DrawHuntAnnouncement(width,brain.RoamRemaining,brain.ReturnElapsed,returning,true);
+            }
+            finally {GUI.matrix=previous;}
+            return announcement;
         }
         public void DrawHunt(float remaining,float returnElapsed,bool returning,int fans)
         {
@@ -117,8 +177,7 @@ namespace UnderAvatar
             try
             {
                 GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
-                TintTexture(new Rect(20,20,68,68),timerRing,Color.white);
-                GUI.Label(new Rect(20,20,68,68),Mathf.CeilToInt(returning?0:Mathf.Max(0,remaining)).ToString(),timerStyle);
+                DrawHuntTimer(remaining,returning);
                 float chatElapsed=Time.unscaledTime-huntChatStarted;
                 DrawComments(new Rect(width-352,548,336,VisibleChatRows*RowHeight),chatElapsed,0,true);
                 Pill(new Rect(width-352,508,318,36),new Color(.06f,.12f,.17f,.90f));
@@ -126,21 +185,11 @@ namespace UnderAvatar
                 int viewers=Mathf.RoundToInt(fans*5.9f);
                 if(!returning) viewers=Mathf.Max(0,viewers+Mathf.RoundToInt(Mathf.Sin(chatElapsed*.17f)*65));
                 GUI.Label(new Rect(width-308,508,262,36),"在线观众： "+viewers.ToString("N0"),viewerStyle);
-                bool announcement=returning?returnElapsed<StreamerController.ReturnAnnouncementSeconds:remaining>StreamerController.HuntSeconds-3;
+                bool announcement=HuntAnnouncementVisible(remaining,returnElapsed,returning);
                 string task=returning?"返回电脑开播，防止粉丝流失":"在30秒内抓到狗仔";
                 if(announcement)
                 {
-                    float duration=returning?StreamerController.ReturnAnnouncementSeconds:3;
-                    float elapsed=returning?returnElapsed:StreamerController.HuntSeconds-remaining;
-                    float alpha=Mathf.SmoothStep(0,1,Mathf.Clamp01(elapsed/.5f))*Mathf.SmoothStep(0,1,Mathf.Clamp01((duration-elapsed)/.65f));
-                    var previousColor=GUI.color;
-                    try
-                    {
-                        GUI.color=new Color(previousColor.r,previousColor.g,previousColor.b,previousColor.a*alpha);
-                        GUI.Label(new Rect(0,280,width,160),returning?"抓捕结束":"抓捕开始",huntTitle);
-                        GUI.Label(new Rect(0,438,width,64),task,huntSubtitle);
-                    }
-                    finally {GUI.color=previousColor;}
+                    DrawHuntAnnouncement(width,remaining,returnElapsed,returning,false);
                 }
                 else
                 {
@@ -290,7 +339,7 @@ namespace UnderAvatar
             if(avatarCamera) avatarCamera.targetTexture=null;
             if(avatarStage) PrototypeVisuals.Release(avatarStage);
             if(avatarTexture) {avatarTexture.Release();PrototypeVisuals.Release(avatarTexture);}
-            foreach(var texture in new[]{disc,laugh,heart,timerRing}) if(texture) PrototypeVisuals.Release(texture);
+            foreach(var texture in new[]{disc,laugh,heart,timerRing,huntVignette}) if(texture) PrototypeVisuals.Release(texture);
             foreach(var item in ownedFonts) PrototypeVisuals.Release(item);
         }
     }

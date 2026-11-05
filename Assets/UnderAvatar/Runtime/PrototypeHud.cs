@@ -88,7 +88,13 @@ namespace UnderAvatar
             menuTitleFont=LoadUiFont("MainMenu/Fonts/AQingRanTi",new[]{"STXingkai","KaiTi","Microsoft YaHei"},144);
             menuTitle=new GUIStyle(skin.label){font=menuTitleFont,fontSize=144,fontStyle=FontStyle.Normal,alignment=TextAnchor.MiddleCenter,wordWrap=false,padding=new RectOffset(),normal={textColor=new Color(.88f,.025f,0)}};
             menuSubtitle=new GUIStyle(menuTitle){font=menuFont,fontSize=40,normal={textColor=new Color(.97f,.94f,.92f)}};
-            menuChoice=new GUIStyle(GUIStyle.none){font=menuFont,fontSize=32,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(),normal={textColor=new Color(.97f,.94f,.92f)},hover={textColor=new Color(1,.78f,.63f)},active={textColor=new Color(.9f,.22f,.12f)},focused={textColor=new Color(1,.78f,.63f)}};
+            foreach(var style in new[]{menuTitle,menuSubtitle})
+            {
+                style.hover=style.normal;
+                style.active=style.normal;
+                style.focused=style.normal;
+            }
+            menuChoice=new GUIStyle(GUIStyle.none){font=menuFont,fontSize=32,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(),normal={textColor=Color.white},hover={textColor=Color.white},active={textColor=Color.white},focused={textColor=Color.white}};
             menuUnderline=new Texture2D(256,32,TextureFormat.RGBA32,false){name="Menu curved underline",filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};
             var pixels=new Color[256*32];
             for(int x=0;x<256;x++)
@@ -207,8 +213,8 @@ namespace UnderAvatar
         }
         bool MenuChoice(Rect rect,string label)
         {
+            var before=GUI.color;GUI.color=rect.Contains(Event.current.mousePosition)?new Color(.88f,.025f,0):new Color(.97f,.94f,.92f);
             bool pressed=GUI.Button(rect,label,menuChoice);
-            var before=GUI.color;GUI.color=rect.Contains(Event.current.mousePosition)?new Color(1,.78f,.63f):new Color(.97f,.94f,.92f);
             GUI.DrawTexture(new Rect(rect.x+6,rect.yMax-17,rect.width-12,23),menuUnderline);GUI.color=before;
             return pressed;
         }
@@ -226,6 +232,12 @@ namespace UnderAvatar
                 GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机。",notice);
                 if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
                 paparazziOverlay.DrawInteractionHint("离开藏身点");
+            }
+            bool reporterHuntAnnouncement=false;
+            if(!match.IsStreamerPlayer)
+            {
+                if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
+                reporterHuntAnnouncement=broadcastOverlay.DrawReporterHunt(match);
             }
             if(!match.IsStreamerPlayer && match.DebugOpen)
             {
@@ -247,7 +259,7 @@ namespace UnderAvatar
             }
             }
             if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
-            else if(!match.Reporter.Hidden)
+            else if(!match.Reporter.Hidden && !reporterHuntAnnouncement)
             {
                 if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
                 paparazziOverlay.Draw(match);
