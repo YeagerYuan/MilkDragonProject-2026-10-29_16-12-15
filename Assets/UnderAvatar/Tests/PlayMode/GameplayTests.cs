@@ -63,6 +63,31 @@ namespace UnderAvatar.Tests
         }
 
         [UnityTest]
+        public IEnumerator HidingCameraShowsAreaBelowCeilingAndRestoresFirstPersonOnExit()
+        {
+            match.enabled=false;brain.enabled=false;
+            var reporter=match.Reporter;
+            Assert.That(reporter.IsHuman,Is.True);
+            var place=app.World.Items.First(i=>i.Floor==0 && i.IsHidingPlace);
+            reporter.Teleport(place.Front);
+            var eye=reporter.View.transform.localPosition;
+            var facing=reporter.View.transform.localRotation;
+            reporter.enabled=true;reporter.Hide(place);
+            yield return null;yield return new WaitForEndOfFrame();
+            Assert.That(reporter.OverheadHidingViewActive,Is.True);
+            Assert.That(reporter.View.transform.position.y,Is.GreaterThan(place.transform.position.y+2));
+            Assert.That(reporter.View.transform.position.y,Is.LessThan((place.Floor+1)*match.World.Data.floorHeight-.24f));
+            Assert.That(Vector3.Dot(reporter.View.transform.forward,Vector3.down),Is.GreaterThan(.7f));
+            Assert.That(reporter.Vision.Lamp.enabled,Is.False,"Hiding must not enable the shared player flashlight.");
+            int score=match.Score;match.TakePhoto();Assert.That(match.Score,Is.EqualTo(score));
+            reporter.Interact();reporter.enabled=false;
+            Assert.That(reporter.Hidden,Is.False);
+            Assert.That(reporter.OverheadHidingViewActive,Is.False);
+            Assert.That(Vector3.Distance(reporter.View.transform.localPosition,eye),Is.LessThan(.001f));
+            Assert.That(Quaternion.Angle(reporter.View.transform.localRotation,facing),Is.LessThan(.01f));
+        }
+
+        [UnityTest]
         public IEnumerator EmergencyTurnHasWindupMissPenaltyAndStun()
         {
             brain.BeginStreaming(); brain.Flap();
