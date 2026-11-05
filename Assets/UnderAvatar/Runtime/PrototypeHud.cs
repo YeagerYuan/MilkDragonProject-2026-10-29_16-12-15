@@ -225,15 +225,17 @@ namespace UnderAvatar
             if(!match) return;
             if(DocumentManager.Instance && DocumentManager.Instance.IsOpen && DocumentManager.Instance.Owner==match) return;
             if(match.IsTraining) { DrawTrainingHall(match);return; }
-            if(!match.IsStreamerPlayer && match.Reporter.Hidden)
+            bool reporterHuntAnnouncement=!match.IsStreamerPlayer && !match.Finished && match.Streamer.State!=StreamerState.Streaming
+                && BroadcastOverlay.HuntAnnouncementVisible(match.Streamer.Controller.RoamRemaining,
+                    match.Streamer.Controller.ReturnElapsed,match.Streamer.State==StreamerState.Returning);
+            if(!match.IsStreamerPlayer && match.Reporter.Hidden && !reporterHuntAnnouncement)
             {
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(.005f,.008f,.012f,.98f));
-                GUI.Label(new Rect(430,330,500,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"你躲在床下":"你躲在衣柜里",title);
+                GUI.Label(new Rect(430,330,500,50),"你躲在"+(match.Reporter.HidingPlace?.DisplayName??"藏身处"),title);
                 GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机。",notice);
                 if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
                 paparazziOverlay.DrawInteractionHint("离开藏身点");
             }
-            bool reporterHuntAnnouncement=false;
             if(!match.IsStreamerPlayer)
             {
                 if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
