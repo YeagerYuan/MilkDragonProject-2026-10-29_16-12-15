@@ -213,8 +213,14 @@ namespace UnderAvatar
         }
         bool MenuChoice(Rect rect,string label)
         {
-            var before=GUI.color;GUI.color=rect.Contains(Event.current.mousePosition)?new Color(.88f,.025f,0):new Color(.97f,.94f,.92f);
+            var color=rect.Contains(Event.current.mousePosition)?menuTitle.normal.textColor:new Color(.97f,.94f,.92f);
+            // Apply text color through the style, just like the title, rather than GUI tint.
+            menuChoice.normal.textColor=color;
+            menuChoice.hover.textColor=color;
+            menuChoice.active.textColor=color;
+            menuChoice.focused.textColor=color;
             bool pressed=GUI.Button(rect,label,menuChoice);
+            var before=GUI.color;GUI.color=color;
             GUI.DrawTexture(new Rect(rect.x+6,rect.yMax-17,rect.width-12,23),menuUnderline);GUI.color=before;
             return pressed;
         }
