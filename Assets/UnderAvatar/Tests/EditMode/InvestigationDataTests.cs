@@ -121,7 +121,8 @@ namespace UnderAvatar.Tests
             Assert.That(t.Contains(new Vector3(0,.2f,1.5f)),Is.True);Assert.That(t.Contains(new Vector3(1.5f,.2f,0)),Is.False);
             map.taskProps[0].portable=false;Assert.Throws<ArgumentException>(()=>map.Validate());map.taskProps[0].portable=true;
             t.targetId="missing";Assert.Throws<ArgumentException>(()=>map.Validate());t.targetId="";
-            Assert.DoesNotThrow(()=>map.Validate());Assert.Throws<InvalidOperationException>(()=>PrototypeApp.ValidateMap(map));
+            Assert.DoesNotThrow(()=>map.Validate());Assert.DoesNotThrow(()=>PrototypeApp.ValidateMap(map));
+            map.requireLiveEvidence=false;Assert.Throws<InvalidOperationException>(()=>PrototypeApp.ValidateMap(map));
         }
         [Test] public void OldTaskImportKeepsObjectBindingsAndFloorHeightMovesAuthoredContent()
         {

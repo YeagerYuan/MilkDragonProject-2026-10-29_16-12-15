@@ -38,6 +38,21 @@ MonoBehaviour:
     crouchedParameter: Crouched
     sneakingParameter: Sneaking
     animationDamping: 0.1
+  hallStreamer:
+    prefab: {fileID: 6871663682324806865, guid: b14501f65fced3a498685d45231778e6,
+      type: 3}
+    animatorController: {fileID: 9100000, guid: 3b5fd245614b275459335adf8eb6d4c5,
+      type: 2}
+    offset: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 180, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    speedParameter: Speed
+    moveXParameter: MoveX
+    moveZParameter: MoveZ
+    crouchedParameter: Crouched
+    sneakingParameter: Sneaking
+    animationDamping: 0.1
+  hallStreamerInSingle: 1
   interpolationDelay: 0.1
   maxExtrapolation: 0.08
   positionSmoothing: 0.04

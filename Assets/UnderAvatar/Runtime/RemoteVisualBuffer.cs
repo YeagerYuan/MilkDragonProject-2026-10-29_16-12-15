@@ -15,7 +15,7 @@ namespace UnderAvatar
         {
             if(pose==null) return;
             if(samples.Count>0 && serverTime<=samples[samples.Count-1].time) return;
-            bool reset=!initialized || samples.Count==0 || pose.hidden!=samples[samples.Count-1].pose.hidden ||
+            bool reset=!initialized || samples.Count==0 || pose.hidden!=samples[samples.Count-1].pose.hidden || pose.lifeEpoch!=samples[samples.Count-1].pose.lifeEpoch ||
                 Vector3.Distance(pose.position,samples[samples.Count-1].pose.position)>3;
             if(reset) { samples.Clear();cursor=serverTime-delay;initialized=true;JustSnapped=true; }
             samples.Add(new Sample{time=serverTime,pose=pose});lastArrival=arrival;
@@ -50,7 +50,7 @@ namespace UnderAvatar
             return result;
         }
         public void ConsumeSnap() { JustSnapped=false; }
-        static ActorSnapshot Copy(ActorSnapshot p) => new ActorSnapshot{position=p.position,yaw=p.yaw,planarVelocity=p.planarVelocity,crouched=p.crouched,sneaking=p.sneaking,hidden=p.hidden};
+        static ActorSnapshot Copy(ActorSnapshot p) => new ActorSnapshot{lifeEpoch=p.lifeEpoch,position=p.position,yaw=p.yaw,planarVelocity=p.planarVelocity,crouched=p.crouched,sneaking=p.sneaking,hidden=p.hidden};
     }
     public sealed class CharacterMotion
     {

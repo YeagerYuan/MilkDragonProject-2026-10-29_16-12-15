@@ -13,13 +13,14 @@ namespace UnderAvatar.Tests
         [TestCase(3.5f)]
         [TestCase(4f)]
         [TestCase(6f)]
-        public void WallsStairsLandingsAndFloorOpeningsShareTheConfiguredHeight(float height)
+        public void WallAndDoorTopsClearTheSlabWhileStairsStillReachTheFloor(float height)
         {
             var data=new BuildingData{floorHeight=height};
             data.floors.Add(new FloorData{floorIndex=0});
             data.floors.Add(new FloorData{floorIndex=1});
             data.floors[0].items.Add(new PlacedItemData{type=ItemType.Stairs});
             data.floors[0].items.Add(new PlacedItemData{type=ItemType.Wall,gridX=-4});
+            data.floors[0].items.Add(new PlacedItemData{type=ItemType.Door,gridX=-3,gridZ=-3});
             var root=new GameObject("GeometryTest"); var world=root.AddComponent<BuildingWorld>();
             try
             {
@@ -27,7 +28,12 @@ namespace UnderAvatar.Tests
                 var stair=world.Stairs[0];
                 var view=world.Find(stair.Item.id);
                 var wall=world.Items.First(i=>i.Data.type==ItemType.Wall);
-                Assert.That(wall.GetComponentInChildren<Renderer>().bounds.size.y,Is.EqualTo(height).Within(.001f));
+                Assert.That(wall.GetComponentInChildren<Renderer>().bounds.size.y,Is.EqualTo(height-.25f).Within(.001f));
+                float ceilingBottom=world.FloorSlabs(1).Min(r=>r.bounds.min.y);
+                Assert.That(wall.GetComponentInChildren<Collider>().bounds.max.y,Is.LessThan(ceilingBottom));
+                var door=world.Items.First(i=>i.Data.type==ItemType.Door);
+                Assert.That(door.GetComponentsInChildren<Collider>().Max(c=>c.bounds.max.y),Is.LessThan(ceilingBottom));
+                Assert.That(door.transform.Find("DoorHinge/DoorLeaf").GetComponent<Collider>().bounds.size.x,Is.EqualTo(data.gridSize-.32f).Within(.001f),"Door width belongs to the next requirement.");
                 Assert.That(view.transform.Find("UpperLanding").GetComponent<Collider>().bounds.max.y,Is.EqualTo(height).Within(.001f));
                 Assert.That(Physics.RaycastAll(stair.WorldPoint(data.gridSize,height+.4f,0),Vector3.down,.6f,PrototypeLayers.SolidMask).Length,Is.EqualTo(1),"Landing must not overlap a second floor slab");
                 Assert.That(view.transform.Find("MiddleLanding").GetComponent<Collider>().bounds.max.y,Is.EqualTo(height*.5f).Within(.001f));

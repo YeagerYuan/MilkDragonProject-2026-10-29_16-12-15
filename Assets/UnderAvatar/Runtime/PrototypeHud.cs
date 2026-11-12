@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnderAvatar
 {
-    public sealed class PrototypeHud : MonoBehaviour
+    public sealed partial class PrototypeHud : MonoBehaviour
     {
         const float Width=1280, Height=800;
         PrototypeApp app;
@@ -20,7 +20,8 @@ namespace UnderAvatar
         GUIStyle pageTitle,pageBody,pageHint;
         enum LauncherPage { Home, SinglePlayer, CreateRoom, JoinRoom }
         LauncherPage launcherPage;
-        Vector2 questScroll;
+        BroadcastOverlay broadcastOverlay;
+        InteractionOverlay interactionOverlay;
         bool showObserver=true;
         Vector2 debugScroll;
         string joinAddress="127.0.0.1",portText="7777";
@@ -168,7 +169,7 @@ namespace UnderAvatar
 
         void OnGUI()
         {
-            if(!app) return;
+            if(!app || app.ComicOpen) return;
             EnsureStyles();
             GUISkin previousSkin=GUI.skin;
             bool previousEnabled=GUI.enabled;
@@ -177,10 +178,32 @@ namespace UnderAvatar
             try
             {
                 GUI.matrix=Matrix4x4.TRS(Offset,Quaternion.identity,Vector3.one*Scale);
-                if(app.Session) DrawPreview();
+                if(app.SettingsOpen) DrawSettings();
+                else if(app.Session) DrawPreview();
                 else DrawLauncher();
             }
             finally { GUI.matrix=matrix; GUI.skin=previousSkin; GUI.enabled=previousEnabled; }
+        }
+        void DrawSettings()
+        {
+            Fill(new Rect(-2000,-2000,6000,6000),new Color(0,0,0,.8f));
+            Fill(new Rect(360,180,560,440),new Color(.045f,.075f,.10f));
+            GUILayout.BeginArea(new Rect(395,210,490,380));
+            GUILayout.Label("设置",title);GUILayout.Space(18);
+            GUILayout.Label("总音量  "+Mathf.RoundToInt(app.MasterVolume*100)+"%",notice);
+            float volume=GUILayout.HorizontalSlider(app.MasterVolume,0,1,GUILayout.Height(25));
+            if(!Mathf.Approximately(volume,app.MasterVolume)) app.SetMasterVolume(volume);
+            GUILayout.Space(10);
+            bool fullscreen=GUILayout.Toggle(app.DisplayMode.FullScreen,"无边框全屏（F11 / Alt+Enter）");
+            if(fullscreen!=app.DisplayMode.FullScreen) app.DisplayMode.SetFullScreen(fullscreen);
+            GUILayout.Label("渲染分辨率保持 "+app.DisplayMode.RenderResolution.x+" × "+app.DisplayMode.RenderResolution.y,small);
+            GUILayout.Space(14);
+            if(Button("继续游戏 / 关闭设置（Esc）",true)) app.CloseSettings();
+            if(Button("返回主菜单")) app.ReturnToMenu();
+            if(Button("退出游戏")) app.QuitTest();
+            GUILayout.Space(12);
+            GUILayout.Label(app.Session?(app.Session.IsNetwork?"联机对局仍在进行；当前仅停止本机操作。":"单人对局已暂停。"):"音量设置会保存在本机。",small);
+            GUILayout.EndArea();
         }
         void DrawLauncher()
         {
@@ -199,6 +222,8 @@ namespace UnderAvatar
                 if(MenuChoice(new Rect(528,470,224,54),"创建房间")) launcherPage=LauncherPage.CreateRoom;
                 if(MenuChoice(new Rect(528,536,224,54),"加入房间")) launcherPage=LauncherPage.JoinRoom;
                 if(!string.IsNullOrEmpty(app.StartupError)) GUI.Label(new Rect(280,685,720,65),app.StartupError,notice);
+                if(MenuChoice(new Rect(396,610,224,54),"设置 / 音量")) app.OpenSettings();
+                if(MenuChoice(new Rect(660,610,224,54),"退出游戏")) app.QuitTest();
                 return;
             }
             Fill(new Rect(320,70,820,660),Ink);
@@ -304,24 +329,27 @@ namespace UnderAvatar
             var match=app.Session;
             if(!match) return;
             if(DocumentManager.Instance && DocumentManager.Instance.IsOpen && DocumentManager.Instance.Owner==match) return;
+            if(match.IsStreamerPlayer && !match.Finished && match.StreamerMapOpen) {DrawPhone(match);return;}
             if(match.IsTraining) { DrawTrainingHall(match);return; }
-            bool reporterHuntAnnouncement=!match.IsStreamerPlayer && !match.Finished && match.Streamer.State!=StreamerState.Streaming
-                && BroadcastOverlay.HuntAnnouncementVisible(match.Streamer.Controller.RoamRemaining,
-                    match.Streamer.Controller.ReturnElapsed,match.Streamer.State==StreamerState.Returning);
-            if(!match.IsStreamerPlayer && match.Reporter.Hidden && !reporterHuntAnnouncement)
-            {
-                // Fill(new Rect(20,656,490,112),new Color(.005f,.008f,.012f,.65f));
-                // GUI.Label(new Rect(34,668,460,42),"你躲在"+(match.Reporter.HidingPlace?.DisplayName??"藏身处"),title);
-                // GUI.Label(new Rect(34,718,460,36),"保持安静。无法使用手机。",notice);
-                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
-                paparazziOverlay.DrawInteractionHint("离开藏身点");
-            }
-            if(!match.IsStreamerPlayer)
+            bool reporterHuntAnnouncement=false;
+            if(!match.IsStreamerPlayer && !match.Reporter.PhoneOpen && !match.DebugOpen)
             {
                 if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
                 reporterHuntAnnouncement=broadcastOverlay.DrawReporterHunt(match);
             }
-            if(!match.IsStreamerPlayer && match.DebugOpen)
+            if(!match.IsStreamerPlayer && match.Reporter.Hidden && !match.DebugOpen && !match.Finished)
+            {
+                if(!match.Reporter.OverheadHidingViewActive) Fill(new Rect(-2000,-2000,6000,6000),Color.black);
+                if(!interactionOverlay) interactionOverlay=GetComponent<InteractionOverlay>()??gameObject.AddComponent<InteractionOverlay>();
+                interactionOverlay.DrawInteractionHint("离开藏身点",true);return;
+            }
+            if(!match.IsStreamerPlayer && match.Reporter.Hidden && !match.Reporter.OverheadHidingViewActive && !reporterHuntAnnouncement)
+            {
+                Fill(new Rect(-2000,-2000,6000,6000),new Color(.005f,.008f,.012f,.98f));
+                GUI.Label(new Rect(430,330,500,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"你躲在床下":"你躲在衣柜里",title);
+                GUI.Label(new Rect(430,385,500,50),"保持安静。无法使用手机，按 E 离开。",notice);
+            }
+            if(match.DebugOpen || (!match.IsStreamerPlayer && match.Reporter.PhoneOpen))
             {
             Fill(new Rect(20,16,800,88),Ink);
             GUI.Label(new Rect(34,23,750,28),"皮套之下  /  "+(match.IsNetwork
@@ -330,7 +358,7 @@ namespace UnderAvatar
             GUI.Label(new Rect(34,52,770,22),match.IsStreamerPlayer
                 ? "空格 / 左键拍翅 · 下播后 WASD 移动 · Shift 静步 · Ctrl 蹲下 · E 门 / 开播 · Tab 调试"
                 : "WASD 行走有声 · Shift 静步无声 · 按住 Ctrl 蹲下 · E 交互 · F 手机 · Tab 调试",small);
-            GUI.Label(new Rect(34,78,770,22),"当前位置 "+((match.IsStreamerPlayer?match.Streamer.Floor:match.Reporter.Floor)+1)+"F  ·  主播电脑 "+(match.Streamer.Computer.Floor+1)+"F  ·  走楼梯上下楼  ·  Esc 退出",small);
+            GUI.Label(new Rect(34,78,770,22),"当前位置 "+((match.IsStreamerPlayer?match.Streamer.Floor:match.Reporter.Floor)+1)+"F  ·  主播电脑 "+(match.Streamer.Computer.Floor+1)+"F  ·  M 手机地图  ·  Esc 设置",small);
             if(match.IsNetwork)
             {
                 var net=app.Lan;
@@ -338,15 +366,23 @@ namespace UnderAvatar
                 GUI.Label(new Rect(34,105,770,24),"本机 "+Mathf.RoundToInt(net.LocalFps)+" FPS · 房主 "+
                     Mathf.RoundToInt(net.IsHost?net.LocalFps:net.HostFps)+" FPS · 网络往返 "+
                     (net.RoundTripMs>0?Mathf.RoundToInt(net.RoundTripMs)+" ms":"测量中"),small);
+                if(!net.IsHost && (net.SnapshotAge>1 || net.PendingInputs>ClientPrediction.MaxReplayTicks))
+                    GUI.Label(new Rect(34,134,770,25),"网络延迟较高 · 本机可继续操作，交互等待房主确认",small);
             }
             }
+            if(!match.IsStreamerPlayer && !match.Reporter.Hidden && !match.DebugOpen && !match.ReporterDying && !match.Finished) DrawPhone(match);
             if(match.IsStreamerPlayer) DrawStreamerPlayer(match);
-            else if(!match.Reporter.Hidden && !reporterHuntAnnouncement)
+            else if(!match.Reporter.Hidden && !match.Reporter.OverheadHidingViewActive && !reporterHuntAnnouncement)
             {
-                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
-                paparazziOverlay.Draw(match);
+                if(!match.Reporter.PhoneOpen && match.PendingPhoto==null)
+                {
+                    GUI.Label(new Rect(630,390,20,20),"+");
+                    if(!interactionOverlay) interactionOverlay=GetComponent<InteractionOverlay>()??gameObject.AddComponent<InteractionOverlay>();
+                    interactionOverlay.DrawInteractionHint(interactionOverlay.ReporterInteractionMessage(match));
+                }
             }
-            if(showObserver && match.DebugOpen && !match.IsStreamerPlayer && !match.IsNetwork) DrawStreamerObserver(match);
+            if(showObserver && match.DebugOpen && !match.IsStreamerPlayer && !match.IsNetwork && !match.Reporter.PhoneOpen) DrawStreamerObserver(match);
+            if(match.IsStreamerPlayer || !match.Reporter.PhoneOpen) DrawAbilities(match);
             if(match.DebugOpen && !match.Finished)
             { if(match.IsNetwork) DrawNetworkMenu();else DrawDebug(match); }
             if(match.IsNetwork && app.Lan.Phase==LanPhase.Loading)
@@ -356,7 +392,7 @@ namespace UnderAvatar
             }
             if(Time.time<match.FlashUntil)
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil && !match.IsStreamerPlayer && match.DebugOpen)
+            if(Time.time<match.MessageUntil && !(match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming))
             {
                 bool broadcasting=match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming;
                 float y=broadcasting?648:744,width=broadcasting?960:1240;
@@ -366,8 +402,9 @@ namespace UnderAvatar
             if(match.Finished)
             {
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(0,0,0,.78f));
-                Fill(new Rect(360,270,560,250),Ink);
+                Fill(new Rect(360,270,560,320),new Color(.055f,.10f,.13f));
                 GUI.Label(new Rect(385,300,510,80),match.Result,title);
+                if(!match.IsStreamerPlayer && match.UploadFeedbackId>0) GUI.Label(new Rect(385,480,510,90),match.UploadFeedbackTitle+"\n"+match.UploadFeedbackDetail,small);
                 if(GUI.Button(new Rect(385,410,235,50),match.IsNetwork?"返回房间":"返回大厅再来一局")) app.RestartGame();
                 if(GUI.Button(new Rect(635,410,235,50),"返回角色选择")) app.ReturnToMenu();
             }
@@ -389,7 +426,13 @@ namespace UnderAvatar
             string preparation=single
                 ? "你："+(ready?"已准备":"未准备")+"  /  AI：已就绪"
                 : "你："+(ready?"已准备":"未准备")+"  /  对方："+(net.RemoteReady?"已准备":"未准备");
-            if(!match.IsStreamerPlayer && match.Reporter.Hidden)
+            if(!match.IsStreamerPlayer && match.Reporter.Hidden && !match.DebugOpen)
+            {
+                if(!match.Reporter.OverheadHidingViewActive) Fill(new Rect(-2000,-2000,6000,6000),Color.black);
+                if(!interactionOverlay) interactionOverlay=GetComponent<InteractionOverlay>()??gameObject.AddComponent<InteractionOverlay>();
+                interactionOverlay.DrawInteractionHint("离开藏身点",true);return;
+            }
+            if(!match.IsStreamerPlayer && match.Reporter.Hidden && !match.Reporter.OverheadHidingViewActive)
             {
                 Fill(new Rect(-2000,-2000,6000,6000),new Color(.005f,.008f,.012f,.98f));
                 GUI.Label(new Rect(430,330,520,50),match.Reporter.HidingPlace?.Data.type==ItemType.Bed?"躲藏练习：床下":"躲藏练习：衣柜",title);
@@ -398,24 +441,26 @@ namespace UnderAvatar
             else
             {
                 GUI.Label(new Rect(630,390,24,24),"+",notice);
-                if(!match.IsStreamerPlayer && match.Reporter.PhoneOpen)
-                {
-                    Outline(new Rect(300,160,650,470),accent,2);
-                    Fill(new Rect(320,640,620,52),Ink);
-                    GUI.Label(new Rect(338,651,585,35),"手机练习 · 左键 / 空格拍照 · F 收起 · 无任务、无计分",notice);
-                }
+                if(!match.IsStreamerPlayer && !match.Reporter.Hidden && !match.DebugOpen && !match.ReporterDying) DrawPhone(match);
             }
             Fill(new Rect(20,16,800,118),Ink);
             GUI.Label(new Rect(36,24,760,32),"教学大厅  /  "+(match.IsStreamerPlayer?"主播":"狗仔")+(single?" · AI 对战":" · 联机对战"),title);
             GUI.Label(new Rect(36,64,760,25),"WASD 移动 · Shift 静步 · Ctrl 蹲下 · E 交互 · Tab 大厅菜单",small);
             GUI.Label(new Rect(36,94,760,25),"自由交互，无小游戏、计时或胜负  ·  "+(single?"准备后开始 AI 对战":"网络 "+Mathf.RoundToInt(net.RoundTripMs)+" ms"),small);
-            Fill(new Rect(840,16,420,118),Ink);
+            if(match.IsStreamerPlayer || !match.Reporter.PhoneOpen)
+            {
+            Fill(new Rect(840,16,420,118),new Color(.035f,.055f,.075f,.93f));
             GUI.Label(new Rect(858,26,385,28),"正式对局准备",section);
             GUI.Label(new Rect(858,62,385,52),preparation+"\n"+(single?"按 Tab 准备并开始正式 AI 对战":"按 Tab 准备，房主开始正式对局"),small);
+            }
             if(Time.time<match.FlashUntil) Fill(new Rect(-2000,-2000,6000,6000),new Color(1,1,1,.13f*Mathf.Clamp01((match.FlashUntil-Time.time)/.3f)));
-            if(Time.time<match.MessageUntil && !(match.IsStreamerPlayer && match.Streamer.State==StreamerState.Streaming))
+            if(Time.time<match.MessageUntil)
             {
                 Fill(new Rect(20,744,1240,42),Ink);GUI.Label(new Rect(36,751,1208,32),match.Message,notice);
+            }
+            if(!match.Reporter.PhoneOpen || match.IsStreamerPlayer)
+            {
+                DrawAbilities(match);if(match.PendingPhoto==null && Time.unscaledTime>=match.UploadFeedbackUntil) DrawTrainingGuide(match);
             }
             if(!single && net.Phase==LanPhase.Loading)
             {
@@ -437,59 +482,6 @@ namespace UnderAvatar
             else GUI.Label(new Rect(385,410,510,32),"双方准备后，等待房主开始。",small);
             if(GUI.Button(new Rect(385,454,510,42),"继续练习（Tab）")) { match.DebugOpen=false;match.Reporter.SetCursor(false); }
             if(GUI.Button(new Rect(385,506,510,42),single?"返回角色选择":"离开房间")) app.ReturnToMenu();
-        }
-
-        PaparazziOverlay paparazziOverlay;
-        void DrawPhone(MatchSession match)
-        {
-            Fill(new Rect(946,94,318,638),Ink);
-            GUILayout.BeginArea(new Rect(966,108,278,608));
-            GUILayout.Label("取证终端 · "+(match.PhoneMenuOpen?"任务与上传":"相机"),section);
-            GUILayout.Label("剩余失误次数  "+match.Score+" / "+match.Settings.maxScore,notice);
-            GUILayout.Label(match.Streamer.State==StreamerState.Streaming?"主播正在直播":"主播已离开电脑，注意安全",small);
-            questScroll=GUILayout.BeginScrollView(questScroll,GUILayout.Height(220));
-            foreach(var quest in match.Quests)
-            {
-                string label=(quest.Complete?"✓ ":match.SelectedTaskId==quest.Id?"▶ ":"□ ")+(quest.Title??quest.Description);
-                if(match.PhoneMenuOpen)
-                { if(GUILayout.Button(label,GUILayout.MinHeight(36))) match.QueuePhoneAction(quest.Id); }
-                else GUILayout.Label(label,small);
-            }
-            if(match.RequiresLiveEvidence)
-            {
-                string live=(match.SelectedTaskId==InvestigationData.LiveTask?"▶ ":"□ ")+"主播直播证据  "+match.StreamerPhotos+" / 3";
-                if(match.PhoneMenuOpen) {if(GUILayout.Button(live,GUILayout.MinHeight(36))) match.QueuePhoneAction(InvestigationData.LiveTask);}
-                else GUILayout.Label(live,small);
-            }
-            GUILayout.EndScrollView();
-            GUILayout.Label(match.SelectedTaskId==InvestigationData.LiveTask?"拍摄正在直播的主播，每场最多一张。":match.SelectedTask?.description??"请选择任务",notice,GUILayout.Height(100));
-            if(match.PendingPhoto!=null)
-            {
-                GUILayout.Label("待提交照片 #"+match.PendingPhoto.id,small);
-                string destination=match.PendingPhoto.taskId==InvestigationData.LiveTask?"主播直播证据":match.Quests.Find(q=>q.Id==match.PendingPhoto.taskId)?.Title;
-                GUILayout.Label("提交到："+destination,small);
-                if(match.PhoneMenuOpen)
-                {
-                    if(GUILayout.Button("上传这张照片",GUILayout.Height(36))) match.QueuePhoneAction(upload:match.PendingPhoto.id);
-                    if(GUILayout.Button("取消照片（不扣分）",GUILayout.Height(30))) match.QueuePhoneAction(cancel:true);
-                }
-            }
-            else GUILayout.Label("暂无待上传照片",small);
-            if(match.PhoneMenuOpen && GUILayout.Button("进入相机 / 继续取景（Q）",GUILayout.Height(34))) match.SetPhoneMenu(false);
-            GUILayout.Label(match.PhoneMenuOpen?"先选任务，再进入相机。F / Esc 收起手机。":"左键 / 空格拍照 · Q 返回任务菜单 · F 收起",small);
-            GUILayout.EndArea();
-            if(match.PhoneMenuOpen)
-            {
-                if(match.PendingPhoto!=null && match.PhotoPreview)
-                {Fill(new Rect(420,210,500,292),new Color(0,0,0,.9f));GUI.DrawTexture(new Rect(430,220,480,270),match.PhotoPreview,ScaleMode.ScaleToFit);}
-                return;
-            }
-            Vector2 lower=ToGui(new Vector2(Screen.width*.22f,Screen.height*.23f));
-            Vector2 upper=ToGui(new Vector2(Screen.width*.64f,Screen.height*.77f));
-            var frame=new Rect(lower.x,upper.y,upper.x-lower.x,lower.y-upper.y);
-            var color=new Color(.8f,.85f,.9f,.7f);Outline(frame,color,2);
-            Fill(new Rect(frame.center.x-8,frame.center.y,16,2),color);Fill(new Rect(frame.center.x,frame.center.y-8,2,16),color);
-            GUI.Label(new Rect(frame.x,frame.yMax+8,frame.width,35),"相机范围 < "+match.Settings.maxPhotoDistance.ToString("0.0")+" m · 拍摄不扣分",small);
         }
 
         void Outline(Rect rect,Color color,float thickness)
@@ -527,6 +519,8 @@ namespace UnderAvatar
             GUI.Label(new Rect(30,393,365,28),alarm?"背后有人闪光偷拍！":"声波穿墙显示，带来源楼层。",small);
         }
 
+
+        void DrawAbilities(MatchSession match) => DrawCompactAbility(match);
 
         void DrawSoundPulses(MatchSession match,Camera camera,Rect rect)
         {
@@ -576,12 +570,12 @@ namespace UnderAvatar
             if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
             broadcastOverlay.DrawHunt(match);
             bool huntAnnouncement=!match.IsTraining && (actor.State==StreamerState.Returning
-                ? brain.ReturnElapsed<StreamerController.ReturnAnnouncementSeconds
-                : brain.RoamRemaining>StreamerController.HuntSeconds-3);
+                ? brain.ReturnElapsed<BroadcastOverlay.AnnouncementSeconds
+                : brain.RoamRemaining>match.Settings.patrolSeconds-BroadcastOverlay.AnnouncementSeconds);
             if(!match.DebugOpen && match.InputCaptured && !huntAnnouncement)
             {
-                if(!paparazziOverlay) paparazziOverlay=GetComponent<PaparazziOverlay>()??gameObject.AddComponent<PaparazziOverlay>();
-                paparazziOverlay.DrawInteractionHint(brain.InteractionPrompt);
+                if(!interactionOverlay) interactionOverlay=GetComponent<InteractionOverlay>()??gameObject.AddComponent<InteractionOverlay>();
+                interactionOverlay.DrawInteractionHint(brain.InteractionPrompt);
             }
             if(Time.time<actor.AlertUntil)
             {
@@ -590,12 +584,15 @@ namespace UnderAvatar
             }
         }
 
-        BroadcastOverlay broadcastOverlay;
         void DrawBroadcastScreen(MatchSession match)
         {
             if(!broadcastOverlay) broadcastOverlay=GetComponent<BroadcastOverlay>()??gameObject.AddComponent<BroadcastOverlay>();
             broadcastOverlay.Draw(match);
         }
+
+
+
+
         void Line(Vector2 from,Vector2 to,Color color,float width)
         {
             Matrix4x4 previous=GUI.matrix;

@@ -43,20 +43,20 @@ namespace UnderAvatar.Tests
             Assert.That(brain.TryCapture(),Is.False,"Proximity must not capture hidden players.");
             Approach(wardrobe);match.Streamer.View.transform.rotation=Quaternion.LookRotation(wardrobe.transform.position+Vector3.up*1.2f-match.Streamer.View.transform.position);
             brain.Interact();
-            Assert.That(match.Finished,Is.True);
+            Assert.That(match.ReporterLives,Is.EqualTo(2));Assert.That(match.ReporterDying,Is.True);
         }
         [UnityTest] public IEnumerator BedIsLouderAndSearchUsesBedPenaltyWithoutCapturingDifferentHidingSpot()
         {
             Start();yield return null;var brain=match.Streamer.Controller;
             var bed=match.World.Find("test_bed");Approach(bed);float before=brain.RoamRemaining;
-            brain.SearchHidingPlace(bed);Assert.That(brain.RoamRemaining,Is.EqualTo(before-5));
-            Assert.That(match.Message,Is.EqualTo("未发现任何人，搜捕时间 -5 秒。"));bed.SetSearchOpen(false);
+            brain.SearchHidingPlace(bed);Assert.That(brain.RoamRemaining,Is.EqualTo(before-12));
+            Assert.That(match.Message,Is.EqualTo("未发现任何人，搜捕时间 -12 秒。"));bed.SetSearchOpen(false);
             match.Reporter.Teleport(bed.Front);match.Reporter.Hide(bed);
             Assert.That(match.Reporter.Hidden,Is.True);Assert.That(match.Pulses.Last().Kind,Is.EqualTo(NoiseKind.HideBed));
             Assert.That(brain.TryCapture(),Is.False);
             var other=match.World.Items.First(i=>i.Floor==0 && i.Data.type==ItemType.Furniture && i.IsHidingPlace);
             Approach(other);Assert.That(brain.SearchHidingPlace(other),Is.False);Assert.That(match.Finished,Is.False);
-            Approach(bed);Assert.That(brain.SearchHidingPlace(bed),Is.True);Assert.That(match.Finished,Is.True);
+            Approach(bed);Assert.That(brain.SearchHidingPlace(bed),Is.True);Assert.That(match.ReporterLives,Is.EqualTo(2));Assert.That(match.ReporterDying,Is.True);
         }
         [UnityTest] public IEnumerator SearchExhaustsRoamAndReturningFanDeadlineCannotBeResetByRepeatedReturn()
         {
@@ -76,7 +76,7 @@ namespace UnderAvatar.Tests
             app.RuntimeSettings.flappyRules.gapSize=.4f;
             brain.BeginReturn();brain.AdvanceReturnDeadline(20);Assert.That(brain.Fans,Is.EqualTo(4000));
             brain.BeginStreaming();brain.AdvanceReturnDeadline(200);
-            Assert.That(brain.Fans,Is.EqualTo(4000));Assert.That(brain.Level.TargetScore,Is.EqualTo(3));
+            Assert.That(brain.Fans,Is.EqualTo(5000));Assert.That(brain.Level.TargetScore,Is.EqualTo(3));
             Assert.That(brain.Level.PipeGap,Is.EqualTo(.4f));GameplayTests.FinishFlappy(brain);brain.BeginStreaming();
             Assert.That(brain.Level.TargetScore,Is.EqualTo(15));Assert.That(brain.Level.PipeGap,Is.EqualTo(.4f));
             Assert.That(brain.Level.Rules.flapImpulse,Is.EqualTo(.56f));

@@ -32,7 +32,7 @@ namespace UnderAvatar
             var definition=LevelObjectCatalog.Default?.Resolve(data);
             Vector3 customSize=data.type==ItemType.Custom && definition!=null && !data.customSizeOverride
                 ?definition.customSize:data.customSize;
-            float h = floorHeight;
+            float h = BuildingData.WallHeightFor(floorHeight);
             GameObject Box(string name, Vector3 p, Vector3 s, Color c, string layer = "UA_Props", bool solid = true) =>
                 name=="Wall" || name=="FrameLeft" || name=="FrameRight" || name=="Lintel"
                     ?palette.SurfaceBox(transform,name,p,s,c,BuildingSurfaceKind.Wall,transform.position.y,h,layer,solid,ghost)

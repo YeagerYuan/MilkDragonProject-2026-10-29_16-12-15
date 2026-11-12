@@ -12,8 +12,10 @@ namespace UnderAvatar
         public float reporterSpeed=2.2f;
         public float streamerSpeed=4.2f;
         public float maxPhotoDistance=8f;
+        [Range(.5f,12)] public float taskPhotoDistance=3f;
         [Min(1)] public int maxScore=3;
-        public float patrolSeconds=30f;
+        public float patrolSeconds=45f;
+        public List<Vector3> mapBoardPositions=new List<Vector3>();
         [Min(1)] public int flappyTargetScore=15;
         public List<BroadcastTarget> broadcastTargets=new List<BroadcastTarget>();
         public FlappyRules flappyRules=new FlappyRules();
@@ -24,11 +26,16 @@ namespace UnderAvatar
         }
         public bool allowEmergencyTurn;
         [Min(0)] public float wrongWardrobePenalty=5;
-        [Min(0)] public float wrongBedPenalty=5;
+        [Min(0)] public float wrongBedPenalty=12;
         [Min(1)] public int initialFans=5000;
         [Min(1)] public int lateFanLoss=1000;
         [Min(0)] public float returnGraceSeconds=10;
         [Min(.1f)] public float lateFanLossInterval=10;
+        [Range(0,20)] public int maxFailureScoreReduction=4;
+        [Min(.5f)] public float returnComputerPulseInterval=4;
+        [Min(.1f)] public float returnComputerPulseSeconds=1;
+        public ReporterLifeRules reporterLives=new ReporterLifeRules();
+        public DetectionRules detection=new DetectionRules();
         public VisionLightSettings streamerVision=new VisionLightSettings();
         public VisionLightSettings reporterVision=VisionLightSettings.Reporter();
     }
@@ -61,7 +68,10 @@ namespace UnderAvatar
         public TestRole Role { get; private set; }
         public bool IsStreamerPlayer => Role==TestRole.Streamer;
         public bool InputCaptured { get; private set; }
+        public bool SimulationPaused => App.SettingsOpen && !IsNetwork;
         public AiReporterDriver ReporterAI { get; private set; }
+        public PlayerAbilities Abilities { get; private set; }
+        public HouseMap HouseMap {get;private set;}
         public ReporterController Reporter { get; private set; }
         public StreamerActor Streamer { get; private set; }
         public List<QuestProgress> Quests { get; } = new List<QuestProgress>();
@@ -99,8 +109,6 @@ namespace UnderAvatar
             audioBank.Initialize(this,app.AudioProfile);
             var player=new GameObject("Reporter"); player.transform.SetParent(transform,false); player.transform.position=spawn;
             Reporter=player.AddComponent<ReporterController>(); Reporter.Initialize(this);
-            // At the right-side (6, 3) spawn, start facing into the room along -X.
-            if(!training) Reporter.SetLookAt(Reporter.View.transform.position+Vector3.left);
             var monster=new GameObject("Streamer"); monster.transform.SetParent(transform,false); monster.transform.position=pc.Front;
             Streamer=monster.AddComponent<StreamerActor>(); Streamer.Initialize(this,pc);
             if(IsStreamerPlayer)
@@ -118,6 +126,8 @@ namespace UnderAvatar
                 if(IsAuthority && !IsTraining) Streamer.Controller.BeginStreaming();
                 else if(!IsAuthority) { Reporter.GetComponent<CharacterController>().enabled=false;Streamer.GetComponent<CharacterController>().enabled=false; }
             }
+            Abilities=gameObject.AddComponent<PlayerAbilities>();Abilities.Initialize(this);
+            HouseMap=gameObject.AddComponent<HouseMap>();HouseMap.Initialize(this);
             if(IsTraining)
             {
                 Streamer.Controller.Driver=null;
@@ -125,7 +135,6 @@ namespace UnderAvatar
                 gameObject.AddComponent<TrainingHall>().Initialize(this);
                 Notice("教学大厅：自由交互，没有小游戏、计时或胜负。Tab 打开准备菜单。",8);return;
             }
-            if(IsNetwork || !IsStreamerPlayer) Reporter.SetPhone(true);
             Notice(IsStreamerPlayer?"空格 / 左键拍翅。Flappy Bird 达到 "+Settings.TargetForBroadcast(1)+" 分后可下播搜捕狗仔。":
                 RequiresLiveEvidence?"完成物证任务和 3 张直播证据；每场直播只能取证主播一次。F 手机，Tab 调试。":"完成手机中配置的拍摄任务。F 手机，Tab 调试。",6);
         }
@@ -133,7 +142,7 @@ namespace UnderAvatar
         public void Notice(string text,float seconds=3) { Message=text; MessageUntil=Time.time+seconds;messageId++; App.Report(text); }
         public void Finish(string result)
         {
-            if(Finished || IsTraining) return;
+            if(Finished || IsTraining || ReporterDying && ReporterLives<=0 && ReporterDeathRemaining>0) return;
             Result=result; WonOrLost?.Invoke();
             Cursor.lockState=CursorLockMode.None; Cursor.visible=true;
         }
@@ -165,9 +174,7 @@ namespace UnderAvatar
         {
             if(Vector3.Distance(camera.transform.position,point)>=Settings.maxPhotoDistance) return false;
             Vector3 screen=camera.WorldToViewportPoint(point);
-            if(screen.z<=0 || (IsTraining
-                ?screen.x<.22f || screen.x>.64f || screen.y<.23f || screen.y>.77f
-                :screen.x<.025f || screen.x>.975f || screen.y<.165f || screen.y>.95f)) return false;
+            if(screen.z<=0 || screen.x<.025f || screen.x>.975f || screen.y<.165f || screen.y>.95f) return false;
             Vector3 ray=point-camera.transform.position;
             foreach(var hit in Physics.RaycastAll(camera.transform.position,ray.normalized,ray.magnitude-.025f,
                 PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore))
@@ -197,7 +204,7 @@ namespace UnderAvatar
 
         public void TakePhoto()
         {
-            if(DocumentManager.BlocksGameplayInput || !IsAuthority || Finished || Reporter.Hidden || !Reporter.PhoneOpen || TaskWorld?.Held || Time.time<nextShutterTime) return;
+            if((!(IsNetwork && IsStreamerPlayer) && (App.GameplayInputBlocked || DocumentManager.BlocksGameplayInput)) || !IsAuthority || Finished || ReporterDying || ReporterProtected || Reporter.Hidden || !Reporter.PhoneOpen || TaskWorld?.Held || Time.time<nextShutterTime) return;
             nextShutterTime=Time.time+.25f;
             EmitNoise(Reporter.transform.position,NoiseKind.Shutter);
             FlashUntil=Time.time+.3f;
@@ -205,18 +212,22 @@ namespace UnderAvatar
             lightObject.transform.SetParent(transform,false); lightObject.transform.position=Reporter.View.transform.position;
             var flash=lightObject.AddComponent<Light>(); flash.type=LightType.Point; flash.color=Color.white; flash.range=5; flash.intensity=8;
             Destroy(lightObject,.3f);
-            if(IsTraining) { Notice("拍照练习完成。大厅照片不上传、不计分。");return; }
+
             CaptureEvidence();
         }
         public void SimulateNetwork(PlayerCommand reporter,PlayerCommand streamer,float dt)
         {
             if(!IsNetwork || !IsAuthority || Finished || reporter==null || streamer==null || !reporter.Valid || !streamer.Valid) return;
-            Reporter.ApplyCommand(reporter,dt);
+            if(reporter.reporterLifeEpoch==ReporterLifeEpoch)
+            {Abilities.ApplyCommand(TestRole.Reporter,reporter);Reporter.ApplyCommand(reporter,dt);}
+            Abilities.ApplyCommand(TestRole.Streamer,streamer);
             Streamer.Controller.TickNetwork(streamer,dt);
         }
         public void SimulateNetworkActor(TestRole role,PlayerCommand input,float dt)
         {
             if(!IsNetwork || !IsAuthority || Finished || input==null || !input.Valid) return;
+            if(role==TestRole.Reporter && input.reporterLifeEpoch!=ReporterLifeEpoch) return;
+            Abilities.ApplyCommand(role,input);
             if(role==TestRole.Reporter) Reporter.ApplyCommand(input,dt);
             else Streamer.Controller.TickNetwork(input,dt);
         }
@@ -225,7 +236,12 @@ namespace UnderAvatar
             var brain=Streamer.Controller;
             var snapshot=new MatchSnapshot
             {
+                reporterLives=ReporterLives,reporterLifeEpoch=ReporterLifeEpoch,reporterDying=ReporterDying,
+                reporterDeathRemaining=ReporterDeathRemaining,reporterProtectionRemaining=ReporterProtectionRemaining,
                 serverTime=Time.unscaledTime,
+                uploadFeedbackId=UploadFeedbackId,uploadFeedbackSuccess=UploadFeedbackSuccess,uploadFeedbackTitle=UploadFeedbackTitle,uploadFeedbackDetail=UploadFeedbackDetail,uploadFeedbackRemaining=Mathf.Max(0,UploadFeedbackUntil-Time.unscaledTime),
+                laughing=Abilities.Laughing,laughEnergy=Abilities.LaughEnergy,outlineRemaining=Abilities.OutlineRemaining,
+                invisibleRemaining=Abilities.InvisibleRemaining,invisibleCharges=Abilities.InvisibleCharges,decoyCharges=Abilities.DecoyCharges,decoys=Abilities.CaptureDecoys(),
                 taskProps=TaskWorld?.Capture(),heldProp=TaskWorld?.HeldId,selectedTask=SelectedTaskId,pendingPhoto=PendingPhoto,lastSubmittedPhoto=LastSubmittedPhoto,
                 reporter=Reporter.CapturePose(),streamer=brain.CapturePose(),state=Streamer.State,broadcast=brain.BroadcastNumber,
                 progress=Streamer.Progress,roamRemaining=brain.RoamRemaining,stateRemaining=brain.StateRemaining,
@@ -247,56 +263,78 @@ namespace UnderAvatar
             { var item=World.Find(door.id);if(item && item.IsOpen!=door.open) item.SetDoorOpen(door.open); }
             if(snapshot.hidingPlaces!=null) foreach(var place in snapshot.hidingPlaces)
             { var item=World.Find(place.id);if(item && item.IsOpen!=place.open) item.SetSearchOpen(place.open); }
+            ApplyReporterLife(snapshot);
+            Abilities.ApplySnapshot(snapshot);
             Reporter.ApplyPose(snapshot.reporter,snapshot.serverTime);Streamer.Controller.ApplySnapshot(snapshot);
             TaskWorld?.Apply(snapshot.taskProps,snapshot.heldProp,snapshot.inputAck);
-            bool newPhoto=snapshot.pendingPhoto!=null && snapshot.pendingPhoto.id!=(PendingPhoto?.id??0);
-            PendingPhoto=snapshot.pendingPhoto;SelectedTaskId=snapshot.selectedTask;LastSubmittedPhoto=snapshot.lastSubmittedPhoto;
+            // JsonUtility may materialize a null inline object as an empty PhotoEvidence (id 0).
+            var receivedPhoto=snapshot.pendingPhoto!=null && snapshot.pendingPhoto.id>0 && snapshot.pendingPhoto.id>snapshot.lastSubmittedPhoto?snapshot.pendingPhoto:null;
+            bool newPhoto=receivedPhoto!=null && receivedPhoto.id!=(PendingPhoto?.id??0);
+            PendingPhoto=receivedPhoto;SelectedTaskId=snapshot.selectedTask;LastSubmittedPhoto=snapshot.lastSubmittedPhoto;
             if(newPhoto && !IsStreamerPlayer) SetPhoneMenu(true);
             if(!Reporter.PhoneOpen && !IsStreamerPlayer) SetPhoneMenu(false);
+            ApplyUploadFeedback(snapshot);
             Score=snapshot.score;StreamerPhotos=snapshot.photos;photographedRound=snapshot.photographedRound;
             foreach(var quest in Quests) quest.Complete=Array.IndexOf(snapshot.completedQuests,quest.Id)>=0;
             Streamer.ApplyAlert(snapshot.alertRemaining);FlashUntil=Time.time+snapshot.flashRemaining;
             if(snapshot.messageId!=messageId)
             { messageId=snapshot.messageId;Message=snapshot.message;MessageUntil=Time.time+snapshot.messageRemaining; }
-            foreach(var noise in snapshot.noises)
+            ApplyNoiseEvents(snapshot.noises);
+            if(!string.IsNullOrEmpty(snapshot.result) && !Finished) Finish(snapshot.result);
+        }
+        public void ApplyNoiseEvents(NoiseSnapshot[] noises)
+        {
+            if(IsAuthority || noises==null) return;
+            foreach(var noise in noises)
             {
                 if(noise.id<=lastRemoteNoise) continue;
                 lastRemoteNoise=noise.id;
                 if(noise.audibleOnly) audioBank.Play(noise.position,noise.kind);
                 else EmitNoise(noise.position,noise.kind);
             }
-            if(!string.IsNullOrEmpty(snapshot.result) && !Finished) Finish(snapshot.result);
         }
 
         void Update()
         {
-            UpdatePhone();
+            TickReporterLife(Time.deltaTime);
             Pulses.RemoveAll(p=>Time.time-p.Created>2.8f);
             InputCaptured=false;
             if(DocumentManager.BlocksGameplayInput) return;
-            if(!IsTraining && !IsStreamerPlayer && !Reporter.Hidden && !Finished && !DebugOpen && Keyboard.current?.qKey.wasPressedThisFrame==true)
+            var keys=Keyboard.current;
+            if(App.SettingsOpen)
             {
-                if(CameraMode) QueuePhoneAction(close:true);else EnterPhotoMode();
+                if(keys?.escapeKey.wasPressedThisFrame==true) App.CloseSettings();
                 return;
+            }
+            if(App.GameplayInputBlocked) return;
+            if(ReporterDying && !IsStreamerPlayer) return;
+            if(UpdateLocalPhoneAndTab()) return;
+            UpdatePhone();
+            if(!IsStreamerPlayer && !Reporter.Hidden && !Finished && !DebugOpen)
+            {
+                if(keys?.mKey.wasPressedThisFrame==true)
+                {
+                    if(Reporter.PhoneOpen && PhoneMenuOpen && ActivePhonePage==PhonePage.Map) QueuePhoneAction(close:true);
+                    else OpenPhonePage(PhonePage.Map);
+                    return;
+                }
+                if(keys?.qKey.wasPressedThisFrame==true)
+                {if(CameraMode) QueuePhoneAction(close:true);else EnterPhotoMode();return;}
             }
             if(PhoneMenuOpen && Reporter.PhoneOpen)
             {
                 var phoneKeys=Keyboard.current;
-                if(PendingPhoto==null && (phoneKeys?.escapeKey.wasPressedThisFrame==true || phoneKeys?.fKey.wasPressedThisFrame==true)) QueuePhoneAction(close:true);
-                if(IsTraining && phoneKeys?.qKey.wasPressedThisFrame==true) SetPhoneMenu(false);
+                if(phoneKeys?.escapeKey.wasPressedThisFrame==true || phoneKeys?.fKey.wasPressedThisFrame==true) QueuePhoneAction(close:true);
                 return;
             }
-            if(IsTraining && Reporter.PhoneOpen && !IsStreamerPlayer && Keyboard.current?.qKey.wasPressedThisFrame==true) {SetPhoneMenu(true);return;}
-            var keys=Keyboard.current;
             if(keys==null) return;
             if(keys.escapeKey.wasPressedThisFrame)
             {
                 if(DebugOpen) { DebugOpen=false; Reporter.SetCursor(false); }
-                else App.ExitPlay();
+                else App.OpenSettings();
                 return;
             }
             if(Finished) return;
-            if(keys.tabKey.wasPressedThisFrame) { DebugOpen=!DebugOpen; Reporter.SetCursor(DebugOpen); return; }
             if(DebugOpen) return;
             if(Cursor.lockState!=CursorLockMode.Locked)
             {

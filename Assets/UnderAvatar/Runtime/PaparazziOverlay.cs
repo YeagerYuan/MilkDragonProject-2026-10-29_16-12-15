@@ -4,16 +4,18 @@ using UnityEngine;
 
 namespace UnderAvatar
 {
+    public enum PhonePage { Home, Tasks, Map }
     // Presentation only. Evidence and uploads remain authoritative in MatchSession.
     public sealed class PaparazziOverlay : MonoBehaviour
     {
-        GUIStyle header,rowTitle,body,descriptionStyle,taskTitle,taskText,hint,action,check;
+        GUIStyle header,rowTitle,body,descriptionStyle,taskDescription,taskTitle,taskText,hint,action,check;
         Texture2D disc,actionUnderline;
         Texture portrait;
         readonly List<Font> ownedFonts=new List<Font>();
         readonly Dictionary<string,float> hoveredAt=new Dictionary<string,float>();
         readonly Color red=new Color(.9f,.025f,0);
-        Vector2 scroll;
+        Vector2 scroll,mapScroll;
+        float mapZoom=1;
         MatchSession current;
         bool raised;
         float fromY,toY,slideStarted;
@@ -30,9 +32,10 @@ namespace UnderAvatar
             var font=LoadFont("MainMenu/Fonts/Hangeuljaemin","Microsoft YaHei");
             var calligraphy=LoadFont("MainMenu/Fonts/AQingRanTi","KaiTi");
             body=new GUIStyle(GUI.skin.label){font=font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft,padding=new RectOffset(),normal={textColor=Color.white}};
-            header=new GUIStyle(body){font=calligraphy,fontSize=36,wordWrap=false,normal={textColor=red}};
+            header=new GUIStyle(body){font=calligraphy,fontSize=28,wordWrap=false,normal={textColor=red}};
             descriptionStyle=new GUIStyle(body){alignment=TextAnchor.UpperLeft};
-            rowTitle=new GUIStyle(body){fontSize=20,wordWrap=false};
+            rowTitle=new GUIStyle(body){fontSize=18,wordWrap=false};
+            taskDescription=new GUIStyle(descriptionStyle){fontSize=14};
             taskTitle=new GUIStyle(header){fontSize=32};
             taskText=new GUIStyle(body){fontSize=24,wordWrap=false};
             hint=new GUIStyle(body){fontSize=20,wordWrap=false};
@@ -78,7 +81,7 @@ namespace UnderAvatar
         public void Draw(MatchSession match)
         {
             EnsureStyles();
-            bool open=match.Reporter.PhoneOpen && match.PhoneMenuOpen && match.PendingPhoto==null;
+            bool open=match.LocalPhoneOpen && match.LocalPhoneMenuOpen;
             if(current!=match)
             {current=match;raised=open;fromY=toY=open?OpenY:ClosedY;slideStarted=Time.unscaledTime;scroll=Vector2.zero;hoveredAt.Clear();}
             if(open!=raised) {fromY=PhoneY;toY=open?OpenY:ClosedY;slideStarted=Time.unscaledTime;raised=open;}
@@ -87,69 +90,37 @@ namespace UnderAvatar
             try
             {
                 GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
+                if(!match.IsStreamerPlayer)
+                {
+                if(!match.IsTraining || match.Reporter.PhoneOpen)
+                {
                 string selected=match.SelectedTaskId==InvestigationData.LiveTask?"主播直播证据":match.Quests.Find(q=>q.Id==match.SelectedTaskId)?.Title??"请选择任务";
-                GUI.Label(new Rect(32,690,600,42),"当前任务",taskTitle);
-                GUI.Label(new Rect(32,734,Mathf.Max(200,width-430),40),selected,taskText);
+                GUI.Label(new Rect(32,690,600,42),match.IsTraining?"拍照练习":"当前任务",taskTitle);
+                GUI.Label(new Rect(32,734,Mathf.Max(200,width-430),60),match.IsTraining?"自由拍照，不计分":selected,new GUIStyle(taskText){wordWrap=true,fontSize=20});
+                }
                 if(match.CameraMode) DrawViewfinder(width);
                 if(match.PendingPhoto!=null) DrawReview(match);
-                else if(Time.time<match.MessageUntil && match.LastSubmittedPhoto>0)
-                    GUI.Label(new Rect(32,640,Mathf.Max(260,width-450),44),match.Message,body);
-                float x=width-PhoneWidth-26,y=PhoneY;
-                if(!match.CameraMode)
+                else if(match.UploadFeedbackId>0 && Time.unscaledTime<match.UploadFeedbackUntil)
                 {
-                    KeyHint(new Vector2(x+10,y-40),"Q","拍摄");
+                    var result=new Rect(32,540,Mathf.Min(610,width-450),120);
+                    Rounded(result,12,match.UploadFeedbackSuccess?new Color(.04f,.25f,.13f,.96f):new Color(.36f,.025f,.025f,.96f));
+                    GUI.Label(new Rect(result.x+14,result.y+8,result.width-28,32),match.UploadFeedbackTitle,hint);
+                    GUI.Label(new Rect(result.x+14,result.y+44,result.width-28,70),match.UploadFeedbackDetail,descriptionStyle);
+                }
+                }
+                float x=width-PhoneWidth-26,y=PhoneY;
+                if(!match.CameraMode || !match.LocalPhoneOpen)
+                {
+                    if(!match.IsStreamerPlayer) KeyHint(new Vector2(x+10,y-40),"Q","拍摄");
                     KeyHint(new Vector2(x+100,y-40),"F","打开/关闭手机");
                 }
                 DrawPhone(match,new Rect(x,y,PhoneWidth,690),open);
-                DrawInteractionHint(ReporterInteractionMessage(match));
+
             }
             finally {GUI.matrix=previous;}
         }
-        string ReporterInteractionMessage(MatchSession match)
-        {
-            var reporter=match.Reporter;
-            if(!reporter || !reporter.IsHuman || reporter.Hidden || reporter.PhoneOpen || match.Finished || match.DebugOpen || !match.InputCaptured)
-                return null;
-            var held=match.TaskWorld?match.TaskWorld.Held:null;
-            if(held && Physics.Raycast(reporter.View.transform.position,reporter.View.transform.forward,out var heldHit,3f,
-                PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
-            {
-                var heldTarget=heldHit.collider.GetComponentInParent<PlacedItemView>();
-                if(heldTarget && heldTarget.Data.type==ItemType.Door) return heldTarget.IsOpen?"关闭门":"打开门";
-            }
-            if(held) return "放下 "+held.Data.name;
-            var document=reporter.Documents?reporter.Documents.Target:null;
-            if(document) return "阅读";
-            var prop=match.TaskWorld?match.TaskWorld.AimProp():null;
-            if(prop && prop.Data.portable) return "拿起 "+prop.Data.name;
-            if(Physics.Raycast(reporter.View.transform.position,reporter.View.transform.forward,out var hit,3f,
-                PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
-            {
-                var item=hit.collider.GetComponentInParent<PlacedItemView>();
-                if(item && item.Data.type==ItemType.Door) return item.IsOpen?"关闭门":"打开门";
-                if(item && item.IsHidingPlace) return "躲藏 "+item.DisplayName;
-            }
-            var openDoor=match.World.Items.Where(i=>i.Floor==reporter.Floor && i.Data.type==ItemType.Door && i.IsOpen)
-                .Where(i=>Vector3.Distance(i.transform.position,reporter.transform.position)<2.3f)
-                .OrderBy(i=>Vector3.Distance(i.transform.position,reporter.transform.position))
-                .FirstOrDefault(i=>!Physics.Linecast(reporter.View.transform.position,i.transform.position+Vector3.up,
-                    PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore));
-            return openDoor?"关闭门":null;
-        }
-        public void DrawInteractionHint(string message)
-        {
-            if(string.IsNullOrWhiteSpace(message)) return;
-            EnsureStyles();
-            var previous=GUI.matrix;float scale=Screen.height/800f,width=Screen.width/scale;
-            try
-            {
-                GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
-                float textWidth=Mathf.Min(500,hint.CalcSize(new GUIContent(message)).x+4);
-                const float keyWidth=36,gap=10;
-                KeyHint(new Vector2((width-keyWidth-gap-textWidth)*.5f,600),"E",message,keyWidth,textWidth);
-            }
-            finally {GUI.matrix=previous;}
-        }
+
+
         void DrawPhone(MatchSession match,Rect rect,bool interactive)
         {
             Rounded(rect,44,new Color(.40f,.45f,.50f));
@@ -159,23 +130,98 @@ namespace UnderAvatar
             Fill(new Rect(rect.x-2,rect.y+110,3,44),new Color(.4f,.44f,.48f));
             Fill(new Rect(rect.xMax-1,rect.y+127,3,74),new Color(.4f,.44f,.48f));
             GUI.BeginGroup(rect);
-            if(portrait) GUI.DrawTexture(new Rect(34,16,58,58),portrait,ScaleMode.ScaleToFit,true);
-            GUI.Label(new Rect(114,16,230,58),"了解爱播之旅",header);
-            GUI.Label(new Rect(34,105,285,28),"选择任务进行拍摄",body);
-            int total=match.Quests.Count+(match.RequiresLiveEvidence?1:0);
-            var view=new Rect(34,144,288,448);
-            scroll=GUI.BeginScrollView(view,scroll,new Rect(0,0,total>5?272:288,Mathf.Max(448,total*92-12)));
-            int index=0;
-            foreach(var quest in match.Quests)
-            {DrawTask(match,new Rect(0,index*92,total>5?272:288,80),quest.Id,(index+1).ToString("00")+" "+quest.Title,quest.Description,quest.Complete,interactive);index++;}
-            if(match.RequiresLiveEvidence)
-                DrawTask(match,new Rect(0,index*92,total>5?272:288,80),InvestigationData.LiveTask,(index+1).ToString("00")+" 主播直播证据","拍摄正在直播的主播，每场最多一张。 "+match.StreamerPhotos+" / 3",match.StreamerPhotos>=3,interactive);
+            if(portrait) GUI.DrawTexture(new Rect(28,20,48,48),portrait,ScaleMode.ScaleToFit,true);
+            GUI.Label(new Rect(88,18,240,56),match.IsStreamerPlayer?"房屋地图":"了解爱播之旅",header);
+            bool prior=GUI.enabled;GUI.enabled=prior && interactive;
+            if(!match.IsStreamerPlayer && match.ActivePhonePage==PhonePage.Tasks)
+            {
+                if(GUI.Button(new Rect(34,78,180,22),"任务列表",new GUIStyle(body){normal={textColor=red}})) match.OpenPhonePage(PhonePage.Tasks);
+                if(GUI.Button(new Rect(250,78,72,22),"地图 →",body)) match.OpenPhonePage(PhonePage.Map);
+            }
+            else
+            {
+                if(!match.IsStreamerPlayer) AppIcon(match,new Rect(34,90,136,58),PhonePage.Tasks,"任务",false);
+                AppIcon(match,new Rect(match.IsStreamerPlayer?110:186,90,136,58),PhonePage.Map,"地图",true);
+            }
+            if(match.ActivePhonePage==PhonePage.Map) DrawMapApp(match);
+            else if(match.ActivePhonePage==PhonePage.Tasks) DrawTasksApp(match,interactive);
+            else
+            {
+                GUI.Label(new Rect(34,200,288,120),"点击任务图标选择拍摄目标。\n点击地图图标查看所有楼层。",descriptionStyle);
+                GUI.Label(new Rect(34,348,288,130),"F：打开 / 收起手机\nQ：快捷相机\nM：直接查看地图\n\n地图不显示玩家实时位置。",descriptionStyle);
+            }
+            GUI.enabled=prior && interactive;
+            if((match.IsStreamerPlayer || match.ActivePhonePage!=PhonePage.Tasks) && GUI.Button(new Rect(34,636,288,32),match.IsStreamerPlayer?"收起手机（F / M）":"⌂ 返回手机桌面",new GUIStyle(body){alignment=TextAnchor.MiddleCenter}))
+                {if(match.IsStreamerPlayer) match.SetStreamerMap(false);else match.OpenPhonePage(PhonePage.Home);}
+            GUI.enabled=prior;GUI.EndGroup();
+        }
+        void AppIcon(MatchSession match,Rect r,PhonePage page,string label,bool map)
+        {
+            bool active=match.ActivePhonePage==page;
+            Rounded(r,12,active?new Color(.42f,.04f,.04f):new Color(.15f,.18f,.2f));
+            var icon=new Rect(r.x+12,r.y+15,28,28);Outline(icon,Color.white,1.5f);
+            if(map)
+            {Fill(new Rect(icon.x+9,icon.y,1,28),Color.white);Fill(new Rect(icon.x+18,icon.y,1,28),Color.white);Fill(new Rect(icon.x,icon.y+14,28,1),Color.white);}
+            else for(int i=0;i<3;i++) Fill(new Rect(icon.x+5,icon.y+6+i*7,18,1.5f),Color.white);
+            GUI.Label(new Rect(r.x+50,r.y,80,r.height),label,hint);
+            if(GUI.Button(r,GUIContent.none,GUIStyle.none)) {match.OpenPhonePage(page);scroll=Vector2.zero;}
+        }
+        void DrawTasksApp(MatchSession match,bool interactive)
+        {
+            GUI.Label(new Rect(34,108,288,24),match.IsTraining?"大厅自由拍照练习":"选择任务进行拍摄",body);
+            if(!match.IsTraining && (match.RequiresLiveEvidence || match.World.Data.tasks.Any(t=>t.IncludesStreamer)))
+                GUI.Label(new Rect(34,132,288,18),"主播拍摄任务：每场直播合计限一次",new GUIStyle(body){fontSize=12,normal={textColor=new Color(.75f,.72f,.70f)}});
+            var tasks=match.IsTraining?new[]{match.SelectedTask}:match.Quests.Select(q=>new InvestigationTaskData{id=q.Id,title=q.Title,description=q.Description}).ToArray();
+            float totalHeight=0;foreach(var q in tasks) totalHeight+=TaskHeight(q.title,q.description)+8;
+            if(!match.IsTraining && match.RequiresLiveEvidence) totalHeight+=84;
+            var view=new Rect(34,154,288,444);
+            scroll=GUI.BeginScrollView(view,scroll,new Rect(0,0,272,Mathf.Max(444,totalHeight)));
+            float y=0;int index=0;
+            foreach(var q in tasks)
+            {
+                float height=TaskHeight(q.title,q.description);
+                DrawTask(match,new Rect(0,y,272,height),q.id,(++index).ToString("00")+" "+q.title,q.description,match.Quests.Any(t=>t.Id==q.id && t.Complete),interactive);
+                y+=height+8;
+            }
+            if(!match.IsTraining && match.RequiresLiveEvidence) DrawTask(match,new Rect(0,y,272,76),InvestigationData.LiveTask,"主播直播证据","每场最多一张。 "+match.StreamerPhotos+" / 3",match.StreamerPhotos>=3,interactive);
             GUI.EndScrollView();
-            int completed=match.Quests.Count(q=>q.Complete)+(match.RequiresLiveEvidence && match.StreamerPhotos>=3?1:0);
-            int segments=Mathf.Max(1,total);float gap=6,w=(250-gap*(segments-1))/segments;
-            for(int i=0;i<segments;i++) Rounded(new Rect(34+i*(w+gap),619,w,8),4,i<completed?red:new Color(.52f,.52f,.52f));
-            GUI.Label(new Rect(292,605,52,36),completed+"/"+total,body);
-            GUI.EndGroup();
+            int total=match.Quests.Count+(match.RequiresLiveEvidence?1:0);
+            int done=match.Quests.Count(q=>q.Complete)+(match.RequiresLiveEvidence && match.StreamerPhotos>=3?1:0);
+            int segments=Mathf.Min(12,total);float segmentWidth=segments>0?(232f-6*(segments-1))/segments:0;
+            for(int i=0;i<segments;i++)
+            {
+                var bar=new Rect(34+i*(segmentWidth+6),618,segmentWidth,7);Rounded(bar,3,new Color(.45f,.45f,.45f));
+                float fill=Mathf.Clamp01((float)done/total*segments-i);
+                if(fill>0) Rounded(new Rect(bar.x,bar.y,bar.width*fill,bar.height),Mathf.Min(3,bar.width*fill*.5f),red);
+            }
+            GUI.Label(new Rect(278,603,55,32),match.IsTraining?"练习":done+"/"+total,body);
+            GUI.Label(new Rect(34,644,288,24),match.IsTraining?"大厅上传不计分":"剩余上传失误机会："+match.Score,new GUIStyle(body){fontSize=13});
+        }
+        float TaskHeight(string title,string description) => Mathf.Max(76,new GUIStyle(rowTitle){wordWrap=true}.CalcHeight(new GUIContent("00 "+title),206)+taskDescription.CalcHeight(new GUIContent(description??""),248)+20);
+        void DrawMapApp(MatchSession match)
+        {
+            var map=match.HouseMap;int count=map.Floors.Count;
+            for(int f=0;f<count;f++)
+            {
+                var r=new Rect(28+(f%6)*50,166+(f/6)*34,46,30);
+                if(GUI.Button(r,(map.Floor==f?"•":"")+(f+1)+"F",new GUIStyle(body){alignment=TextAnchor.MiddleCenter})) {map.SelectFloor(f);mapScroll=Vector2.zero;}
+            }
+            var viewport=new Rect(24,238,308,290);var texture=map.Floors[map.Floor];
+            float scale=Mathf.Min(288f/texture.width,270f/texture.height)*mapZoom;
+            float width=Mathf.Max(288,texture.width*scale),height=Mathf.Max(270,texture.height*scale);
+            mapScroll=GUI.BeginScrollView(viewport,mapScroll,new Rect(0,0,width,height));
+            var plot=new Rect((width-texture.width*scale)*.5f,(height-texture.height*scale)*.5f,texture.width*scale,texture.height*scale);
+            GUI.DrawTexture(plot,texture);
+            foreach(var room in map.Rooms.Where(r=>r.floor==map.Floor))
+            {
+                var data=match.World.Data;
+                var at=new Vector2(plot.x+(room.center.x+data.halfWidth+.5f)/data.WidthCells*plot.width,plot.yMax-(room.center.y+data.halfDepth+.5f)/data.DepthCells*plot.height);
+                var label=new Rect(at.x-45,at.y-10,90,22);Fill(label,new Color(0,0,0,.75f));
+                GUI.Label(label,room.computer?"主播电脑房":room.name,new GUIStyle(body){fontSize=12,alignment=TextAnchor.MiddleCenter});
+            }
+            GUI.EndScrollView();
+            GUI.Label(new Rect(28,540,50,24),"缩放",body);mapZoom=GUI.HorizontalSlider(new Rect(84,549,230,20),mapZoom,1,3);
+            GUI.Label(new Rect(28,572,300,60),"绿：门 蓝：楼梯 粉：床\n紫：柜 灰：桌 橙：主播电脑（"+(match.Streamer.Computer.Floor+1)+"F）\n上为北；放大后可滚动查看房间。",new GUIStyle(body){fontSize=14});
         }
         void DrawTask(MatchSession match,Rect r,string id,string title,string description,bool complete,bool interactive)
         {
@@ -187,8 +233,10 @@ namespace UnderAvatar
             if(hover>0 || selected) Rounded(new Rect(r.x+1,r.y+1,r.width-2,r.height-2),3,new Color(.65f,0,0,(selected?.045f:hover*.07f)));
             var old=GUI.color;GUI.color=selected?red:Color.Lerp(Color.white,red,hover);
             float textWidth=Mathf.Max(0,r.width-66);
-            GUI.Label(new Rect(r.x+12,r.y+4,r.width-60,28),title,rowTitle);GUI.color=old;
-            GUI.Label(new Rect(r.x+12,r.y+33,textWidth,49),description??"",descriptionStyle);
+            var wrappedTitle=new GUIStyle(rowTitle){wordWrap=true};
+            float titleHeight=wrappedTitle.CalcHeight(new GUIContent(title),textWidth);
+            GUI.Label(new Rect(r.x+12,r.y+6,textWidth,titleHeight),title,wrappedTitle);GUI.color=old;
+            GUI.Label(new Rect(r.x+12,r.y+titleHeight+12,r.width-24,r.height-titleHeight-18),description??"",taskDescription);
             var box=new Rect(r.xMax-35,r.y+8,22,22);Rounded(box,5,complete?red:Color.white);Rounded(new Rect(box.x+1,box.y+1,20,20),4,new Color(.055f,.055f,.055f));
             if(complete) GUI.Label(box,"√",check);
             if(interactive && GUI.Button(r,GUIContent.none,GUIStyle.none)) match.QueuePhoneAction(task:id);
@@ -209,6 +257,9 @@ namespace UnderAvatar
         }
         void DrawReview(MatchSession match)
         {
+            var task=match.PendingPhoto.taskId;
+            string target=match.IsTraining?"大厅练习":task==InvestigationData.LiveTask?"主播直播证据":match.Quests.Find(q=>q.Id==task)?.Title??"拍摄时选定的任务";
+            GUI.Label(new Rect(32,448,650,36),"上传目标："+target,new GUIStyle(body){wordWrap=true});
             Fill(new Rect(32,490,330,180),Color.white);
             Fill(new Rect(43,501,308,158),Color.black);
             if(match.PhotoPreview) GUI.DrawTexture(new Rect(43,501,308,158),match.PhotoPreview,ScaleMode.ScaleToFit);

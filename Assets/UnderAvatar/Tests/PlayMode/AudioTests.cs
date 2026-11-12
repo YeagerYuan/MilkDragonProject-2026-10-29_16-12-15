@@ -23,7 +23,7 @@ namespace UnderAvatar.Tests
             audio=match.GetComponent<PrototypeAudio>();
             Assert.That(audio.Profile,Is.Not.Null,"The shipped audio profile must be present in Resources.");
         }
-        AudioSource Breath => audio.GetComponentsInChildren<AudioSource>().SingleOrDefault(s=>s.loop);
+        AudioSource Breath => audio.GetComponentsInChildren<AudioSource>().SingleOrDefault(s=>s.loop && s.spatialBlend==0);
         [UnityTearDown] public IEnumerator Cleanup() { if(root) Object.Destroy(root);yield return null; }
 
         [UnityTest] public IEnumerator RealClipsPlaySpatiallyAndImportedAssetsSurviveMatchExit()

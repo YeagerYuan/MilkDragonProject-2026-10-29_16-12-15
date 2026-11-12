@@ -28,7 +28,7 @@ namespace UnderAvatar
         public void Initialize(MatchSession match,TestRole playerRole,Func<ActorSnapshot> getPose)
         {
             session=match;role=playerRole;capture=getPose;profile=match.App.CharacterVisuals;
-            settings=profile?(role==TestRole.Reporter?profile.reporter:profile.streamer):new CharacterVisualSettings();
+            settings=profile?(role==TestRole.Reporter?profile.reporter:match.IsTraining && (match.IsNetwork || profile.hallStreamerInSingle) && profile.hallStreamer.prefab?profile.hallStreamer:profile.streamer):new CharacterVisualSettings();
             postureRoot=new GameObject("Posture").transform;postureRoot.SetParent(transform,false);
             var mount=new GameObject("ModelOffset").transform;mount.SetParent(postureRoot,false);
             mount.gameObject.SetActive(false);
@@ -73,7 +73,7 @@ namespace UnderAvatar
         {
             if(!Remote) return;
             buffer.Add(pose,time,Time.unscaledTime,profile?profile.interpolationDelay:.1f);
-            SetVisible(!pose.hidden); // Hide immediately; never leave a delayed silhouette outside a wardrobe.
+            SetVisible(!pose.hidden && !(role==TestRole.Reporter && session.Abilities && session.Abilities.Invisible)); // Hide immediately; never leave a delayed silhouette outside a wardrobe.
         }
         public void SetVisible(bool value)
         {
@@ -97,11 +97,13 @@ namespace UnderAvatar
                 renderedRotation=Quaternion.Slerp(renderedRotation,Quaternion.Euler(0,pose.yaw,0),1-Mathf.Exp(-25*dt));
                 transform.SetPositionAndRotation(renderedPosition,renderedRotation);
             }
-            else { transform.localPosition=Vector3.zero;transform.localRotation=Quaternion.identity;SetVisible(!actual.hidden); }
-            var velocity=session.Finished || actual.hidden?Vector3.zero:pose.planarVelocity;
+            else { transform.localPosition=Vector3.zero;transform.localRotation=Quaternion.identity;SetVisible(!actual.hidden && !(role==TestRole.Reporter && session.Abilities && session.Abilities.Invisible)); }
+            var velocity=session.Finished || actual.hidden || role==TestRole.Reporter && session.ReporterDying?Vector3.zero:pose.planarVelocity;
             var local=Quaternion.Inverse(Quaternion.Euler(0,pose.yaw,0))*velocity;
             Float(settings.speedParameter,velocity.magnitude,dt);Float(settings.moveXParameter,local.x,dt);Float(settings.moveZParameter,local.z,dt);
             Bool(settings.crouchedParameter,pose.crouched);Bool(settings.sneakingParameter,pose.sneaking);
+            float death=role==TestRole.Reporter && session.ReporterDying?Mathf.SmoothStep(0,1,Mathf.Clamp01((session.Settings.reporterLives.deathSeconds-session.ReporterDeathRemaining)/.85f)):0;
+            postureRoot.localRotation=Quaternion.Euler(0,0,82*death);postureRoot.localPosition=Vector3.up*(.18f*death);
             postureRoot.localScale=new Vector3(1,pose.crouched && !Has(settings.crouchedParameter,AnimatorControllerParameterType.Bool)?1f/1.8f:1,1);
         }
     }

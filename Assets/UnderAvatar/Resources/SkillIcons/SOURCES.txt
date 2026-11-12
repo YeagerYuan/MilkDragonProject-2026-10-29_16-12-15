@@ -1,0 +1,13 @@
+Red skill icons — 2026-11-06
+
+Created with the built-in image_gen tool, using user-provided screenshots as visual references. Original generated PNGs copied into this folder with transparency preserved. Unity imports them at a maximum size of 256 px, without mipmaps.
+
+LaughRed.png
+Reference: codex-clipboard-16c4a3a3-8321-49cc-8a64-54a940e79bf2.png, bottom-center yellow laughing Nailong icon.
+Prompt specification: Redraw the single square laughing Nailong ability icon from the reference. A chubby dinosaur laughing and holding its belly, retaining the recognizable pose and rounded square composition. Recolor the icon in crimson and scarlet with warm cream highlights. Transparent outside the tile. No labels, numbers, keys, scenery or other UI.
+
+InvisibilityRed.png
+Reference: image-20261105211622333.png, bottom-center purple invisibility icon.
+Prompt specification: Isolate and redraw the purple invisibility ability icon as a matching red game skill tile. A pale rose female ghostlike silhouette with circular scarlet aura rings on a burgundy square. Keep the reference's full-body silhouette and supernatural visual language. Transparent outside the tile. No labels, counts, keys, scenery or other UI.
+
+Runtime consumer: Assets/UnderAvatar/Runtime/CompactAbilityHud.cs

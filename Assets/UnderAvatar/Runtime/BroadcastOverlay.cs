@@ -11,7 +11,10 @@ namespace UnderAvatar
         GUIStyle commentStyle,viewerStyle,bannerStyle,hintStyle,badgeStyle,huntTitle,huntSubtitle,huntTask,huntTaskTitle,timerStyle;
         Font bodyFont,titleFont;
         readonly List<Font> ownedFonts=new List<Font>();
-        Texture2D disc,laugh,heart,timerRing,huntVignette;
+        Texture2D disc,laugh,heart,timerRing,timerProgress,huntVignette;
+        Color32[] timerRingPixels,timerProgressPixels;
+        float[] timerPixelPhases;
+        int timerBucket=-1;
         float huntChatStarted=-1;
         static readonly string[] AwayMessages={"主播你去哪了","我在等你呀主播","再不回来我就走了！！","？？？？？？","主播快回来我想你了","怎么突然没人了","主播人呢？","还在吗？快回来开播","我们还在等你回来","是不是离开电脑了？"};
         GameObject avatarStage;
@@ -20,6 +23,7 @@ namespace UnderAvatar
         int currentRound=-1;
         MinigameLevel currentLevel;
         float started;
+        public const float AnnouncementSeconds=3;
         const int VisibleChatRows=6;
         const float ChatInterval=1.85f,RowHeight=38;
         const float InitialChatElapsed=.8f+ChatInterval*(VisibleChatRows-1)+.38f;
@@ -74,6 +78,10 @@ namespace UnderAvatar
                 style.focused=style.normal;
             }
             timerRing=MakeTexture(128,(x,y)=> {float r=new Vector2(x-.5f,y-.5f).magnitude;return new Color(1,1,1,Mathf.Clamp01((.022f-Mathf.Abs(r-.465f))*128));});
+            timerRingPixels=timerRing.GetPixels32();timerProgressPixels=new Color32[timerRingPixels.Length];
+            timerPixelPhases=new float[timerRingPixels.Length];
+            for(int y=0;y<128;y++) for(int x=0;x<128;x++) timerPixelPhases[y*128+x]=ClockwisePhase((x+.5f)/128-.5f,(y+.5f)/128-.5f);
+            timerProgress=new Texture2D(128,128,TextureFormat.RGBA32,false){name="Clockwise countdown ring",filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};
             disc=MakeTexture(64,(x,y)=>new Color(1,1,1,Mathf.Clamp01((.5f-new Vector2(x-.5f,y-.5f).magnitude)*64)));
             laugh=MakeTexture(96,LaughPixel);heart=MakeTexture(96,HeartPixel);
         }
@@ -117,7 +125,7 @@ namespace UnderAvatar
         public void DrawHunt(MatchSession match)
         {
             var brain=match.Streamer.Controller;
-            DrawHunt(brain.RoamRemaining,brain.ReturnElapsed,match.Streamer.State==StreamerState.Returning,brain.Fans);
+            DrawHunt(brain.RoamRemaining,brain.ReturnElapsed,match.Streamer.State==StreamerState.Returning,brain.Fans,match.Settings.patrolSeconds);
             if(match.IsStreamerPlayer && !match.Finished && Time.time<match.MessageUntil &&
                 match.Message?.StartsWith(StreamerController.EmptySearchNoticePrefix)==true)
             {
@@ -134,35 +142,53 @@ namespace UnderAvatar
             }
         }
         // Both roles use the authoritative hunt clock, including replicated LAN snapshots.
-        public static bool HuntAnnouncementVisible(float remaining,float returnElapsed,bool returning)
-            => returning?returnElapsed<StreamerController.ReturnAnnouncementSeconds:remaining>StreamerController.HuntSeconds-3;
+        public static bool HuntAnnouncementVisible(float remaining,float returnElapsed,bool returning,float huntSeconds=45)
+            => returning?returnElapsed<AnnouncementSeconds:remaining>huntSeconds-3;
 
-        void DrawHuntTimer(float remaining,bool returning)
+        // Texture coordinates have positive Y upwards: top -> right -> bottom -> left.
+        public static float ClockwisePhase(float x,float y) => Mathf.Repeat(Mathf.Atan2(x,y)/(Mathf.PI*2),1);
+        public static float RemainingFraction(float remaining,float duration) => duration>0?Mathf.Clamp01(remaining/duration):0;
+        void DrawHuntTimer(float remaining,bool returning,float huntSeconds)
         {
-            TintTexture(new Rect(20,20,68,68),timerRing,Color.white);
-            GUI.Label(new Rect(20,20,68,68),Mathf.CeilToInt(returning?0:Mathf.Max(0,remaining)).ToString(),timerStyle);
+            float fraction=returning?0:RemainingFraction(remaining,huntSeconds);
+            int bucket=Mathf.CeilToInt(fraction*256);
+            if(bucket!=timerBucket)
+            {
+                timerBucket=bucket;float elapsed=1-bucket/256f;
+                for(int i=0;i<timerRingPixels.Length;i++)
+                {
+                    var pixel=timerRingPixels[i];
+                    if(bucket==0 || timerPixelPhases[i]<elapsed) pixel.a=0;
+                    timerProgressPixels[i]=pixel;
+                }
+                timerProgress.SetPixels32(timerProgressPixels);timerProgress.Apply(false,false);
+            }
+            var rect=new Rect(20,52,68,68);
+            TintTexture(rect,timerRing,new Color(1,1,1,.18f));
+            TintTexture(rect,timerProgress,Color.white);
+            GUI.Label(rect,Mathf.CeilToInt(returning?0:Mathf.Max(0,remaining)).ToString(),timerStyle);
         }
-        void DrawHuntAnnouncement(float width,float remaining,float returnElapsed,bool returning,bool reporter)
+        void DrawHuntAnnouncement(float width,float remaining,float returnElapsed,bool returning,bool reporter,float huntSeconds)
         {
-            float duration=returning?StreamerController.ReturnAnnouncementSeconds:3;
-            float elapsed=returning?returnElapsed:StreamerController.HuntSeconds-remaining;
+            float duration=returning?AnnouncementSeconds:3;
+            float elapsed=returning?returnElapsed:huntSeconds-remaining;
             float alpha=Mathf.SmoothStep(0,1,Mathf.Clamp01(elapsed/.5f))*Mathf.SmoothStep(0,1,Mathf.Clamp01((duration-elapsed)/.65f));
             var previousColor=GUI.color;
             try
             {
                 GUI.color=new Color(previousColor.r,previousColor.g,previousColor.b,previousColor.a*alpha);
                 GUI.Label(new Rect(0,280,width,160),reporter?(returning?"搜捕结束":"搜捕开始"):(returning?"抓捕结束":"抓捕开始"),huntTitle);
-                string subtitle=reporter?(returning?"恭喜你，没有被主播抓住":"在30秒内躲避主播的追捕"):(returning?"返回电脑开播，防止粉丝流失":"在30秒内抓到狗仔");
+                string subtitle=reporter?(returning?"恭喜你，没有被主播抓住":"在"+Mathf.CeilToInt(huntSeconds)+"秒内躲避主播的追捕"):(returning?"返回电脑开播，防止粉丝流失":"在"+Mathf.CeilToInt(huntSeconds)+"秒内抓到狗仔");
                 GUI.Label(new Rect(0,438,width,64),subtitle,huntSubtitle);
             }
             finally {GUI.color=previousColor;}
         }
         public bool DrawReporterHunt(MatchSession match)
         {
-            if(match.IsTraining || match.Finished || match.Streamer.State==StreamerState.Streaming) return false;
+            if(match.IsTraining || match.Finished || (match.Streamer.State!=StreamerState.Roaming && match.Streamer.State!=StreamerState.Returning)) return false;
             bool returning=match.Streamer.State==StreamerState.Returning;
-            var brain=match.Streamer.Controller;
-            bool announcement=HuntAnnouncementVisible(brain.RoamRemaining,brain.ReturnElapsed,returning);
+            var brain=match.Streamer.Controller;float huntSeconds=match.Settings.patrolSeconds;
+            bool announcement=HuntAnnouncementVisible(brain.RoamRemaining,brain.ReturnElapsed,returning,huntSeconds);
             EnsureStyles();
             var previous=GUI.matrix;float scale=Screen.height/800f,width=Screen.width/scale;
             try
@@ -177,13 +203,13 @@ namespace UnderAvatar
                     });
                     TintTexture(new Rect(0,0,width,800),huntVignette,Color.white);
                 }
-                DrawHuntTimer(brain.RoamRemaining,returning);
-                if(announcement) DrawHuntAnnouncement(width,brain.RoamRemaining,brain.ReturnElapsed,returning,true);
+                DrawHuntTimer(brain.RoamRemaining,returning,huntSeconds);
+                if(announcement) DrawHuntAnnouncement(width,brain.RoamRemaining,brain.ReturnElapsed,returning,true,huntSeconds);
             }
             finally {GUI.matrix=previous;}
             return announcement;
         }
-        public void DrawHunt(float remaining,float returnElapsed,bool returning,int fans)
+        public void DrawHunt(float remaining,float returnElapsed,bool returning,int fans,float huntSeconds=45)
         {
             EnsureStyles();
             if(huntChatStarted<0) huntChatStarted=Time.unscaledTime-InitialChatElapsed;
@@ -191,19 +217,20 @@ namespace UnderAvatar
             try
             {
                 GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
-                DrawHuntTimer(remaining,returning);
+                DrawHuntTimer(remaining,returning,huntSeconds);
                 float chatElapsed=Time.unscaledTime-huntChatStarted;
                 DrawComments(new Rect(width-352,548,336,VisibleChatRows*RowHeight),chatElapsed,0,true);
                 Pill(new Rect(width-352,508,318,36),new Color(.06f,.12f,.17f,.90f));
                 DrawViewers(new Vector2(width-338,515));
+                GUI.Label(new Rect(width-352,470,336,32),"当前粉丝："+fans.ToString("N0"),viewerStyle);
                 int viewers=Mathf.RoundToInt(fans*5.9f);
                 if(!returning) viewers=Mathf.Max(0,viewers+Mathf.RoundToInt(Mathf.Sin(chatElapsed*.17f)*65));
                 GUI.Label(new Rect(width-308,508,262,36),"在线观众： "+viewers.ToString("N0"),viewerStyle);
-                bool announcement=HuntAnnouncementVisible(remaining,returnElapsed,returning);
-                string task=returning?"返回电脑开播，防止粉丝流失":"在30秒内抓到狗仔";
+                bool announcement=HuntAnnouncementVisible(remaining,returnElapsed,returning,huntSeconds);
+                string task=returning?"返回电脑开播，防止粉丝流失":"在"+Mathf.CeilToInt(huntSeconds)+"秒内抓到狗仔";
                 if(announcement)
                 {
-                    DrawHuntAnnouncement(width,remaining,returnElapsed,returning,false);
+                    DrawHuntAnnouncement(width,remaining,returnElapsed,returning,false,huntSeconds);
                 }
                 else
                 {
@@ -237,6 +264,7 @@ namespace UnderAvatar
             DrawComments(new Rect(width-352,548,336,VisibleChatRows*RowHeight),chatElapsed,level.LevelNumber);
             Pill(new Rect(width-352,508,254,36),new Color(.06f,.12f,.17f,.90f));
             DrawViewers(new Vector2(width-338,515));
+            GUI.Label(new Rect(width-352,470,336,32),"当前粉丝："+fans.ToString("N0"),viewerStyle);
             int viewers=Mathf.Max(1,fans*6-500+Mathf.FloorToInt(Mathf.Sin(elapsed*.17f)*75));
             GUI.Label(new Rect(width-308,508,200,36),"在线观众： "+viewers.ToString("N0"),viewerStyle);
             DrawReactions(new Rect(width-90,610,82,144),elapsed);
@@ -353,7 +381,7 @@ namespace UnderAvatar
             if(avatarCamera) avatarCamera.targetTexture=null;
             if(avatarStage) PrototypeVisuals.Release(avatarStage);
             if(avatarTexture) {avatarTexture.Release();PrototypeVisuals.Release(avatarTexture);}
-            foreach(var texture in new[]{disc,laugh,heart,timerRing,huntVignette}) if(texture) PrototypeVisuals.Release(texture);
+            foreach(var texture in new[]{disc,laugh,heart,timerRing,timerProgress,huntVignette}) if(texture) PrototypeVisuals.Release(texture);
             foreach(var item in ownedFonts) PrototypeVisuals.Release(item);
         }
     }

@@ -46,6 +46,7 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
+    "com.unity.modules.xr": "1.0.0",
+    "com.tripo3d.unitybridge": "file:D:/EdgeDownLoad/Tripo3d_Unity_Bridge"
   }
 }

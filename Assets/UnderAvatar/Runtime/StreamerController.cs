@@ -41,11 +41,10 @@ namespace UnderAvatar
         public int Fans { get; private set; }
         public float ReturnElapsed { get; private set; }
         int lateDeductions;
-        int returnStartingFans;
-        public const float HuntSeconds=30, ReturnAnnouncementSeconds=3, ViewerDrainSeconds=30;
         public const string EmptySearchNoticePrefix="未发现任何人";
         public float NextFanLossIn => Mathf.Max(0,Session.Settings.returnGraceSeconds+(lateDeductions+1)*Mathf.Max(.1f,Session.Settings.lateFanLossInterval)-ReturnElapsed);
         public bool OnStairs => stairRoute!=null;
+
         public string InteractionPrompt
         {
             get
@@ -77,12 +76,13 @@ namespace UnderAvatar
             posture=new CharacterPosture(body,Actor.View.transform,null,1.7f);
             patrolCells=Navigation.ReachableFrom(transform.position).ToList();
             Level=new MinigameLevel(Environment.TickCount);
+            Level.MaxFailureReduction=Session.Settings.maxFailureScoreReduction;
             Level.Configure(Session.Settings.flappyRules);
             Actor.State=StreamerState.Roaming; RoamRemaining=Session.Settings.patrolSeconds;
             Driver=new AiStreamerDriver(); Session.NoiseEmitted+=OnNoise;
         }
 
-        void OnNoise(SoundPulse pulse) { Driver?.Hear(pulse); }
+        void OnNoise(SoundPulse pulse) { Driver?.Hear(pulse);Session.Abilities?.HearForAi(pulse); }
         public bool SetDestination(Vector3 target)
         {
             if(stairRoute!=null) { pendingDestination=target; return true; }
@@ -100,7 +100,6 @@ namespace UnderAvatar
             if(Actor.State==StreamerState.Streaming && !Level.Complete) return;
             Actor.State=StreamerState.Returning; Actor.Progress=0;
             ReturnElapsed=0;lateDeductions=0;
-            returnStartingFans=Fans;
             if(IsHuman) { path=null; Session.Notice("搜捕时间结束，请回到电脑前按 E 开始下一场直播。",6); return; }
             if(!SetDestination(Actor.Computer.Front)) Session.Notice("主播无法抵达电脑，请检查门和楼梯连接。",6);
         }
@@ -116,7 +115,9 @@ namespace UnderAvatar
             transform.rotation=Actor.Computer.transform.rotation;
             posture.SetCrouched(false); pitch=0; Actor.View.transform.localRotation=Quaternion.identity;
             Actor.State=StreamerState.Streaming;
+            Fans=Session.Settings.initialFans;
             ReturnElapsed=0;lateDeductions=0;searchedEmpty.Clear();
+            Level.MaxFailureReduction=Session.Settings.maxFailureScoreReduction;
             Level.Configure(Session.Settings.flappyRules);
             Level.Start(round,Session.Settings.TargetForBroadcast(round)); Actor.Progress=0;
             Session.Notice("主播开始第 "+round+" 关直播。注意手机上的通关进度。");
@@ -132,7 +133,7 @@ namespace UnderAvatar
             Level.Tick(dt); Actor.Progress=Level.Progress;
             if(Level.Complete)
             {
-                Actor.State=StreamerState.Roaming; RoamRemaining=HuntSeconds;
+                Actor.State=StreamerState.Roaming; RoamRemaining=Session.Settings.patrolSeconds;
                 round++; path=null;
                 Session.Notice("主播已经通关，恢复搜捕！",3);
             }
@@ -149,19 +150,27 @@ namespace UnderAvatar
         public bool CanSeeReporter()
         {
             var reporter=Session.Reporter;
-            if(reporter.Hidden || reporter.Floor!=Actor.Floor) return false;
+            if(reporter.Hidden) return false;
+            if(Session.Abilities && Session.Abilities.Revealed) return true;
+            if(Session.ReporterDying || Session.Abilities && Session.Abilities.Invisible || reporter.Floor!=Actor.Floor) return false;
             Vector3 delta=reporter.View.transform.position-Actor.View.transform.position;
             return delta.magnitude<6.5f && Vector3.Angle(transform.forward,delta)<50 &&
                 !Physics.Linecast(Actor.View.transform.position,reporter.View.transform.position,PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore);
         }
 
+        public void ExhaustHuntByDecoy()
+        {
+            if(!Session.IsAuthority || Session.IsTraining || Session.Finished) return;
+            RoamRemaining=0;BeginReturn();
+        }
         public bool TryCapture()
         {
             if(Session.IsTraining) return false;
             if(!Session.IsAuthority || Session.Finished || Session.Reporter.Hidden || Actor.State!=StreamerState.Roaming && Actor.State!=StreamerState.Ambush) return false;
+            if(Session.Abilities.ConsumeTouchingDecoys()) return false;
             if(Vector3.Distance(transform.position,Session.Reporter.transform.position)>=1.3f) return false;
             if(Physics.Linecast(Actor.View.transform.position,Session.Reporter.View.transform.position,PrototypeLayers.PhotoMask,QueryTriggerInteraction.Ignore)) return false;
-            Session.Finish("主播获胜：狗仔被灭口"); return true;
+            return Session.CaptureReporter();
         }
 
         public bool SearchHidingPlace(PlacedItemView place)
@@ -175,7 +184,7 @@ namespace UnderAvatar
             Session.PlayWorldSound(place.transform.position,place.Data.type==ItemType.Bed?NoiseKind.HideBed:NoiseKind.Door);
             if(Session.IsTraining) { Session.Notice("翻查练习完成："+place.DisplayName+"。大厅不抓捕、不扣分。");return false; }
             if(Session.Reporter.Hidden && Session.Reporter.HidingPlaceId==place.Data.id)
-            { Session.Finish("主播获胜：在"+place.DisplayName+"中发现了狗仔");return true; }
+            { return Session.CaptureReporter(); }
             if(searchedEmpty.Add(place.Data.id))
             {
                 float penalty=Mathf.Max(0,place.Data.type==ItemType.Bed?Session.Settings.wrongBedPenalty:Session.Settings.wrongWardrobePenalty);
@@ -191,10 +200,13 @@ namespace UnderAvatar
         {
             if(!Session.IsAuthority || Session.Finished || Actor.State!=StreamerState.Returning || Session.IsTraining) return;
             ReturnElapsed+=Mathf.Max(0,dt);
-            // The end announcement precedes the thirty-second audience drain.
-            float remaining=1-Mathf.Clamp01((ReturnElapsed-ReturnAnnouncementSeconds)/ViewerDrainSeconds);
-            Fans=Mathf.CeilToInt(returnStartingFans*remaining);
+            float interval=Mathf.Max(.1f,Session.Settings.lateFanLossInterval);
+            int due=Mathf.Max(0,Mathf.FloorToInt((ReturnElapsed-Mathf.Max(0,Session.Settings.returnGraceSeconds))/interval));
+            if(due<=lateDeductions) return;
+            int loss=(due-lateDeductions)*Mathf.Max(1,Session.Settings.lateFanLoss);lateDeductions=due;
+            Fans=Mathf.Max(0,Fans-loss);
             if(Fans==0) Session.Finish("狗仔获胜：主播逾期开播，粉丝已经流失完了");
+            else Session.Notice("开播逾期！粉丝减少 "+loss+"，当前粉丝 "+Fans+"。请尽快回电脑开播。");
         }
 
         void Update()
@@ -216,7 +228,7 @@ namespace UnderAvatar
         { if(Session.IsAuthority) Tick(dt,command); }
         void Tick(float dt,PlayerCommand command)
         {
-            if(!Actor || Session.Finished) return;
+            if(!Actor || Session.Finished || Session.SimulationPaused) return;
             AdvanceReturnDeadline(dt);
             if(Session.Finished) return;
             if(body.isGrounded && vertical<0) vertical=-2;
@@ -293,6 +305,17 @@ namespace UnderAvatar
             if(body.isGrounded && vertical<0) vertical=-2;
             vertical+=Physics.gravity.y*dt;body.Move(Vector3.up*vertical*dt);
             MoveInput(new Vector2(command.x,command.y),command.sneak,dt,replay);
+        }
+        public void RestorePredictedPose(ActorSnapshot pose)
+        {
+            body.enabled=false;transform.position=pose.position;vertical=pose.vertical;
+            posture.SetCrouched(pose.crouched,true);sneaking=pose.sneaking;
+            RestorePredictedLook(pose);body.enabled=true;
+        }
+        public void RestorePredictedLook(ActorSnapshot pose)
+        {
+            transform.rotation=Quaternion.Euler(0,pose.yaw,0);pitch=pose.pitch;
+            Actor.View.transform.localRotation=Quaternion.Euler(pitch,0,0);
         }
 
         void HumanInput(float dt)

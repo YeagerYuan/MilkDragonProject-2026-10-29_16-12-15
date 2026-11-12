@@ -19,6 +19,9 @@ namespace UnderAvatar.Editor
         {
             serializedObject.Update();
             EditorGUILayout.HelpBox("将 Project 中的音频拖入下列槽位。脚步数组每项放一个脚步；喘气放完整循环。修改配置资源会保存，Play 中调整也会保留。音量设为 0 可静音，不改变取证与 AI 听觉规则。",MessageType.Info);
+            Field("menuMusic","菜单 / 漫画 / 大厅 BGM");Field("menuMusicVolume","BGM 音量");
+            Field("comicPageTurn","漫画翻页声");Field("comicPageVolume","翻页音量");
+            Field("streamerLaugh","主播大笑声音");Field("laughVolume","大笑音量");
             Field("walkSteps","行走脚步变体");Field("chaseSteps","主播搜捕脚步变体");
             Field("walkVolume","行走音量");Field("chaseVolume","搜捕音量");
             Field("walkInterval","行走步频间隔（秒）");Field("chaseInterval","搜捕步频间隔（秒）");
@@ -28,8 +31,10 @@ namespace UnderAvatar.Editor
             Field("bedHide","躲床声音（可选）");Field("bedHideVolume","躲床音量");Field("bedHideDistanceMultiplier","躲床传播距离倍率");
             Field("breathingLoop","喘气循环");Field("breathingVolume","普通移动喘气音量");
             Field("quietBreathingMultiplier","静步 / 蹲行喘气倍率");Field("breathingFadeSeconds","喘气淡入淡出（秒）");
+            Field("floorAttenuation","启用跨楼层衰减");Field("volumePerFloor","每隔一层音量倍率");Field("otherFloorLowPass","相邻楼层低通频率（Hz，越低越闷）");
             Field("minDistance","开始衰减距离（米）");Field("maxDistance","最远可听距离（米）");
-            Field("chair","椅子转动（可选）");Field("success","取证成功（可选）");
+            Field("chair","椅子转动（可选）");Field("success","上传成功提示音（可选）");
+            Field("uploadFailure","上传失败提示音（可选）");Field("uploadFeedbackVolume","上传反馈音量");
             serializedObject.ApplyModifiedProperties();
             if(GUILayout.Button("保存音效配置")) AssetDatabase.SaveAssets();
         }

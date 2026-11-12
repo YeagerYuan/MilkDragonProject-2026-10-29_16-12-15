@@ -18,7 +18,8 @@ namespace UnderAvatar.Tests
         {
             float deadline=Time.realtimeSinceStartup+5;
             while(!ready() && Time.realtimeSinceStartup<deadline) { peer.Poll();yield return null; }
-            Assert.That(ready(),Is.True,"LAN transition timed out");
+            var app=root?root.GetComponent<PrototypeApp>():null;
+            Assert.That(ready(),Is.True,"LAN transition timed out: "+(app?app.Lan.Phase+" / "+app.Lan.Status:"no app")+" / peer="+peer.Error+" / last="+received.LastOrDefault()?.type);
         }
         [UnityTearDown] public IEnumerator Cleanup() {peer?.Dispose();if(root) UnityEngine.Object.Destroy(root);yield return null;}
         [UnityTest] public IEnumerator BothReadyTwiceAndSessionEpochRejectsOldInputsAndLoadAcknowledgements()
@@ -49,6 +50,8 @@ namespace UnderAvatar.Tests
             Send(new LanMessage{type="input",sessionId=hallStart.sessionId,input=new PlayerCommand{sequence=100,x=1}});
             Send(new LanMessage{type="input",sessionId=gameStart.sessionId,input=new PlayerCommand{sequence=1,x=1}});
             yield return Until(()=>received.Any(m=>m.type=="snapshot" && m.sessionId==gameStart.sessionId && m.snapshot.inputAck==1));
+            Send(new LanMessage{type="inputs",sessionId=gameStart.sessionId,inputs=new[]{new PlayerCommand{sequence=2},new PlayerCommand{sequence=3}}});
+            yield return Until(()=>received.Any(m=>m.type=="snapshot" && m.sessionId==gameStart.sessionId && m.snapshot.inputAck==3));
             Assert.That(lan.Active,Is.True);Assert.That(RenderSettings.ambientIntensity,Is.Zero);
             Send(new LanMessage{type="leave",text="test leave"});yield return Until(()=>!lan.Active);Assert.That(app.Session,Is.Null);
         }

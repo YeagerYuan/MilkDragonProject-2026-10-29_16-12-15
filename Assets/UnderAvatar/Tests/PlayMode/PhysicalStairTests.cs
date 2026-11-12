@@ -43,6 +43,35 @@ namespace UnderAvatar.Tests
             yield return Start(6);
             yield return WalkUpAndDown();
         }
+        [UnityTest] public IEnumerator StackedStairsConnectThreeFloorsForPlayersAndAi()
+        {
+            asset=ScriptableObject.CreateInstance<BuildingAsset>();
+            var data=new BuildingData();
+            for(int floor=0;floor<3;floor++) data.floors.Add(new FloorData{floorIndex=floor});
+            for(int floor=0;floor<2;floor++)
+                data.floors[floor].items.Add(new PlacedItemData{type=ItemType.Stairs});
+            data.floors[0].items.Add(new PlacedItemData{type=ItemType.StreamerPC,gridX=-4,gridZ=-4});
+            asset.SetData(data);
+            root=new GameObject("StackedStairPlayTest");root.SetActive(false);
+            app=root.AddComponent<PrototypeApp>();app.Building=asset;root.SetActive(true);app.EnterPlay();
+            yield return null;
+            Assert.That(app.Session,Is.Not.Null,app.StartupError);
+            app.Session.Streamer.Controller.enabled=false;app.Session.Reporter.enabled=false;
+            app.Settings.reporterSpeed=5;
+            var lower=app.World.Stairs[0];var upper=app.World.Stairs[1];
+            Assert.That(app.World.Find(lower.Item.id).transform.Find("OpeningGuard"),Is.Null);
+            var navigation=new BuildingNavigation(data);
+            var path=navigation.FindPath(lower.Waypoints(true)[0],upper.Waypoints(true).Last());
+            Assert.That(path,Is.Not.Null);
+            Assert.That(path.Select(cell=>cell.y).Distinct().Count(),Is.EqualTo(3));
+            app.Session.Reporter.Teleport(lower.Waypoints(true)[0]);
+            yield return Walk(lower.Waypoints(true));
+            yield return Walk(upper.Waypoints(true));
+            Assert.That(app.Session.Reporter.Floor,Is.EqualTo(2));
+            yield return Walk(upper.Waypoints(false));
+            yield return Walk(lower.Waypoints(false));
+            Assert.That(app.Session.Reporter.Floor,Is.Zero);
+        }
         IEnumerator WalkUpAndDown()
         {
             var stair=app.World.Stairs[0]; var reporter=app.Session.Reporter;

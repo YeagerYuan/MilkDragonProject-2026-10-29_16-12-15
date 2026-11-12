@@ -22,6 +22,8 @@ namespace UnderAvatar
         readonly List<Pipe> pipes=new List<Pipe>();
         public IReadOnlyList<Pipe> Pipes => pipes;
         public int LevelNumber { get; private set; }
+        int originalTarget;
+        public int MaxFailureReduction {get;set;}=4;
         public int TargetScore { get; private set; }
         public int Score { get; private set; }
         public int Crashes { get; private set; }
@@ -43,7 +45,7 @@ namespace UnderAvatar
         public MinigameLevel(int seed) { random=new System.Random(seed); }
         public void Start(int level,int targetScore)
         {
-            LevelNumber=level; TargetScore=Math.Max(1,targetScore); Crashes=0; Reset();
+            LevelNumber=level; originalTarget=Math.Max(1,targetScore);TargetScore=originalTarget; Crashes=0; Reset();
         }
         public void Reset()
         {
@@ -90,16 +92,16 @@ namespace UnderAvatar
                 }
             }
         }
-        void Crash() { Score=0; Velocity=0; Running=false; Crashed=true; Crashes++; }
+        void Crash() { Score=0; Velocity=0; Running=false; Crashed=true; Crashes++;TargetScore=Math.Max(1,originalTarget-Math.Min(Crashes,MaxFailureReduction)); }
         public FlappySnapshot Capture() => new FlappySnapshot
         {
-            level=LevelNumber,target=TargetScore,score=Score,crashes=Crashes,height=BirdHeight,velocity=Velocity,running=Running,crashed=Crashed,
+            originalTarget=originalTarget,maxFailureReduction=MaxFailureReduction,level=LevelNumber,target=TargetScore,score=Score,crashes=Crashes,height=BirdHeight,velocity=Velocity,running=Running,crashed=Crashed,
             pipeX=pipes.ConvertAll(p=>p.X).ToArray(),gaps=pipes.ConvertAll(p=>p.GapCenter).ToArray(),passed=pipes.ConvertAll(p=>p.scored).ToArray()
         };
         public void Apply(FlappySnapshot state)
         {
             if(state==null) return;
-            LevelNumber=state.level;TargetScore=state.target;Score=state.score;Crashes=state.crashes;
+            LevelNumber=state.level;TargetScore=state.target;originalTarget=state.originalTarget>0?state.originalTarget:state.target;MaxFailureReduction=state.maxFailureReduction;Score=state.score;Crashes=state.crashes;
             BirdHeight=state.height;Velocity=state.velocity;Running=state.running;Crashed=state.crashed;
             pipes.Clear();
             for(int i=0;i<state.pipeX.Length;i++) pipes.Add(new Pipe{X=state.pipeX[i],GapCenter=state.gaps[i],scored=state.passed[i]});

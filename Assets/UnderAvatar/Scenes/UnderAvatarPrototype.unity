@@ -157,23 +157,32 @@ MonoBehaviour:
     reporterSpeed: 2.2
     streamerSpeed: 4.2
     maxPhotoDistance: 8
+    taskPhotoDistance: 3
     maxScore: 3
-    patrolSeconds: 30
-    flappyTargetScore: 1
+    patrolSeconds: 45
+    mapBoardPositions: []
+    flappyTargetScore: 12
     broadcastTargets: []
     flappyRules:
-      gravity: 3.1
-      flapImpulse: 1.1
+      gravity: 2.8
+      flapImpulse: 1.05
       scrollSpeed: 0.269
-      pipeSpacing: 0.3
-      gapSize: 0.283
+      pipeSpacing: 0.38
+      gapSize: 0.3
     allowEmergencyTurn: 0
     wrongWardrobePenalty: 5
-    wrongBedPenalty: 5
+    wrongBedPenalty: 12
     initialFans: 5000
     lateFanLoss: 1000
     returnGraceSeconds: 10
     lateFanLossInterval: 10
+    detection:
+      rangeMultiplier: 1.2
+      outlineSeconds: 3
+      laughCapacity: 5
+      recoverySecondsPerLaughSecond: 2
+      initialInvisibilityCharges: 2
+      invisibilitySeconds: 10
     streamerVision:
       range: 6.5
       innerAngle: 10
@@ -188,6 +197,8 @@ MonoBehaviour:
       intensity: 9
       followSeconds: 0.065
       cookieStrength: 0.45
+  paparazziComicPrefab: {fileID: 0}
+  useDvAtmosphere: 1
   enableDocuments: 1
   documentReaderPrefab: {fileID: 1621046168815396855, guid: a5f90035814c2c942be020a60b99abc0,
     type: 3}

@@ -3,7 +3,10 @@
   "rootNamespace": "UnderAvatar.Editor",
   "references": [
     "UnderAvatar.Runtime",
-    "UnderAvatar.PageCurl"
+    "UnderAvatar.PageCurl",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.ugui"
   ],
   "includePlatforms": [
     "Editor"

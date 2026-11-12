@@ -41,3 +41,17 @@ Public HQ preview: https://cdn.freesound.org/previews/175/175517_1084891-hq.mp3
 Edits: high-pass, 2 ms edge fades and level adjustment, mono 48 kHz PCM.
 
 The two unrelated chair/success prototype cues remain procedural unless overridden in GameAudio.
+
+Added 2026-11-05:
+MenuHorrorLoop.ogg — Ambient Horror Track 01, Cleyton Kauffman. CC0.
+https://opengameart.org/content/ambient-horror-track-01
+https://opengameart.org/sites/default/files/ambient_horror_track_01_0.zip
+Original 48-second seamless OGG loop; playback volume configurable.
+ComicPageTurn.wav — Pages that turn #8, Joseph SARDIN, BigSoundBank. CC0.
+https://bigsoundbank.com/pages-that-turn-8-s2215.html
+https://bigsoundbank.com/UPLOAD/bwf-en/2215.wav
+Trimmed leading silence, 5 ms fade-in, mono 48 kHz PCM.
+StreamerLaugh.wav — User-provided audio from Assets/Music. Not covered by the CC0 license above.
+Original file is ASF/WMA despite its .mp3 extension; decoded to mono 48 kHz PCM, 65 Hz high-pass and 15 ms fade-in. Original retained.
+
+2026-11-05：上传失败提示音由 PrototypeAudio 运行时程序合成；成功提示沿用程序合成音。可在 GameAudioProfile 中替换，不新增外部音频授权依赖。

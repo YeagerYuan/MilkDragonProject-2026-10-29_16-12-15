@@ -31,6 +31,11 @@ namespace UnderAvatar
             session=match; reporter=match.Reporter; navigation=new BuildingNavigation(match.World.Data);
             streamerRoom=navigation.RoomCells(session.Streamer.Computer.Front);
         }
+        public void ResetAfterRespawn()
+        {
+            path=null;stairRoute=null;pendingDestination=null;photoTarget=null;photoTask=null;hidingPlace=null;
+            nextDecision=hiddenUntil=avoidRoomUntil=0;retreating=sneaking=false;
+        }
         public bool SetDestination(Vector3 destination)
         {
             if(OnStairs) { pendingDestination=destination; return true; }
@@ -42,7 +47,7 @@ namespace UnderAvatar
         }
         void Update()
         {
-            if(session==null || session.Finished) return;
+            if(session==null || session.Finished || session.ReporterDying || session.SimulationPaused) return;
             if(reporter.Hidden)
             {
                 Status=reporter.HidingPlace?.Data.type==ItemType.Bed?"藏在床下":"藏在衣柜中";
@@ -74,6 +79,7 @@ namespace UnderAvatar
             retreating=false;
             if(SeesThreat())
             {
+                session.Abilities?.TryInvisibility();
                 photoTarget=null; sneaking=false; reporter.SetCrouched(false);
                 var wardrobe=session.World.Items.Where(i=>i.IsHidingPlace && !i.IsOpen && i.Floor==reporter.Floor &&
                     Vector3.Distance(i.Front,transform.position)<8 &&
@@ -120,7 +126,7 @@ namespace UnderAvatar
             }
             if(HasPath) return;
             // Live status is visible on the phone; the AI does not track a roaming streamer through walls.
-            if(session.StreamerPhotoAvailable && PlanPhoto(session.Streamer.PhotoPoint,session.Streamer.Floor))
+            if(session.StreamerPhotoAvailable && PlanPhoto(session.Streamer.PhotoPoint,session.Streamer.Floor,true))
             { photoTask=InvestigationData.LiveTask;Status="接近电脑，拍摄直播"; sneaking=true; return; }
             foreach(var item in session.World.Items.Where(i=>i.Data.type==ItemType.QuestItem &&
                 (Time.time>=avoidRoomUntil || !streamerRoom.Contains(navigation.NearestWalkable(navigation.Cell(i.transform.position)))) &&
@@ -179,12 +185,12 @@ namespace UnderAvatar
             foreach(var cell in reachable.OrderByDescending(c=>Vector3.Distance(navigation.Position(c),session.Streamer.Computer.Front)))
                 if(SetDestination(navigation.Position(cell))) { retreating=true;Status="拍摄完成，远离主播电脑";return; }
         }
-        bool PlanPhoto(Vector3 point,int floor)
+        bool PlanPhoto(Vector3 point,int floor,bool live=false)
         {
-            float maxDistance=Mathf.Min(session.Settings.maxPhotoDistance-.3f,6);
+            float maxDistance=Mathf.Min((live?session.Settings.maxPhotoDistance:session.TaskPhotoDistance)-.15f,6);
             var candidates=navigation.ReachableFrom(transform.position).Where(c=>c.y==floor)
                 .Select(navigation.Position)
-                .Where(p=>Vector3.Distance(p+Vector3.up*1.65f,point)>1.8f &&
+                .Where(p=>Vector3.Distance(p+Vector3.up*1.65f,point)>Mathf.Min(1.2f,maxDistance*.4f) &&
                     Vector3.Distance(p+Vector3.up*1.65f,point)<maxDistance &&
                     Vector3.Distance(p,transform.position)>.35f)
                 .OrderBy(p=>Vector3.Distance(p,transform.position));

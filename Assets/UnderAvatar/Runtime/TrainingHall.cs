@@ -61,7 +61,24 @@ namespace UnderAvatar
                 for(int x=-5;x<=5;x+=5)
                     match.World.Palette.Box(transform,"CeilingLight",new Vector3(x*2,(f+1)*match.World.Data.floorHeight-.15f,0),new Vector3(3,.08f,.5f),Color.white,"UA_Props",false);
             }
+            if(session.IsAuthority)
+            {
+                var door=match.World.Items.FirstOrDefault(i=>i.Data.type==ItemType.Door && i.Floor==0);
+                if(door)
+                {
+                    var center=door.transform.position;
+                    var body=match.Streamer.GetComponent<CharacterController>();body.enabled=false;
+                    match.Streamer.transform.SetPositionAndRotation(center+Vector3.back*3+Vector3.up*.02f,Quaternion.identity);body.enabled=true;
+                    if(!match.World.Data.useCustomReporterSpawn)
+                    {
+                        match.Reporter.Teleport(center+Vector3.forward*3);
+                        match.Reporter.SetLookAt(center+Vector3.up*1.65f);
+                    }
+                    Physics.SyncTransforms();
+                }
+            }
             gameObject.AddComponent<TutorialSigns>().Initialize(session);
+            gameObject.AddComponent<TrainingGuide>().Initialize(session);
         }
         void OnDisable()
         {

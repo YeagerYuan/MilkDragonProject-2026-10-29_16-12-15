@@ -121,15 +121,16 @@ namespace UnderAvatar.Editor
                 if(available!=null) {additional.Add(available);GUI.changed=true;}
             }
             if(ids[target]==InvestigationData.StreamerTarget || additional.Contains(InvestigationData.StreamerTarget))
-                EditorGUILayout.HelpBox("主播目标使用角色当前的拍照点，随角色移动；所有目标必须在按下快门时同时入镜。",MessageType.Info);
+                EditorGUILayout.HelpBox("主播目标只能在直播中拍摄，每场直播所有主播任务合计最多拍摄上传一次；所有目标须同时入镜。",MessageType.Info);
             if(InvestigationData.IsDocumentTarget(ids[target]) || additional.Any(InvestigationData.IsDocumentTarget))
                 EditorGUILayout.HelpBox("直接拍摄文档布置中的原物体，不会生成副本；阅读界面打开时不能拍照。",MessageType.Info);
+            var reward=(TaskReward)EditorGUILayout.Popup("完成奖励（仅一次）",(int)t.reward,new[]{"无奖励","隐身机会 +1","假人机会 +1"});
             Vector3 position=t.regionPosition,size=t.regionSize;float yaw=t.regionYaw;
             if(kind==InvestigationKind.PlaceAndPhotograph)
             {
                 position=EditorGUILayout.Vector3Field("目标区域中心",position);size=EditorGUILayout.Vector3Field("目标区域尺寸",size);yaw=EditorGUILayout.FloatField("区域旋转 Y",yaw);
             }
-            if(EditorGUI.EndChangeCheck()) Edit("修改任务",d=>{var v=d.tasks[index];v.title=title;v.description=description;v.kind=kind;v.targetId=ids[target];v.additionalTargetIds=additional;v.regionPosition=position;v.regionSize=size;v.regionYaw=yaw;});
+            if(EditorGUI.EndChangeCheck()) Edit("修改任务",d=>{var v=d.tasks[index];v.title=title;v.description=description;v.reward=reward;v.kind=kind;v.targetId=ids[target];v.additionalTargetIds=additional;v.regionPosition=position;v.regionSize=size;v.regionYaw=yaw;});
             EditorGUILayout.HelpBox("添加可阅读文档目标：编辑文档布置，在文档的 DocumentInteractable 上填写唯一 Photo Target Id，保存后即可在上方选择。文档须在关卡中启用。",MessageType.None);
             EditorGUILayout.LabelField("关联线索（仅编辑辅助，不强制阅读）",EditorStyles.boldLabel);
             foreach(var c in Asset.Data.taskClues)

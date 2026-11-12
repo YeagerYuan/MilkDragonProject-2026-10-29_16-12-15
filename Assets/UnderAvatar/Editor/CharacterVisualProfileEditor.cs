@@ -18,6 +18,8 @@ namespace UnderAvatar.Editor
             serializedObject.Update();
             EditorGUILayout.HelpBox("两个角色各自配置外观，下一次开始测试时生效。模型脚底应在原点、正面朝 +Z。外观不会改变角色碰撞和第一人称镜头。",MessageType.Info);
             Role("reporter","狗仔 · 你豆姐");Role("streamer","主播 · 恐怖奶龙");
+            Role("hallStreamer","教学大厅主播 · 神秘人");
+            Field(serializedObject.FindProperty("hallStreamerInSingle"),"单人教学也使用大厅替身");
             EditorGUILayout.Space();EditorGUILayout.LabelField("联机远端外观",EditorStyles.boldLabel);
             Field(serializedObject.FindProperty("interpolationDelay"),"插值缓冲（秒）");
             Field(serializedObject.FindProperty("maxExtrapolation"),"最大外推时间（秒）");

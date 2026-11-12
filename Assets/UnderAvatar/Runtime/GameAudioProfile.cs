@@ -5,6 +5,14 @@ namespace UnderAvatar
     [CreateAssetMenu(menuName="Under Avatar/游戏音效配置",fileName="GameAudio")]
     public sealed class GameAudioProfile : ScriptableObject
     {
+        [Header("菜单、漫画和教学大厅")]
+        public AudioClip menuMusic;
+        [Range(0,1)] public float menuMusicVolume=.24f;
+        public AudioClip comicPageTurn;
+        [Range(0,1)] public float comicPageVolume=.65f;
+        [Header("主播大笑")]
+        public AudioClip streamerLaugh;
+        [Range(0,1)] public float laughVolume=.8f;
         [Header("室内脚步（每个文件只放一个脚步，随机轮换）")]
         public AudioClip[] walkSteps;
         public AudioClip[] chaseSteps;
@@ -29,10 +37,15 @@ namespace UnderAvatar
         [Range(0,1)] public float quietBreathingMultiplier=.35f;
         [Min(.01f)] public float breathingFadeSeconds=.15f;
         [Header("空间声音衰减（喘气不使用此设置）")]
+        public bool floorAttenuation=true;
+        [Range(0,1)] public float volumePerFloor=.45f;
+        [Range(500,22000)] public float otherFloorLowPass=2500;
         [Min(.1f)] public float minDistance=1.5f;
         [Min(1)] public float maxDistance=28;
         [Header("可选：椅子转动 / 取证成功；留空沿用原型提示音")]
         public AudioClip chair;
         public AudioClip success;
+        public AudioClip uploadFailure;
+        [Range(0,1)] public float uploadFeedbackVolume=.8f;
     }
 }

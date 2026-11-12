@@ -29,6 +29,8 @@ namespace UnderAvatar
         public float LocalFps { get; private set; }
         public float HostFps { get; private set; }
         public int PendingInputs => prediction?.PendingCount??0;
+        public int PendingSendBytes => transport?.PendingSendBytes??0;
+        public float SnapshotAge => IsHost?0:Mathf.Max(0,Time.realtimeSinceStartup-lastSnapshotReceived);
         public string LocalAddresses
         {
             get
@@ -45,6 +47,9 @@ namespace UnderAvatar
         MatchSettings rules;
         readonly Queue<PlayerCommand> remoteInputs=new Queue<PlayerCommand>();
         ClientPrediction prediction;
+        MatchSnapshot pendingSnapshot;
+        readonly List<PlayerCommand> inputBatch=new List<PlayerCommand>();
+        float nextInputSend,lastSnapshotReceived;
         int receivedInput,confirmedInput;
         float remoteCredit;
         float lastTraffic,lastRemoteInput,nextHeartbeat,nextSnapshot,connectingSince;
@@ -87,8 +92,14 @@ namespace UnderAvatar
         {
             if(settings==null || settings.flappyTargetScore<1 || settings.flappyTargetScore>100 || settings.maxScore<1 || settings.maxScore>999 ||
                 !(settings.reporterSpeed>=.5f && settings.reporterSpeed<=8) || !(settings.streamerSpeed>=1 && settings.streamerSpeed<=12) ||
-                !(settings.maxPhotoDistance>=2 && settings.maxPhotoDistance<=30) || !(settings.patrolSeconds>=5 && settings.patrolSeconds<=300))
+                !(settings.maxPhotoDistance>=2 && settings.maxPhotoDistance<=30) || !(settings.taskPhotoDistance>=.5f && settings.taskPhotoDistance<=12) || !(settings.patrolSeconds>=5 && settings.patrolSeconds<=300))
                 throw new ArgumentException("房间玩法参数无效。");
+            if(settings.mapBoardPositions==null || settings.mapBoardPositions.Count>48 || settings.mapBoardPositions.Any(p=>!InvestigationData.Finite(p.x) || !InvestigationData.Finite(p.y) || !InvestigationData.Finite(p.z) || p.sqrMagnitude>1000000)) throw new ArgumentException("地图看板位置无效。");
+            if(settings.reporterLives==null || !settings.reporterLives.Valid) throw new ArgumentException("狗仔生命与复活参数无效。");
+            if(settings.maxFailureScoreReduction<0 || settings.maxFailureScoreReduction>20 ||
+                !(settings.returnComputerPulseInterval>=.5f && settings.returnComputerPulseInterval<=120) ||
+                !(settings.returnComputerPulseSeconds>=.1f && settings.returnComputerPulseSeconds<=settings.returnComputerPulseInterval)) throw new ArgumentException("失败降分或电脑提示参数无效。");
+            if(settings.detection==null || !settings.detection.Valid) throw new ArgumentException("探测或隐身参数无效。");
             if(settings.streamerVision==null || !settings.streamerVision.Valid || settings.reporterVision==null || !settings.reporterVision.Valid)
                 throw new ArgumentException("房间视野灯光参数无效，请检查距离、内外角与亮度。");
             if(settings.flappyRules==null || !settings.flappyRules.Valid || settings.broadcastTargets==null || settings.broadcastTargets.Count>1000 ||
@@ -152,10 +163,16 @@ namespace UnderAvatar
                     if(!PeerJoined || Phase!=LanPhase.Training || message.sessionId!=sessionId) return;
                     RemoteReady=message.guestReady;SendHallStatus();break;
                 case "input":
-                    if(!InWorld||message.sessionId!=sessionId||message.input==null||!message.input.Valid) return;
-                    if(message.input.sequence!=receivedInput+1) throw new InvalidOperationException("输入序号不一致，请使用相同版本重新连接。");
-                    receivedInput=message.input.sequence;remoteInputs.Enqueue(message.input);
-                    if(remoteInputs.Count>300) throw new InvalidOperationException("输入积压过多，请检查连接。");
+                case "inputs":
+                    if(!InWorld||message.sessionId!=sessionId) return;
+                    var inputs=message.inputs!=null && message.inputs.Length>0?message.inputs:(message.input==null?Array.Empty<PlayerCommand>():new[]{message.input});
+                    if(inputs.Length>60) throw new InvalidOperationException("输入批次过大。");
+                    foreach(var input in inputs)
+                    {
+                        if(input==null || !input.Valid || input.sequence!=receivedInput+1) throw new InvalidOperationException("输入序号不一致，请使用相同版本重新连接。");
+                        receivedInput=input.sequence;remoteInputs.Enqueue(input);
+                    }
+                    if(remoteInputs.Count>1800) throw new InvalidOperationException("输入积压过多，请检查连接。");
                     lastRemoteInput=Time.realtimeSinceStartup;break;
                 case "lobby":
                     if(Phase==LanPhase.Playing && App.Session.Finished) ReturnToLobby();break;
@@ -179,10 +196,12 @@ namespace UnderAvatar
                 case "start":
                     if((Phase!=LanPhase.Lobby && Phase!=LanPhase.Training)||!LocalReady || message.sessionId<=sessionId || message.training!=(Phase==LanPhase.Lobby)) return;
                     sessionId=message.sessionId;loadingTraining=message.training;LocalReady=RemoteReady=false;ResetInputs();
-                    Phase=LanPhase.Loading;App.StartNetworkSession(loadingTraining?trainingMap:map,rules,LocalRole,false,loadingTraining);
-                    if(!App.Session) throw new InvalidOperationException(App.StartupError);
-                    ApplyGuestSnapshot(message.snapshot);
-                    Send(new LanMessage{type="loaded"});Status="等待房主开始…";break;
+                    Phase=LanPhase.Loading;Status="等待开场漫画与大厅加载…";
+                    BeginLocalLoad(()=>
+                    {
+                        ApplyGuestSnapshot(message.snapshot);
+                        Send(new LanMessage{type="loaded"});Status="等待房主开始…";
+                    });break;
                 case "go":
                     if(Phase!=LanPhase.Loading || message.sessionId!=sessionId) return;
                     ApplyGuestSnapshot(message.snapshot);Phase=loadingTraining?LanPhase.Training:LanPhase.Playing;
@@ -191,7 +210,15 @@ namespace UnderAvatar
                     if(Phase!=LanPhase.Training || message.sessionId!=sessionId) return;
                     LocalReady=message.guestReady;RemoteReady=message.hostReady;break;
                 case "snapshot":
-                    if(InWorld && message.sessionId==sessionId) ApplyGuestSnapshot(message.snapshot);break;
+                    if(InWorld && message.sessionId==sessionId && message.snapshot!=null)
+                    {
+                        // A burst may contain seconds of old snapshots; reconcile only the newest this frame.
+                        App.Session.ApplyNoiseEvents(message.snapshot.noises);
+                        if(pendingSnapshot==null || message.snapshot.serverTime>=pendingSnapshot.serverTime) pendingSnapshot=message.snapshot;
+                    }
+                    break;
+                case "noises":
+                    if(InWorld && message.sessionId==sessionId) App.Session.ApplyNoiseEvents(message.noises);break;
             }
         }
         void SendLobby() => Send(new LanMessage{type="lobby",hostReady=LocalReady,guestReady=RemoteReady});
@@ -209,10 +236,30 @@ namespace UnderAvatar
             if(!CanStart) return;
             loadingTraining=Phase==LanPhase.Lobby;sessionId++;LocalReady=RemoteReady=false;
             Phase=LanPhase.Loading;
-            App.StartNetworkSession(loadingTraining?trainingMap:map,rules,LocalRole,true,loadingTraining);
-            if(!App.Session) { Fail(App.StartupError);return; }
-            ResetInputs();
-            Send(new LanMessage{type="start",training=loadingTraining,snapshot=Snapshot()});Status="正在等待另一位玩家加载…";
+            Status="等待开场漫画与大厅加载…";
+            BeginLocalLoad(()=>
+            {
+                ResetInputs();
+                Send(new LanMessage{type="start",training=loadingTraining,snapshot=Snapshot()});
+                Status="等待另一位玩家看完开场漫画并加载大厅 / 关卡…";
+            });
+        }
+        void BeginLocalLoad(Action loaded)
+        {
+            int epoch=sessionId;
+            Action create=()=>
+            {
+                if(Phase!=LanPhase.Loading || sessionId!=epoch) return;
+                try
+                {
+                    App.StartNetworkSession(loadingTraining?trainingMap:map,rules,LocalRole,IsHost,loadingTraining);
+                    if(!App.Session) { Fail(App.StartupError);return; }
+                    loaded();
+                }
+                catch(Exception e) { Fail("进入大厅失败："+e.Message); }
+            };
+            try { if(loadingTraining) App.BeforeTrainingHall(LocalRole,create);else create(); }
+            catch(Exception e) { Fail("进入大厅失败："+e.Message); }
         }
         public void ReturnToLobby()
         {
@@ -229,16 +276,19 @@ namespace UnderAvatar
             {
                 transport?.Poll();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                while(Active && delayedMessages.Count>0 && delayedMessages.Peek().Key<=Time.realtimeSinceStartup)
+                int delayedBudget=24;
+                while(Active && delayedMessages.Count>0 && delayedMessages.Peek().Key<=Time.realtimeSinceStartup && delayedBudget-->0)
                     ReceiveNow(delayedMessages.Dequeue().Value);
 #endif
                 if(!Active) return;
+                if(pendingSnapshot!=null)
+                { var newest=pendingSnapshot;pendingSnapshot=null;ApplyGuestSnapshot(newest); }
                 if(transport?.Error!=null) { Fail("连接中断："+transport.Error);return; }
                 float now=Time.realtimeSinceStartup;
                 if(Phase==LanPhase.Connecting && now-connectingSince>10) { Fail("连接超时，请检查房主 IP、端口和本地网络。");return; }
                 if(transport!=null && transport.Connected)
                 {
-                    if(now-lastTraffic>12) { Fail("对方长时间没有响应，连接已断开。");return; }
+                    if(now-lastTraffic>30) { Fail("对方超过 30 秒没有响应，连接已断开。");return; }
                     if(now>=nextHeartbeat) { nextHeartbeat=now+1;Send(new LanMessage{type="ping",stamp=now}); }
                 }
                 if(InWorld && App.Session && !App.Session.Finished)
@@ -248,33 +298,42 @@ namespace UnderAvatar
                     if(phoneCommand.taskId!=null) local.taskId=phoneCommand.taskId;
                     if(phoneCommand.uploadPhoto>0) local.uploadPhoto=phoneCommand.uploadPhoto;
                     local.cancelPhoto|=phoneCommand.cancelPhoto;local.phone|=phoneCommand.phone;
-                    if (DocumentManager.BlocksGameplayInput)
+                    if (DocumentManager.BlocksGameplayInput || App.GameplayInputBlocked)
                         local = new PlayerCommand { aspect = local.aspect };
                     if(!local.Valid) local=new PlayerCommand();
+                    local.reporterLifeEpoch=App.Session.ReporterLifeEpoch;
                     if(IsHost)
                     {
                         float dt=Mathf.Min(Time.deltaTime,.1f);
                         App.Session.SimulateNetworkActor(LocalRole,local,dt);
-                        remoteCredit=Mathf.Min(remoteCredit+dt,.15f);
-                        while(remoteInputs.Count>0 && remoteCredit>=ClientPrediction.Step)
+                        remoteCredit=Mathf.Min(remoteCredit+Mathf.Max(0,frame),30);
+                        int replayBudget=8;
+                        while(remoteInputs.Count>0 && remoteCredit>=ClientPrediction.Step && replayBudget-->0)
                         {
                             var input=remoteInputs.Dequeue();
                             App.Session.SimulateNetworkActor(Opposite(LocalRole),input,ClientPrediction.Step);
                             confirmedInput=input.sequence;remoteCredit-=ClientPrediction.Step;
                         }
-                        if(remoteInputs.Count==0 && now-lastRemoteInput>.35f)
-                        {
-                            App.Session.SimulateNetworkActor(Opposite(LocalRole),new PlayerCommand(),dt);
-                            remoteCredit=0;
-                        }
                         App.Session.Streamer.Controller.TryCapture();
                     }
-                    else prediction?.Tick(local,Time.deltaTime,command=>Send(new LanMessage{type="input",input=command}));
+                    else
+                    {
+                        prediction?.Tick(local,Time.deltaTime,command=>inputBatch.Add(command));
+                        if(inputBatch.Count>0 && (now>=nextInputSend || inputBatch.Count>=6 ||
+                            inputBatch.Any(c=>c.invisible || c.decoy || c.interact || c.phone || c.action || c.uploadPhoto>0 || c.cancelPhoto || c.taskId!=null)))
+                        {
+                            Send(new LanMessage{type="inputs",inputs=inputBatch.ToArray()});
+                            inputBatch.Clear();nextInputSend=now+1f/20;
+                        }
+                    }
                 }
-                if(IsHost && InWorld && now>=nextSnapshot && transport.PendingSendBytes<65536)
+                if(IsHost && InWorld && now>=nextSnapshot)
                 {
-                    nextSnapshot=now+1f/30;
-                    Send(new LanMessage{type="snapshot",snapshot=Snapshot()});
+                    nextSnapshot=now+1f/20;
+                    var state=Snapshot();
+                    if(state.noises.Length>0) Send(new LanMessage{type="noises",noises=state.noises});
+                    state.noises=Array.Empty<NoiseSnapshot>();
+                    transport.SendLatest(JsonUtility.ToJson(new LanMessage{sessionId=sessionId,type="snapshot",snapshot=state}),"snapshot");
                 }
                 transport?.Flush();
             }
@@ -286,12 +345,13 @@ namespace UnderAvatar
         }
         void ApplyGuestSnapshot(MatchSnapshot state)
         {
+            if(state==null) return;
             if(prediction==null || prediction.Match!=App.Session) prediction=new ClientPrediction(App.Session);
-            HostFps=state.hostFps;prediction.Receive(state);
+            HostFps=state.hostFps;prediction.Receive(state);lastSnapshotReceived=Time.realtimeSinceStartup;
         }
         void ResetInputs()
         {
-            remoteInputs.Clear();receivedInput=confirmedInput=0;remoteCredit=0;prediction=null;
+            remoteInputs.Clear();inputBatch.Clear();pendingSnapshot=null;receivedInput=confirmedInput=0;remoteCredit=0;prediction=null;nextInputSend=0;
         }
         void Fail(string message)
         {
@@ -299,6 +359,7 @@ namespace UnderAvatar
         }
         public void Disconnect()
         {
+            if(App) App.CancelComic();
             if(transport!=null)
             {
                 try { Send(new LanMessage{type="leave",text="对方已离开房间。"});transport.Flush(); } catch { }

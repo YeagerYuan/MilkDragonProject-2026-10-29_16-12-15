@@ -19,7 +19,7 @@ namespace UnderAvatar.Tests
             for(int i=0;i<600 && !level.Crashed;i++) level.Tick(1f/60);
             Assert.That(level.Crashed,Is.True); Assert.That(level.Score,Is.Zero); Assert.That(level.Complete,Is.False);
             level.Flap(); Assert.That(level.Running,Is.True); Assert.That(level.Crashed,Is.False);
-            Assert.That(level.TargetScore,Is.EqualTo(15)); Assert.That(level.Score,Is.Zero);
+            Assert.That(level.TargetScore,Is.EqualTo(14)); Assert.That(level.Score,Is.Zero);
         }
 
         [TestCase(1)] [TestCase(42)] [TestCase(123)]

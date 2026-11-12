@@ -78,9 +78,19 @@ namespace UnderAvatar
             var camera=session.Reporter.View;
             return Physics.Raycast(camera.transform.position,camera.transform.forward,out var hit,3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore)?hit.collider.GetComponentInParent<TaskProp>():null;
         }
+        public void ClearPrediction() {predictionSequence=0;}
+        public void DropOnDeath()
+        {
+            if(!Held) return;
+            var prop=Held;
+            // Prefer a clear surface in front of the player; otherwise use its last safe resting spot.
+            if(TryPlacement(out var position,out var yaw)) {prop.goalPosition=position;prop.goalRotation=Vector3.up*yaw;}
+            prop.transform.SetPositionAndRotation(prop.goalPosition,Quaternion.Euler(prop.goalRotation));
+            HeldId=null;predictionSequence=0;prop.Body.enabled=true;
+        }
         public bool Interact(bool predict=false,int sequence=0)
         {
-            if(!session || session.Finished || session.Reporter.Hidden) return false;
+            if(!session || session.Finished || session.ReporterDying || session.Reporter.Hidden) return false;
             if(Held)
             {
                 if(TryPlacement(out var position,out var yaw))
@@ -112,6 +122,12 @@ namespace UnderAvatar
             // Do not permit placing an obstacle through either player's body.
             foreach(var actor in new[]{session.Reporter.transform,session.Streamer.transform})
                 if(Vector3.Distance(new Vector3(bottom.x,actor.position.y,bottom.z),actor.position)<Mathf.Max(half.x,half.z)+.35f && Mathf.Abs(bottom.y-actor.position.y)<1.8f) return false;
+            if(!session.IsTraining)
+            {
+                var spawn=session.ReporterSpawn;
+                if(Mathf.Abs(bottom.x-spawn.x)<half.x+.35f && Mathf.Abs(bottom.z-spawn.z)<half.z+.35f && bottom.y<spawn.y+1.8f && bottom.y+half.y*2>spawn.y)
+                    return false; // Keep the configured respawn capsule clear of portable props.
+            }
             return true;
         }
         public TaskPropSnapshot[] Capture() => Props.Select(p=>new TaskPropSnapshot{id=p.Data.id,position=p.transform.position,rotation=p.transform.eulerAngles}).ToArray();

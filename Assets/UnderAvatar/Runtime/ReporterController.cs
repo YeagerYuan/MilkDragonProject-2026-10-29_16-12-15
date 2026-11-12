@@ -50,7 +50,7 @@ namespace UnderAvatar
             View=head.AddComponent<Camera>(); View.nearClipPlane=.05f; View.farClipPlane=150; View.fieldOfView=75;
             View.cullingMask=~LayerMask.GetMask("UA_Sound","UA_Reporter");
             View.clearFlags=CameraClearFlags.SolidColor;View.backgroundColor=Color.black;
-            Vision=VisionLight.Create(View,()=>session.Settings.reporterVision,"UA_Reporter",()=>!Hidden);
+            Vision=VisionLight.Create(View,()=>session.Settings.reporterVision,"UA_Reporter",()=>!Hidden && (!session.IsStreamerPlayer || !session.Abilities || !session.Abilities.Invisible));
             head.AddComponent<AudioListener>();
             posture=new CharacterPosture(body,head.transform,null,1.65f);
             SetCursor(false);
@@ -123,13 +123,15 @@ namespace UnderAvatar
 
         public void SetPhone(bool open)
         {
-            if(Hidden) return;
+            if(Hidden || session.ReporterDying) return;
             if(open && session.TaskWorld?.Held) {session.Notice("请先放下道具再打开手机。");return;}
             bool changed=PhoneOpen!=open;PhoneOpen=open;
             if(changed && IsHuman) session.SetPhoneMenu(open);
         }
         public void SetCursor(bool released)
         {
+            // Snapshot reconciliation must not steal the cursor from an open local menu.
+            released|=session.DebugOpen || session.LocalPhoneMenuOpen || session.Finished || session.App.SettingsOpen || DocumentManager.BlocksGameplayInput;
             Cursor.lockState=released?CursorLockMode.None:CursorLockMode.Locked;
             Cursor.visible=released;
         }
@@ -140,6 +142,25 @@ namespace UnderAvatar
             motion.Reset();Physics.SyncTransforms();
         }
 
+        public void BeginDeath()
+        {
+            RestoreHidingCamera();
+            body.enabled=false;
+            if(Hidden) transform.position=hidingExit;
+            Hidden=false;HidingPlaceId=null;PhoneOpen=false;Sneaking=false;motion.Reset();
+            posture.SetCrouched(false,true);Appearance.SetVisible(true);
+        }
+        public void RestoreView()
+        {
+            View.transform.localPosition=Vector3.up*(Crouched?.88f:1.65f);
+            View.transform.localRotation=Quaternion.Euler(pitch,0,0);
+        }
+        public void RespawnAt(Vector3 position,float yaw)
+        {
+            body.enabled=false;Hidden=false;HidingPlaceId=null;PhoneOpen=false;Sneaking=false;
+            posture.SetCrouched(false,true);transform.SetPositionAndRotation(position,Quaternion.Euler(0,yaw,0));
+            pitch=vertical=0;motion.Reset();RestoreView();body.enabled=true;Physics.SyncTransforms();
+        }
         public void SetLookAt(Vector3 target)
         {
             Vector3 delta=target-View.transform.position;
@@ -156,7 +177,7 @@ namespace UnderAvatar
                 if(!session.IsAuthority && !IsHuman && replica!=null) SmoothReplica();
                 return;
             }
-            if(!IsHuman || session.Finished || session.DebugOpen || !session.InputCaptured || DocumentManager.BlocksGameplayInput) return;
+            if(!IsHuman || session.ReporterDying || session.Finished || session.DebugOpen || !session.InputCaptured || DocumentManager.BlocksGameplayInput) return;
             var keys=Keyboard.current;
             if(keys==null) return;
             if(keys.eKey.wasPressedThisFrame) { Interact(); if(Hidden) return; }
@@ -175,7 +196,7 @@ namespace UnderAvatar
 
         public void ApplyCommand(PlayerCommand command,float dt)
         {
-            if(!session.IsAuthority || session.Finished) return;
+            if(!session.IsAuthority || session.Finished || session.ReporterDying) return;
             View.aspect=command.aspect;
             if(command.interact) Interact();
             if(Hidden) return;
@@ -190,7 +211,7 @@ namespace UnderAvatar
         }
         public ActorSnapshot CapturePose() => new ActorSnapshot
         {
-            position=transform.position,yaw=transform.eulerAngles.y,pitch=pitch,vertical=vertical,
+            lifeEpoch=session.ReporterLifeEpoch,position=transform.position,yaw=transform.eulerAngles.y,pitch=pitch,vertical=vertical,
             crouched=Crouched,hidden=Hidden,phone=PhoneOpen,sneaking=Sneaking,hidingPlaceId=HidingPlaceId,planarVelocity=motion.Velocity
         };
         public void ApplyPose(ActorSnapshot value,float serverTime=0)
@@ -206,17 +227,22 @@ namespace UnderAvatar
                 transform.position=value.position;
             replica=value;Hidden=value.hidden;PhoneOpen=value.phone;Sneaking=value.sneaking;HidingPlaceId=value.hidingPlaceId;
             posture.SetCrouched(value.crouched,true);Appearance.SetVisible(!Hidden);Appearance.Receive(value,serverTime);
-            if(IsHuman) body.enabled=!Hidden;
+            if(IsHuman) body.enabled=!Hidden && !session.ReporterDying;
         }
         public void PredictLook(Vector2 look)
         {
-            if(Hidden || session.Finished) return;
+            if(Hidden || session.Finished || session.ReporterDying) return;
             transform.Rotate(0,look.x*.12f,0);pitch=Mathf.Clamp(pitch-look.y*.12f,-85,85);
+            View.transform.localRotation=Quaternion.Euler(pitch,0,0);
+        }
+        public void RestorePredictedLook(ActorSnapshot pose)
+        {
+            transform.rotation=Quaternion.Euler(0,pose.yaw,0);pitch=pose.pitch;
             View.transform.localRotation=Quaternion.Euler(pitch,0,0);
         }
         public void PredictCommand(PlayerCommand command,float dt,bool replay)
         {
-            if(!IsHuman || session.IsAuthority || Hidden || session.Finished) return;
+            if(!IsHuman || session.IsAuthority || Hidden || session.Finished || session.ReporterDying) return;
             if(replay) PredictLook(new Vector2(command.lookX,command.lookY));
             SetCrouched(command.crouch);MoveInput(new Vector2(command.x,command.y),command.sneak,dt,replay);
             if(command.phone) {if(replay) PhoneOpen=!PhoneOpen;else SetPhone(!PhoneOpen);}
@@ -234,6 +260,7 @@ namespace UnderAvatar
 
         public void Interact()
         {
+            if(session.ReporterDying) return;
             if(Hidden)
             {
                 if(Physics.CheckCapsule(hidingExit+Vector3.up*.4f,hidingExit+Vector3.up*1.5f,.3f,PrototypeLayers.SolidMask,QueryTriggerInteraction.Ignore))
@@ -265,7 +292,7 @@ namespace UnderAvatar
         public float MovementSpeed(bool sneak) => session.Settings.reporterSpeed*(sneak || Crouched?.45f:1);
         public void MoveInput(Vector2 input,bool sneak,float deltaTime,bool replay=false)
         {
-            if(Hidden || session.Finished || !body.enabled) return;
+            if(Hidden || session.Finished || session.ReporterDying || !body.enabled) return;
             input=Vector2.ClampMagnitude(input,1);
             Sneaking=(sneak || Crouched) && input.sqrMagnitude>.01f;
             if(body.isGrounded && vertical<0) vertical=-2;
@@ -291,7 +318,7 @@ namespace UnderAvatar
 
         public void Hide(PlacedItemView wardrobe)
         {
-            if(!session.IsAuthority || !wardrobe || !wardrobe.IsHidingPlace || session.Finished || Hidden) return;
+            if(!session.IsAuthority || !wardrobe || !wardrobe.IsHidingPlace || session.Finished || session.ReporterDying || Hidden) return;
             if(session.TaskWorld?.Held) {session.Notice("请先放下道具再躲藏。");return;}
             if(wardrobe.IsOpen) { if(IsHuman) session.Notice("藏身点正在被翻查，稍后再躲藏。");return; }
             hidingExit=transform.position; PhoneOpen=false; Sneaking=false; Hidden=true;

@@ -68,6 +68,7 @@ namespace UnderAvatar.Editor
             var imported=BuildingData.FromJson(File.ReadAllText(path));
             Commit(asset,"导入地图 JSON",data=>
             {
+                data.useCustomReporterSpawn=imported.useCustomReporterSpawn;data.reporterSpawnCell=imported.reporterSpawnCell;data.reporterSpawnYaw=imported.reporterSpawnYaw;
                 data.name=imported.name; data.floorHeight=imported.floorHeight; data.gridSize=imported.gridSize;
                 data.halfWidth=imported.halfWidth; data.halfDepth=imported.halfDepth; data.floors=imported.floors;
                 data.useTaskEditor=imported.useTaskEditor;data.tasks=imported.tasks;data.taskProps=imported.taskProps;data.taskClues=imported.taskClues;

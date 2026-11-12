@@ -22,6 +22,8 @@ namespace UnderAvatar
     {
         public CharacterVisualSettings reporter=new CharacterVisualSettings();
         public CharacterVisualSettings streamer=new CharacterVisualSettings();
+        public CharacterVisualSettings hallStreamer=new CharacterVisualSettings();
+        public bool hallStreamerInSingle=true;
         [Range(.03f,.25f)] public float interpolationDelay=.1f;
         [Range(0,.15f)] public float maxExtrapolation=.08f;
         [Range(.01f,.15f)] public float positionSmoothing=.04f;

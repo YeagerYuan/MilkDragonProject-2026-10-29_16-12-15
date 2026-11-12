@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60466023591fd8c42a88cf2c6a9f88c3, type: 3}
   m_Name: GameAudio
   m_EditorClassIdentifier: UnderAvatar.Runtime::UnderAvatar.GameAudioProfile
+  menuMusic: {fileID: 8300000, guid: 3b6581098499c5740932366ffbb60c85, type: 3}
+  menuMusicVolume: 0.24
+  comicPageTurn: {fileID: 8300000, guid: e061e55c78923c24f902f2b6a59d69c5, type: 3}
+  comicPageVolume: 0.65
+  streamerLaugh: {fileID: 8300000, guid: 2983e88021c2ba1498c9a45ea16d1eda, type: 3}
+  laughVolume: 0.8
   walkSteps:
   - {fileID: 8300000, guid: 753c4626cd1c80a43b22dde86664898c, type: 3}
   - {fileID: 8300000, guid: deae92d4b7ab2394e93ac24b61b3ffdd, type: 3}
@@ -39,6 +45,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f84c9efe139538445857d631bb6d7501, type: 3}
   shutter:
   - {fileID: 8300000, guid: 75690df6352f17e49a88f0f7a25d9661, type: 3}
+  bedHide: []
+  bedHideVolume: 1
+  bedHideDistanceMultiplier: 1.5
   doorVolume: 0.75
   shutterVolume: 0.8
   breathingLoop: {fileID: 8300000, guid: 7cf40940133e60d4189d2ec7574d8976, type: 3}

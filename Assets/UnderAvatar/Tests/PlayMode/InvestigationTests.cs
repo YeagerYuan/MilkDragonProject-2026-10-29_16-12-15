@@ -52,7 +52,7 @@ namespace UnderAvatar.Tests
             var doc=page.AddComponent<DocumentInteractable>();JsonUtility.FromJsonOverwrite("{\"photoTargetId\":\"test_document\"}",doc);
             documentData=ScriptableObject.CreateInstance<DocumentData>();documentData.text="Readable task document";doc.Initialize(documentData);
             match.World.Data.tasks.Single().targetId=doc.PhotoTargetId;match.RegisterDocumentTargets(documents);
-            match.Reporter.Teleport(new Vector3(100,0,97));match.Reporter.SetLookAt(doc.PhotoPoint);Physics.SyncTransforms();
+            match.Reporter.Teleport(new Vector3(100,0,97.5f));match.Reporter.SetLookAt(doc.PhotoPoint);Physics.SyncTransforms();
             Assert.That(match.TargetInPhoto(doc.PhotoTargetId),Is.True);
             Assert.That(doc.enabled,Is.True,"Registering a photo target must preserve document reading.");
             var reader=DocumentManager.Instance;reader.OpenDocument(documentData,match);yield return null;
@@ -82,7 +82,7 @@ namespace UnderAvatar.Tests
         }
         [UnityTest] public IEnumerator StreamerAndComputerMustShareTheShotAndEvidenceSurvivesMovement()
         {
-            Start();yield return null;
+            Start();match.Settings.taskPhotoDistance=6;yield return null;
             var liveTask=match.World.Data.tasks.Single();
             liveTask.targetId=InvestigationData.StreamerTarget;
             liveTask.additionalTargetIds.Add(InvestigationData.ComputerTarget);
@@ -116,6 +116,7 @@ namespace UnderAvatar.Tests
             wall.layer=PrototypeLayers.Get("UA_Target");Physics.SyncTransforms();
             Assert.That(match.TaskInPhoto(streamerOnly),Is.False,"Task-prop colliders must also obscure the streamer.");
             Object.Destroy(wall);yield return null;
+            typeof(StreamerActor).GetProperty("State").SetValue(match.Streamer,StreamerState.Streaming);
             match.TakePhoto();Assert.That(match.PendingPhoto.objectCorrect,Is.True);
             match.Streamer.transform.position+=Vector3.right*20;Physics.SyncTransforms();
             Assert.That(match.TaskInPhoto(liveTask),Is.False);
@@ -142,7 +143,7 @@ namespace UnderAvatar.Tests
             match.ApplyPhoneCommand(new PlayerCommand{cancelPhoto=true});Assert.That(match.PendingPhoto,Is.Null);Assert.That(match.Score,Is.EqualTo(5));
             for(int i=0;i<5;i++)
             {
-                yield return new WaitForSeconds(.27f);match.TakePhoto();int id=match.PendingPhoto.id;
+                yield return new WaitForSeconds(.27f);match.Reporter.SetPhone(true);match.TakePhoto();int id=match.PendingPhoto.id;
                 Assert.That(match.Score,Is.EqualTo(5-i));match.UploadPhoto(id);match.UploadPhoto(id);
                 Assert.That(match.Score,Is.EqualTo(4-i));
             }
@@ -213,6 +214,7 @@ namespace UnderAvatar.Tests
             match.Reporter.SetLookAt(match.Streamer.PhotoPoint);Physics.SyncTransforms();
             match.TakePhoto();Assert.That(match.PendingPhoto.live,Is.True);Assert.That(match.StreamerPhotoAvailable,Is.False);
             int id=match.PendingPhoto.id;match.UploadPhoto(id);Assert.That(match.StreamerPhotos,Is.EqualTo(1));
+            match.SelectTask(InvestigationData.LiveTask);
             yield return new WaitForSeconds(.27f);match.TakePhoto();Assert.That(match.PendingPhoto,Is.Null);Assert.That(match.Score,Is.EqualTo(3));
         }
     }

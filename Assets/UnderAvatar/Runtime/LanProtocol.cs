@@ -6,9 +6,9 @@ namespace UnderAvatar
 {
     [Serializable] public sealed class PlayerCommand
     {
-        public int sequence;
+        public int sequence,reporterLifeEpoch;
         public float x,y,lookX,lookY,aspect=1.777778f;
-        public bool sneak,crouch,interact,phone,action,cancelPhoto;
+        public bool sneak,crouch,interact,phone,action,cancelPhoto,laugh,invisible,decoy;
         public string taskId;
         public int uploadPhoto;
         public static PlayerCommand Read(bool captured)
@@ -20,6 +20,7 @@ namespace UnderAvatar
             c.y=(k.wKey.isPressed?1:0)-(k.sKey.isPressed?1:0);
             var mouse=Mouse.current?.delta.ReadValue()??Vector2.zero;
             c.lookX=mouse.x; c.lookY=mouse.y; c.sneak=k.shiftKey.isPressed; c.crouch=k.ctrlKey.isPressed;
+            c.laugh=k.qKey.isPressed;c.invisible=k.gKey.wasPressedThisFrame;c.decoy=k.bKey.wasPressedThisFrame;
             c.interact=k.eKey.wasPressedThisFrame; c.phone=k.fKey.wasPressedThisFrame;
             c.action=k.spaceKey.wasPressedThisFrame || Mouse.current?.leftButton.wasPressedThisFrame==true;
             return c;
@@ -29,16 +30,19 @@ namespace UnderAvatar
         static bool Finite(float f) => !float.IsNaN(f)&&!float.IsInfinity(f);
         public void Merge(PlayerCommand c)
         {
+            reporterLifeEpoch=c.reporterLifeEpoch;
+            laugh=c.laugh;invisible|=c.invisible;decoy|=c.decoy;
             x=c.x;y=c.y;sneak=c.sneak;crouch=c.crouch;aspect=c.aspect;
             lookX=Mathf.Clamp(lookX+c.lookX,-4000,4000);lookY=Mathf.Clamp(lookY+c.lookY,-4000,4000);
             interact|=c.interact;phone|=c.phone;action|=c.action;cancelPhoto|=c.cancelPhoto;
             if(c.taskId!=null) taskId=c.taskId;if(c.uploadPhoto>0) uploadPhoto=c.uploadPhoto;
         }
-        public void ConsumeEdges() { lookX=lookY=0;interact=phone=action=cancelPhoto=false;taskId=null;uploadPhoto=0; }
+        public void ConsumeEdges() { lookX=lookY=0;interact=phone=action=cancelPhoto=invisible=decoy=false;taskId=null;uploadPhoto=0; }
         public PlayerCommand Copy() => (PlayerCommand)MemberwiseClone();
     }
     [Serializable] public sealed class ActorSnapshot
     {
+        public int lifeEpoch;
         public Vector3 position;
         public Vector3 planarVelocity;
         public float yaw,pitch,vertical;
@@ -47,6 +51,7 @@ namespace UnderAvatar
     }
     [Serializable] public sealed class FlappySnapshot
     {
+        public int originalTarget,maxFailureReduction;
         public int level,target,score,crashes;
         public float height,velocity;
         public bool running,crashed;
@@ -57,6 +62,17 @@ namespace UnderAvatar
     [Serializable] public sealed class NoiseSnapshot { public int id; public Vector3 position; public NoiseKind kind; public bool audibleOnly; }
     [Serializable] public sealed class MatchSnapshot
     {
+        public int reporterLives,reporterLifeEpoch;
+        public bool reporterDying;
+        public float reporterDeathRemaining,reporterProtectionRemaining;
+        public int uploadFeedbackId;
+        public bool uploadFeedbackSuccess;
+        public string uploadFeedbackTitle,uploadFeedbackDetail;
+        public float uploadFeedbackRemaining;
+        public bool laughing;
+        public float laughEnergy,outlineRemaining,invisibleRemaining;
+        public int invisibleCharges,decoyCharges;
+        public DecoySnapshot[] decoys;
         public ActorSnapshot reporter,streamer;
         public StreamerState state;
         public int broadcast,score,photos,photographedRound,messageId,inputAck;
@@ -78,7 +94,7 @@ namespace UnderAvatar
     }
     [Serializable] public sealed class LanMessage
     {
-        public const int Version=12;
+        public const int Version=17;
         public int protocol=Version;
         public string type,text,map;
         public string trainingMap;
@@ -89,6 +105,8 @@ namespace UnderAvatar
         public float stamp;
         public MatchSettings settings;
         public PlayerCommand input;
+        public PlayerCommand[] inputs;
+        public NoiseSnapshot[] noises;
         public MatchSnapshot snapshot;
     }
 }

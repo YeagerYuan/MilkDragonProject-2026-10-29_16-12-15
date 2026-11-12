@@ -48,11 +48,33 @@ namespace UnderAvatar.Tests
             while(host.Error==null&&Time.realtimeSinceStartup<deadline) {host.Poll();yield return null;}
             Assert.That(host.Connected,Is.False);Assert.That(host.Error,Is.Not.Null);
         }
+        [Test] public void LargeUnicodeFramesAreCompressedAndRemainIncrementallyDecodable()
+        {
+            string text=string.Concat(Enumerable.Repeat("主播、狗仔和同一张地图。",10000));
+            var frame=LanFrameDecoder.Frame(text);
+            Assert.That(frame.Length,Is.LessThan(Encoding.UTF8.GetByteCount(text)/5));
+            var decoder=new LanFrameDecoder();
+            for(int i=0;i<frame.Length;i+=7) {var part=frame.Skip(i).Take(7).ToArray();decoder.Push(part,part.Length);}
+            Assert.That(decoder.Messages.Dequeue(),Is.EqualTo(text));
+        }
+        [UnityTest] public IEnumerator UnsentSnapshotsCoalesceWhileReliableEventsStayOrdered()
+        {
+            host=new LanTransport();host.Listen(0);guest=new LanTransport();guest.Connect("127.0.0.1",host.Port);
+            float deadline=Time.realtimeSinceStartup+4;
+            while((!host.Connected || !guest.Connected) && Time.realtimeSinceStartup<deadline) {host.Poll();guest.Poll();yield return null;}
+            var messages=new System.Collections.Generic.List<string>();guest.Message+=messages.Add;
+            host.Send("interaction");
+            for(int i=0;i<100;i++) host.SendLatest("state "+i,"snapshot");
+            host.Send("uploaded");host.Flush();
+            while(messages.Count<3 && Time.realtimeSinceStartup<deadline) {host.Poll();guest.Poll();yield return null;}
+            Assert.That(messages,Is.EqualTo(new[]{"interaction","state 99","uploaded"}));
+            Assert.That(host.PendingSendBytes,Is.Zero);
+        }
         [UnityTest] public IEnumerator PlayStartsAtRoleSelectionAndBothSoloRolesRemainAvailable()
         {
             root=new GameObject("LauncherTest");var app=root.AddComponent<PrototypeApp>();
             yield return null;Assert.That(app.Session,Is.Null);
-            app.StartSingle(TestRole.Reporter);Assert.That(app.Session.Role,Is.EqualTo(TestRole.Reporter));
+            app.StartSingle(TestRole.Reporter);app.Comic.Finish();Assert.That(app.Session.Role,Is.EqualTo(TestRole.Reporter));
             Assert.That(app.Session.IsTraining,Is.True);app.SetSingleReady(true);app.StartSingleMatch();
             Assert.That(app.Session.Streamer.Controller.Driver,Is.Not.Null);
             app.ReturnToMenu();yield return null;

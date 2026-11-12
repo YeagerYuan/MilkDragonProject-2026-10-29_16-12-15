@@ -9,6 +9,9 @@ namespace UnderAvatar
         MinigameLevel level;
         BroadcastOverlay overlay;
         float restartAt;
+        readonly MatchSettings rules=new MatchSettings();
+        float ReturnDuration => rules.returnGraceSeconds+Mathf.Ceil(rules.initialFans/(float)rules.lateFanLoss)*rules.lateFanLossInterval;
+        int FansAt(float elapsed) => Mathf.Max(0,rules.initialFans-Mathf.Max(0,Mathf.FloorToInt((elapsed-rules.returnGraceSeconds)/rules.lateFanLossInterval))*rules.lateFanLoss);
         [Range(0,4),Tooltip("0: full cycle; 1: hunt announcement; 2: hunt; 3: end announcement; 4: viewer loss. Number keys switch preview screens.")]
         public int previewScreen;
         float selectedAt;
@@ -24,7 +27,7 @@ namespace UnderAvatar
             if(keyboard!=null)
                 for(int i=0;i<=4;i++) if(keyboard[PreviewKeys[i]].wasPressedThisFrame) {previewScreen=i;selectedAt=Time.unscaledTime;}
             if(level.Complete)
-            {if(restartAt==0) restartAt=Time.unscaledTime+63;if(Time.unscaledTime>=restartAt) {level.Start(level.LevelNumber+1,12);restartAt=0;}return;}
+            {if(restartAt==0) restartAt=Time.unscaledTime+rules.patrolSeconds+ReturnDuration;if(Time.unscaledTime>=restartAt) {level.Start(level.LevelNumber+1,12);restartAt=0;}return;}
             if(level.WantsAutoFlap) level.Flap();level.Tick(Time.unscaledDeltaTime);
         }
         void OnGUI()
@@ -36,13 +39,13 @@ namespace UnderAvatar
                 if(previewScreen>0)
                 {
                     float t=Time.unscaledTime-selectedAt;
-                    int fans=previewScreen==4?Mathf.CeilToInt(5000*(1-Mathf.Clamp01(t/30))):5000;
-                    overlay.DrawHunt(previewScreen==1?30-t%3:20,previewScreen==3?t%3:3+t,previewScreen>=3,fans);
+                    int fans=previewScreen==4?FansAt(rules.returnGraceSeconds+t):rules.initialFans;
+                    overlay.DrawHunt(previewScreen==1?rules.patrolSeconds-t%3:20,previewScreen==3?t%3:rules.returnGraceSeconds+t,previewScreen>=3,fans,rules.patrolSeconds);
                 }
                 else if(level.Complete && restartAt>0)
                 {
-                    float elapsed=63-(restartAt-Time.unscaledTime);
-                    overlay.DrawHunt(Mathf.Max(0,30-elapsed),Mathf.Max(0,elapsed-30),elapsed>=30,Mathf.CeilToInt(5000*(1-Mathf.Clamp01((elapsed-33)/30))));
+                    float elapsed=rules.patrolSeconds+ReturnDuration-(restartAt-Time.unscaledTime);
+                    overlay.DrawHunt(Mathf.Max(0,rules.patrolSeconds-elapsed),Mathf.Max(0,elapsed-rules.patrolSeconds),elapsed>=rules.patrolSeconds,FansAt(Mathf.Max(0,elapsed-rules.patrolSeconds)),rules.patrolSeconds);
                 }
                 else overlay.Draw(level,5000);
             }

@@ -38,7 +38,7 @@ namespace UnderAvatar
                     case ItemType.Bed: text="床 / 藏身点\n狗仔：看向床按 E 躲藏\n再按 E 离开\n主播：按 E 翻查床铺\n大厅不抓捕、不扣分";break;
                     case ItemType.Furniture: text=item.IsHidingPlace?"衣柜 / 藏身点\n狗仔：看向衣柜按 E 躲藏\n再按 E 离开\n主播：按 E 翻查\n大厅不抓捕、不扣分":"家具 / 遮挡物\n练习绕行、蹲下和遮挡\nWASD 移动 · 按住 Ctrl 蹲下";break;
                     case ItemType.StreamerPC: text="主播电脑\n主播：靠近电脑按 E 体验交互\n大厅不启动小游戏\n正式对局才进行直播挑战";break;
-                    case ItemType.QuestItem: text="拍照练习物品\n狗仔：F 打开 / 收起手机\n左键或空格拍照\n大厅只练习，没有任务或计分";break;
+                    case ItemType.QuestItem: text="拍照练习物品\n狗仔：F 打开 / 收起手机\nQ 进入相机，左键或空格拍照\n任务图标选任务；地图图标看楼层";break;
                     case ItemType.Stairs: text="折返楼梯\n直接走上 / 走下\n不需要按 E\n二楼也是练习区域";break;
                     default:text=item.DisplayName+"\n自由观察和碰撞练习";break;
                 }
@@ -46,6 +46,7 @@ namespace UnderAvatar
                 if(item.Data.type==ItemType.Furniture && !item.IsHidingPlace) position+=Vector3.back*2;
                 Sign(position,text,2.3f);
             }
+            Sign(new Vector3(2.8f,2.5f,-2.2f),"技能练习区\n狗仔：G 隐身，练习次数不限\n主播：按住 Q 大笑，穿墙显示伙伴\n躲进床 / 柜内不会显示轮廓",3.6f);
             Sign(new Vector3(-6,2.4f,-8.7f),"欢迎来到教学大厅\nWASD 移动 · Shift 静步 · Ctrl 蹲下\n"+(match.IsNetwork
                 ? "两位玩家可以自由练习物体交互\nTab 打开大厅菜单，双方再次准备\n由房主开始正式对局"
                 : "自由练习物体交互，没有倒计时\nTab 打开大厅菜单，准备进入对局\n再点击开始正式 AI 对战"),4.8f,180);
@@ -71,6 +72,9 @@ namespace UnderAvatar
             foreach(var label in labels)
             {
                 if(!label.mesh || !label.root.gameObject.activeSelf) continue;
+                var camera=match.IsStreamerPlayer?match.Streamer.View:match.Reporter.View;
+                Vector3 away=label.root.position-camera.transform.position;away.y=0;
+                if(away.sqrMagnitude>.01f) label.root.rotation=Quaternion.LookRotation(away);
                 var size=label.mesh.GetComponent<MeshRenderer>().localBounds.size;
                 if(size.x>.001f && size.y>.001f) label.mesh.transform.localScale=Vector3.one*Mathf.Min(1,label.width/size.x,label.height/size.y);
             }

@@ -8,7 +8,7 @@ namespace UnderAvatar
         readonly Dictionary<NoiseKind,int> previous=new Dictionary<NoiseKind,int>();
         readonly List<AudioClip> generated=new List<AudioClip>();
         MatchSession session;
-        AudioClip chair,success;
+        AudioClip chair,success,failure;
         AudioSource breath;
         public GameAudioProfile Profile { get; private set; }
         public float WalkInterval => Profile?Mathf.Max(.1f,Profile.walkInterval):.48f;
@@ -19,6 +19,7 @@ namespace UnderAvatar
             session=match; Profile=profile?profile:Resources.Load<GameAudioProfile>("GameAudio");
             chair=Profile && Profile.chair?Profile.chair:Create("ChairTurn",.6f,260,.55f);
             success=Profile && Profile.success?Profile.success:Create("Upload",.18f,880,0);
+            failure=Profile && Profile.uploadFailure?Profile.uploadFailure:Create("UploadFailure",.36f,155,0);
             // Private, local-only channel: breathing must never become a NoiseKind or network event.
             if(session.Role==TestRole.Reporter)
             {
@@ -35,7 +36,7 @@ namespace UnderAvatar
             var clip=Profile?Profile.breathingLoop:null;
             if(breath.clip!=clip) { breath.Stop();breath.clip=clip;breath.volume=0; }
             bool moving=clip && reporter && reporter.IsHuman && reporter.MovedLocallyRecently &&
-                !reporter.Hidden && !session.Finished && !session.DebugOpen && session.InputCaptured;
+                !reporter.Hidden && !session.ReporterDying && !session.Finished && !session.DebugOpen && session.InputCaptured;
             float target=moving?Profile.breathingVolume*(reporter.Sneaking?Profile.quietBreathingMultiplier:1):0;
             float fade=Profile?Mathf.Max(.01f,Profile.breathingFadeSeconds):.15f;
             breath.volume=Mathf.MoveTowards(breath.volume,target,Time.unscaledDeltaTime/fade);
@@ -89,7 +90,8 @@ namespace UnderAvatar
             }
             PlayClip(position,clip,true,volume,pitch,kind==NoiseKind.HideBed && Profile?Profile.bedHideDistanceMultiplier:1);
         }
-        public void Success() => PlayClip(transform.position,success,false,.7f,1);
+        public void Success() => UploadFeedback(true);
+        public void UploadFeedback(bool accepted) => PlayClip(transform.position,accepted?success:failure,false,Profile?Profile.uploadFeedbackVolume:.8f,1);
         void PlayClip(Vector3 position,AudioClip clip,bool spatial,float volume,float pitch,float distanceMultiplier=1)
         {
             if(!clip || volume<=0) return;
@@ -100,6 +102,7 @@ namespace UnderAvatar
             source.maxDistance=Profile?Mathf.Max(source.minDistance,Profile.maxDistance):28;
             source.maxDistance*=Mathf.Max(1,distanceMultiplier);
             source.rolloffMode=AudioRolloffMode.Linear;source.volume=volume;source.pitch=Mathf.Clamp(pitch,.5f,2);
+            if(spatial) go.AddComponent<FloorSpatialAudio>().Initialize(session,source,Profile,volume);
             source.Play();Destroy(go,clip.length/source.pitch+.1f);
         }
         void OnDestroy() { foreach(var clip in generated) PrototypeVisuals.Release(clip); }

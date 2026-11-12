@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UnderAvatar.Editor
 {
-    public sealed class BuildingEditorWindow : EditorWindow
+    public sealed partial class BuildingEditorWindow : EditorWindow
     {
         static readonly string[] Names={"墙体","交互门","家具 / 衣柜","任务物品","主播电脑桌","折返楼梯","床","自定义物体"};
         [SerializeField] string definitionId="";
@@ -106,6 +106,7 @@ namespace UnderAvatar.Editor
                 scroll=EditorGUILayout.BeginScrollView(scroll);
                 EditorGUILayout.LabelField("测试设置（Play 后选择角色）",EditorStyles.boldLabel);
                 if(GUILayout.Button("配置狗仔 / 主播模型及联机动画")) CharacterVisualProfileEditor.Open();
+                if(GUILayout.Button("画质 / 狗仔与主播模糊效果")) DVRenderSettingsWindow.Open();
                 EditorGUI.BeginChangeCheck();
                 var role=(TestRole)EditorGUILayout.Popup("操控角色",(int)target.Role,new[]{"狗仔（AI 主播）","主播（AI 狗仔）"});
                 int targetScore=EditorGUILayout.IntField("Flappy Bird 通关分数",target.Settings.flappyTargetScore);
@@ -118,6 +119,7 @@ namespace UnderAvatar.Editor
                 EditorGUILayout.HelpBox("Play 后可选狗仔 / 主播单人测试，或两台电脑局域网对战。联机使用房主关卡和参数。",MessageType.None);
                 DrawVisionSettings(target);
                 DrawGameplaySettings(target);
+                DrawReporterSpawn();
                 DrawDocumentSettings(target);
                 if(GUILayout.Button("任务编辑器 / 拍摄与搬运任务",GUILayout.Height(34))) TaskEditorWindow.Open();
                 if(GUILayout.Button("自由摆放 / 柜顶装饰物",GUILayout.Height(34))) {painting=false;ClearGhost();FreePlacementWindow.Open();}
@@ -140,12 +142,13 @@ namespace UnderAvatar.Editor
                 EditorGUILayout.Space(6);
                 EditorGUILayout.LabelField("统一建筑尺寸（作用于全部楼层）",EditorStyles.boldLabel);
                 EditorGUI.BeginChangeCheck();
-                float wallHeight=EditorGUILayout.DelayedFloatField("墙高 / 层高（米）",data.floorHeight);
+                float wallHeight=EditorGUILayout.DelayedFloatField("楼层间距（米）",data.floorHeight);
                 int width=EditorGUILayout.DelayedIntField("楼层宽度（格）",data.WidthCells);
                 int depth=EditorGUILayout.DelayedIntField("楼层深度（格）",data.DepthCells);
                 if(EditorGUI.EndChangeCheck()) Try(()=>BuildingEditorModel.SetDimensions(Asset,wallHeight,width,depth));
                 EditorGUILayout.LabelField("实际尺寸",data.WidthCells*data.gridSize+" × "+data.DepthCells*data.gridSize+" 米");
-                EditorGUILayout.HelpBox("墙、楼层间距和楼梯高度同步变化；宽深使用奇数格。缩小时保留全部物品，存在冲突则提示原因。",MessageType.None);
+                EditorGUILayout.LabelField("实际墙高",data.WallHeight.ToString("0.##")+" 米");
+                EditorGUILayout.HelpBox("墙顶降低 0.25 米，避开上层楼板；楼梯仍对齐楼层地板。调整楼层间距时墙高和楼梯同步变化。宽深使用奇数格，缩小时保留全部物品，存在冲突则提示原因。",MessageType.None);
                 EditorGUILayout.BeginHorizontal();
                 if(GUILayout.Button("新增楼层")) Try(()=>{ BuildingEditorModel.AddFloor(Asset); BuildingEditorPreview.SetFloor(Asset.Data.floors.Count-1); });
                 using(new EditorGUI.DisabledScope(data.floors.Count<=1))
@@ -206,6 +209,7 @@ namespace UnderAvatar.Editor
                     {
                         var value=BuildingData.CreateDefault(); d.name=value.name; d.floors=value.floors; d.floorHeight=value.floorHeight;
                         d.gridSize=value.gridSize; d.halfWidth=value.halfWidth; d.halfDepth=value.halfDepth;
+                        d.useCustomReporterSpawn=false;d.reporterSpawnCell=Vector3Int.zero;d.reporterSpawnYaw=0;
                         d.useTaskEditor=false;d.tasks.Clear();d.taskProps.Clear();d.taskClues.Clear();
                         d.decorations.Clear();
                         d.requireLiveEvidence=value.requireLiveEvidence;
@@ -300,6 +304,15 @@ namespace UnderAvatar.Editor
             }
             EditorGUILayout.HelpBox("未指定场次使用上方默认分数；同场重复配置以最后一条为准。碰撞仍清零重试。以下飞行参数全场次一致，下次开播生效。",MessageType.None);
             void Field(string path,string label) => EditorGUILayout.PropertyField(serialized.FindProperty("settings."+path),new GUIContent(label));
+            EditorGUILayout.LabelField("狗仔生命与复活",EditorStyles.boldLabel);
+            Field("maxFailureScoreReduction","每场失败降分上限");Field("detection.initialDecoyCharges","狗仔初始假人次数");
+            Field("returnComputerPulseInterval","返程电脑高亮间隔（秒）");Field("returnComputerPulseSeconds","每次高亮时长（秒）");
+            Field("reporterLives.initialLives","狗仔初始生命");Field("reporterLives.deathSeconds","死亡动画时长（秒）");Field("reporterLives.protectionSeconds","复活保护时长（秒）");
+            EditorGUILayout.LabelField("大笑探测与隐身",EditorStyles.boldLabel);
+            Field("detection.rangeMultiplier","大笑探测距离 / 主播视野倍率");Field("detection.outlineSeconds","轮廓保留时间（秒）");
+            Field("detection.laughCapacity","满条大笑时长（秒）");Field("detection.recoverySecondsPerLaughSecond","每秒大笑额度的恢复耗时（秒）");
+            Field("detection.initialInvisibilityCharges","狗仔初始隐身次数");Field("detection.invisibilitySeconds","每次隐身时长（秒）");
+            Field("taskPhotoDistance","任务物体拍摄距离（米，受视野距离限制）");
             Field("flappyRules.flapImpulse","拍翅向上速度");Field("flappyRules.gravity","下落重力");Field("flappyRules.scrollSpeed","管道滚动速度");
             Field("flappyRules.pipeSpacing","管道横向间距");Field("flappyRules.gapSize","管道开口高度");
             EditorGUILayout.LabelField("搜查惩罚与返程开播",EditorStyles.boldLabel);
@@ -367,6 +380,7 @@ namespace UnderAvatar.Editor
         {
             if(FreePlacementWindow.EditingScene || TaskEditorWindow.EditingScene || PrefabStageUtility.GetCurrentPrefabStage()!=null) { ClearGhost();Tools.hidden=oldToolsHidden;return; }
             if(!Asset || !BuildingEditorPreview.World || EditorApplication.isPlayingOrWillChangePlaymode) { ClearGhost(); Tools.hidden=oldToolsHidden; return; }
+            DrawReporterSpawnHandle();
             var e=Event.current;
             var selectedView=Selection.activeGameObject?Selection.activeGameObject.GetComponentInParent<PlacedItemView>():null;
             bool ownsSelection=BuildingEditorPreview.Owns(selectedView);

@@ -47,6 +47,7 @@ namespace UnderAvatar.Tests
             app.World.Items.First(i=>i.Data.type==ItemType.Door).SetDoorOpen(true);
             Assert.That(asset.Data.ToJson(),Is.EqualTo(original));
             app.RestartGame();
+            if(app.ComicOpen) app.Comic.Finish();
             Assert.That(app.Session,Is.Not.Null,app.StartupError);
             Assert.That(app.Session.IsTraining,Is.True);
             Assert.That(asset.Data.ToJson(),Is.EqualTo(original));

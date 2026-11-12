@@ -14,6 +14,7 @@ namespace UnderAvatar.Tests
             var root=new GameObject("DocumentPreviewTest");var building=ScriptableObject.CreateInstance<BuildingAsset>();
             try
             {
+                building.SetData(AssetDatabase.LoadAssetAtPath<BuildingAsset>("Assets/UnderAvatar/Levels/DefaultBuilding.asset").CreateRuntimeCopy());
                 var app=root.AddComponent<PrototypeApp>();app.Building=building;
                 string path=AssetDatabase.GetAssetPath(app.DocumentPropsPrefab);
                 var before=AssetDatabase.GetAssetDependencyHash(path);
@@ -21,6 +22,8 @@ namespace UnderAvatar.Tests
                 Assert.That(BuildingEditorPreview.Error,Is.Null);
                 var docs=BuildingEditorPreview.Documents;
                 Assert.That(docs,Is.Not.Null);
+                // Authored documents now span multiple floors; compare all enabled floors.
+                BuildingEditorPreview.SetFloor(building.Data.floors.Count-1);
                 Assert.That(docs.GetComponentsInChildren<DocumentInteractable>().Length,Is.EqualTo(app.DocumentPropsPrefab.GetComponentsInChildren<DocumentInteractable>().Length));
                 Assert.That(docs.GetComponentsInChildren<Renderer>().Length,Is.GreaterThan(0));
                 Assert.That(docs.GetComponentInChildren<DocumentManager>(true),Is.Null);

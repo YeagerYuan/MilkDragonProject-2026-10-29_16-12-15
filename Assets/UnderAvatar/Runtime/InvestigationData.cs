@@ -5,10 +5,13 @@ using UnityEngine;
 
 namespace UnderAvatar
 {
+    public enum TaskReward { None, Invisibility, Decoy }
     public enum InvestigationKind { Photograph, PlaceAndPhotograph }
     [Serializable] public sealed class InvestigationTaskData
     {
         public string id=Guid.NewGuid().ToString("N"),title="新任务",description="阅读线索，找到正确的物体并拍照上传。",targetId="";
+        public TaskReward reward;
+        public bool IncludesStreamer => PhotoTargets.Contains(InvestigationData.StreamerTarget);
         public InvestigationKind kind;
         public List<string> additionalTargetIds=new List<string>();
         public IEnumerable<string> PhotoTargets => new[]{targetId}.Concat(additionalTargetIds??Enumerable.Empty<string>());
@@ -65,7 +68,7 @@ namespace UnderAvatar
             var tasks=new HashSet<string>();
             foreach(var t in map.tasks)
             {
-                if(t==null || string.IsNullOrWhiteSpace(t.id) || t.id==LiveTask || !tasks.Add(t.id) || string.IsNullOrWhiteSpace(t.title) || string.IsNullOrWhiteSpace(t.description) || !Enum.IsDefined(typeof(InvestigationKind),t.kind)) throw new ArgumentException("任务 ID、名称、描述或类型无效。");
+                if(t==null || string.IsNullOrWhiteSpace(t.id) || t.id==LiveTask || !tasks.Add(t.id) || string.IsNullOrWhiteSpace(t.title) || string.IsNullOrWhiteSpace(t.description) || !Enum.IsDefined(typeof(TaskReward),t.reward) || !Enum.IsDefined(typeof(InvestigationKind),t.kind)) throw new ArgumentException("任务 ID、名称、描述或类型无效。");
                 // An empty target is a valid draft; starting a match rejects drafts.
                 if(!string.IsNullOrEmpty(t.targetId) && !ids.Contains(t.targetId) && !IsDocumentTarget(t.targetId)) throw new ArgumentException("任务引用的目标物体不存在，请先解除任务绑定。");
                 if(t.additionalTargetIds==null) t.additionalTargetIds=new List<string>();

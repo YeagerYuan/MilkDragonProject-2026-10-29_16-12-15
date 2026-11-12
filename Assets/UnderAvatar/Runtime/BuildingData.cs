@@ -47,6 +47,10 @@ namespace UnderAvatar
     public sealed class BuildingData
     {
         public int version = 1;
+        public bool useCustomReporterSpawn;
+        public Vector3Int reporterSpawnCell;
+        public float reporterSpawnYaw;
+        public Vector3 ReporterSpawnPosition => new Vector3(reporterSpawnCell.x*gridSize,reporterSpawnCell.y*floorHeight+.05f,reporterSpawnCell.z*gridSize);
         public bool useTaskEditor;
         public bool requireLiveEvidence=true;
         public List<InvestigationTaskData> tasks=new List<InvestigationTaskData>();
@@ -62,7 +66,10 @@ namespace UnderAvatar
 
         public int WidthCells => halfWidth*2+1;
         public int DepthCells => halfDepth*2+1;
-        public float WallHeight => floorHeight;
+        // Floor slabs extend 0.24 m below their walking surface. Keep wall tops below that underside.
+        public const float WallTopInset = .25f;
+        public static float WallHeightFor(float floorSpacing) => floorSpacing-WallTopInset;
+        public float WallHeight => WallHeightFor(floorHeight);
         public bool ContainsCell(int x, int z) => Mathf.Abs(x) <= halfWidth && Mathf.Abs(z) <= halfDepth;
         public Vector3 Position(int floor, PlacedItemData item) =>
             new Vector3(item.gridX * gridSize, floor * floorHeight, item.gridZ * gridSize);
@@ -132,6 +139,8 @@ namespace UnderAvatar
             }
             if(taskProps!=null && taskProps.Any(p=>p!=null && ids.Contains(p.id))) throw new ArgumentException("任务道具与建筑物体的 ID 不能重复。");
             InvestigationData.Validate(this);
+            if(useCustomReporterSpawn && (!InvestigationData.Finite(reporterSpawnYaw) || reporterSpawnCell.y<0 || reporterSpawnCell.y>=floors.Count || !ContainsCell(reporterSpawnCell.x,reporterSpawnCell.z) || At(reporterSpawnCell.y,reporterSpawnCell.x,reporterSpawnCell.z)!=null || !new BuildingNavigation(this).Walkable(reporterSpawnCell)))
+                throw new ArgumentException("狗仔出生点必须位于有效楼层的空地，不能放在墙、家具或楼梯洞口内。");
         }
 
         static bool ValidSize(float value) => !float.IsNaN(value) && !float.IsInfinity(value) && value>=.1f;
@@ -140,9 +149,14 @@ namespace UnderAvatar
         {
             if (floors.Count == 1) throw new InvalidOperationException("至少保留一层楼。");
             if (index < 0 || index >= floors.Count) throw new ArgumentOutOfRangeException(nameof(index));
+            if(useCustomReporterSpawn)
+            {
+                if(reporterSpawnCell.y==index) throw new InvalidOperationException("请先把狗仔出生点移到其他楼层，再删除本层。");
+            }
             Func<Vector3,bool> onFloor=p=>Mathf.FloorToInt(Mathf.Max(0,p.y)/floorHeight)==index;
             if(decorations.Any(p=>onFloor(p.position)) || taskProps.Any(p=>onFloor(p.position)) || taskClues.Any(c=>onFloor(c.position)) || tasks.Any(t=>t.kind==InvestigationKind.PlaceAndPhotograph && onFloor(t.regionPosition)))
                 throw new InvalidOperationException("该楼层有自由摆放物体、任务道具、线索或区域，请先移走或删除它们。");
+            if(useCustomReporterSpawn && reporterSpawnCell.y>index) reporterSpawnCell.y--;
             Func<Vector3,Vector3> shift=p=>p.y>=(index+1)*floorHeight?p-Vector3.up*floorHeight:p;
             foreach(var p in taskProps) p.position=shift(p.position);
             foreach(var c in taskClues) c.position=shift(c.position);

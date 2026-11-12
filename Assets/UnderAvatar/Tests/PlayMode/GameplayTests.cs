@@ -39,7 +39,7 @@ namespace UnderAvatar.Tests
             FinishFlappy(brain);
             Assert.That(match.Streamer.State,Is.EqualTo(StreamerState.Roaming));
             Assert.That(brain.TryCapture(),Is.True);
-            Assert.That(match.Result,Does.Contain("主播获胜"));
+            Assert.That(match.ReporterLives,Is.EqualTo(2));Assert.That(match.ReporterDying,Is.True);
         }
 
         [UnityTest]
@@ -158,7 +158,8 @@ namespace UnderAvatar.Tests
         public IEnumerator StreamerCanPhysicallyReturnFromAnotherFloorThroughDoorsAndStairs()
         {
             match.Reporter.Hide(app.World.Items.First(i=>i.Floor==0 && i.Data.hideable));
-            brain.transform.position=new Vector3(-8,0,-4);
+            var body=brain.GetComponent<CharacterController>();body.enabled=false;
+            brain.transform.position=new Vector3(-8,0,-4);body.enabled=true;Physics.SyncTransforms();
             match.Settings.streamerSpeed=8;
             brain.BeginReturn();
             float deadline=Time.time+15;

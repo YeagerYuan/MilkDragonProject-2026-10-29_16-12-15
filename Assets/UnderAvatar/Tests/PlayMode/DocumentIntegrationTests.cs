@@ -15,6 +15,19 @@ namespace UnderAvatar.Tests
         Keyboard keyboard;
         MatchSession match;
         DocumentManager reader;
+        InputSettings.BackgroundBehavior previousBackgroundBehavior;
+#if UNITY_EDITOR
+        InputSettings.EditorInputBehaviorInPlayMode previousEditorInputBehavior;
+#endif
+        [SetUp] public void KeepSimulatedKeyboardActiveInBackground()
+        {
+            previousBackgroundBehavior=InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
+#if UNITY_EDITOR
+            previousEditorInputBehavior=InputSystem.settings.editorInputBehaviorInPlayMode;
+            InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+#endif
+        }
         void Start(TestRole role=TestRole.Reporter,bool network=false)
         {
             keyboard=InputSystem.AddDevice<Keyboard>();
@@ -29,6 +42,10 @@ namespace UnderAvatar.Tests
         {
             if(root) Object.Destroy(root);if(wall) Object.Destroy(wall);
             if(keyboard!=null) InputSystem.RemoveDevice(keyboard);
+            InputSystem.settings.backgroundBehavior=previousBackgroundBehavior;
+#if UNITY_EDITOR
+            InputSystem.settings.editorInputBehaviorInPlayMode=previousEditorInputBehavior;
+#endif
             yield return null;
         }
         [UnityTest] public IEnumerator ImportedDocumentsHavePagesAndHallDoesNotSpawnFormalProps()
@@ -37,7 +54,7 @@ namespace UnderAvatar.Tests
             var docs=match.GetComponentsInChildren<DocumentInteractable>();
             Assert.That(docs.Length,Is.GreaterThanOrEqualTo(4));
             foreach(var doc in docs) { Assert.That(doc.Data,Is.Not.Null);Assert.That(doc.Data.pages.All(p=>p),Is.True); }
-            app.StartSingle(TestRole.Reporter);yield return null;
+            app.StartSingle(TestRole.Reporter);app.Comic.Finish();yield return null;
             Assert.That(app.Session.IsTraining,Is.True);
             Assert.That(app.Session.GetComponentsInChildren<DocumentInteractable>(),Is.Empty);
             app.SetSingleReady(true);app.StartSingleMatch();yield return null;

@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -302,7 +302,7 @@ PrefabInstance:
     - target: {fileID: 7092066856627972206, guid: fc3a099f507af8e449d7bd81133e4bc8,
         type: 3}
       propertyPath: m_Material
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: f08e57ca59ca3b84eb360b40c418bc0c, type: 2}
     - target: {fileID: 8270327704461454309, guid: fc3a099f507af8e449d7bd81133e4bc8,
         type: 3}

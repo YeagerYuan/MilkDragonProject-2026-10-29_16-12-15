@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.IO;
+using System.IO.Compression;
+using System.Diagnostics;
 
 namespace UnderAvatar
 {
@@ -33,7 +36,7 @@ namespace UnderAvatar
                 if(bodyCount==body.Length)
                 {
                     if(Messages.Count>=256) throw new InvalidOperationException("网络消息积压过多。");
-                    Messages.Enqueue(new UTF8Encoding(false,true).GetString(body));
+                    Messages.Enqueue(Decode(body));
                     body=null;headerCount=0;
                 }
             }
@@ -42,9 +45,36 @@ namespace UnderAvatar
         {
             var bytes=Encoding.UTF8.GetBytes(text);
             if(bytes.Length==0||bytes.Length>MaxFrame) throw new InvalidOperationException("关卡或网络数据过大。");
+            if(bytes.Length>512)
+            {
+                using(var stream=new MemoryStream())
+                {
+                    using(var gzip=new GZipStream(stream,CompressionLevel.Fastest,true)) gzip.Write(bytes,0,bytes.Length);
+                    var compressed=stream.ToArray();if(compressed.Length<bytes.Length) bytes=compressed;
+                }
+            }
             var frame=new byte[bytes.Length+4];int size=bytes.Length;
             frame[0]=(byte)(size>>24);frame[1]=(byte)(size>>16);frame[2]=(byte)(size>>8);frame[3]=(byte)size;
             Array.Copy(bytes,0,frame,4,size);return frame;
+        }
+        static string Decode(byte[] bytes)
+        {
+            if(bytes.Length>2 && bytes[0]==0x1f && bytes[1]==0x8b)
+            {
+                using(var input=new MemoryStream(bytes))
+                using(var gzip=new GZipStream(input,CompressionMode.Decompress))
+                using(var output=new MemoryStream())
+                {
+                    var buffer=new byte[4096];int count;
+                    while((count=gzip.Read(buffer,0,buffer.Length))>0)
+                    {
+                        if(output.Length+count>MaxFrame) throw new InvalidOperationException("解压后的网络数据过大。");
+                        output.Write(buffer,0,count);
+                    }
+                    bytes=output.ToArray();
+                }
+            }
+            return new UTF8Encoding(false,true).GetString(bytes);
         }
     }
     public sealed class LanTransport : IDisposable
@@ -52,7 +82,8 @@ namespace UnderAvatar
         TcpListener listener;
         Socket socket;
         IAsyncResult connecting;
-        readonly Queue<byte[]> outgoing=new Queue<byte[]>();
+        sealed class Packet { public byte[] Bytes; public string Key; }
+        readonly LinkedList<Packet> outgoing=new LinkedList<Packet>();
         readonly LanFrameDecoder decoder=new LanFrameDecoder();
         readonly byte[] readBuffer=new byte[32768];
         int sendOffset,queuedBytes;
@@ -77,14 +108,26 @@ namespace UnderAvatar
         }
         void Activate(Socket value)
         {
-            socket=value;socket.Blocking=false;socket.NoDelay=true;socket.SendBufferSize=16384;Connected=true;ConnectedNow?.Invoke();
+            socket=value;socket.Blocking=false;socket.NoDelay=true;socket.SendBufferSize=4096;Connected=true;ConnectedNow?.Invoke();
         }
         public void Send(string text)
+            => QueueFrame(text,null);
+        // Only unsent replaceable state is discarded. Reliable events and partially sent frames stay ordered.
+        public void SendLatest(string text,string key) => QueueFrame(text,key);
+        void QueueFrame(string text,string key)
         {
             if(!Connected) return;
             byte[] packet=LanFrameDecoder.Frame(text);
+            if(key!=null)
+                for(var node=outgoing.First;node!=null;)
+                {
+                    var next=node.Next;
+                    if(node.Value.Key==key && (node!=outgoing.First || sendOffset==0))
+                    { queuedBytes-=node.Value.Bytes.Length;outgoing.Remove(node); }
+                    node=next;
+                }
             if(queuedBytes+packet.Length>LanFrameDecoder.MaxFrame*2) throw new InvalidOperationException("网络发送积压，请检查连接。");
-            queuedBytes+=packet.Length;outgoing.Enqueue(packet);
+            queuedBytes+=packet.Length;outgoing.AddLast(new Packet{Bytes=packet,Key=key});
         }
         public void Poll()
         {
@@ -103,20 +146,20 @@ namespace UnderAvatar
                     else Activate(accepted);
                 }
                 if(!Connected) return;
-                int budget=512*1024;bool ended=false;
-                while(budget>0 && socket.Poll(0,SelectMode.SelectRead))
+                int budget=32768;bool ended=false;var clock=Stopwatch.StartNew();
+                while(budget>0 && clock.ElapsedMilliseconds<2 && socket.Poll(0,SelectMode.SelectRead))
                 {
                     int count=socket.Receive(readBuffer,0,Math.Min(budget,readBuffer.Length),SocketFlags.None);
                     if(count==0) { ended=true;break; }
                     decoder.Push(readBuffer,count);budget-=count;
                 }
                 int messages=0;
-                while(decoder.Messages.Count>0 && messages++<128)
+                while(decoder.Messages.Count>0 && messages++<24 && clock.ElapsedMilliseconds<4)
                 {
                     string value=decoder.Messages.Dequeue();ReceivedFrames++;Message?.Invoke(value);
                     if(!Connected) return;
                 }
-                if(ended) throw new InvalidOperationException("对方已断开连接。");
+                if(ended && decoder.Messages.Count==0) throw new InvalidOperationException("对方已断开连接。");
                 Flush();
             }
             catch(SocketException e) when(e.SocketErrorCode==SocketError.WouldBlock) { }
@@ -125,15 +168,19 @@ namespace UnderAvatar
         public void Flush()
         {
             if(!Connected) return;
-            int budget=512*1024;
-            while(outgoing.Count>0 && budget>0 && socket.Poll(0,SelectMode.SelectWrite))
+            int budget=32768;var clock=Stopwatch.StartNew();
+            try
             {
-                var bytes=outgoing.Peek();
-                int sent=socket.Send(bytes,sendOffset,Math.Min(budget,bytes.Length-sendOffset),SocketFlags.None);
-                if(sent<=0) break;
-                sendOffset+=sent;queuedBytes-=sent;budget-=sent;
-                if(sendOffset==bytes.Length) { outgoing.Dequeue();sendOffset=0; }
+                while(outgoing.Count>0 && budget>0 && clock.ElapsedMilliseconds<2 && socket.Poll(0,SelectMode.SelectWrite))
+                {
+                    var bytes=outgoing.First.Value.Bytes;
+                    int sent=socket.Send(bytes,sendOffset,Math.Min(budget,bytes.Length-sendOffset),SocketFlags.None);
+                    if(sent<=0) break;
+                    sendOffset+=sent;queuedBytes-=sent;budget-=sent;
+                    if(sendOffset==bytes.Length) { outgoing.RemoveFirst();sendOffset=0; }
+                }
             }
+            catch(SocketException e) when(e.SocketErrorCode==SocketError.WouldBlock) { }
         }
         public void Dispose()
         {

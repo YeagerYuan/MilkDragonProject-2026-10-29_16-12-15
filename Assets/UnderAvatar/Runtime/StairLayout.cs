@@ -105,7 +105,10 @@ namespace UnderAvatar
                 float rise=half*(n+1)/steps;
                 float lowerZ=g*.5f+(n+.5f)*tread, upperZ=(FlightCells+.5f)*g-(n+.5f)*tread;
                 Box("LowerStep_"+n,new Vector3(0,rise*.5f,lowerZ),new Vector3(width,rise,tread+.002f),stone);
-                Box("UpperStep_"+n,new Vector3(g,(half+rise)*.5f,upperZ),new Vector3(width,half+rise,tread+.002f),stone);
+                // Keep the underside clear so another stair flight can pass below a stacked pair.
+                // Solid columns reaching down to this floor would block the lower player's head.
+                float thickness=.24f;
+                Box("UpperStep_"+n,new Vector3(g,half+rise-thickness*.5f,upperZ),new Vector3(width,thickness,tread+.002f),stone);
                 // Continuous side guards keep both actors on the flights.
                 foreach(float edge in new[]{-1f,1f})
                 {
